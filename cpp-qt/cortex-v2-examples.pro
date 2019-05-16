@@ -2,11 +2,12 @@ TEMPLATE = subdirs
 
 SUBDIRS = \
     cortexclient\
-    facialexpressions \
     motion \
     eeg \
-    training \
-    mentalcommand \
+    mental-command \
+    mental-command-training \
+    facial-expression \
+    facial-expression-training \
     marker
 
 # build the project sequentially as listed in SUBDIRS !

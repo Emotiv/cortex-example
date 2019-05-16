@@ -19,9 +19,6 @@ int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
     Training t;
-
-    t.start("mentalCommand");
-    //t.start("facialExpression");
-
+    t.start("facialExpression");
     return a.exec();
 }

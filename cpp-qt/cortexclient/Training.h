@@ -70,6 +70,7 @@ private:
     QString token;
     QString sessionId;
     int actionIndex;
+    int actionCount;
     int trainingFailure;
 };
 

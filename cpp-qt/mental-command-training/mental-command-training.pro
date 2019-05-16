@@ -15,8 +15,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-SOURCES += main.cpp \
-    Training.cpp
+SOURCES += main.cpp
 
 win32:CONFIG(release, debug|release): LIBS += -L$$OUT_PWD/../cortexclient/release/ -lcortexclient
 else:win32:CONFIG(debug, debug|release): LIBS += -L$$OUT_PWD/../cortexclient/debug/ -lcortexclient
@@ -30,6 +29,3 @@ else:win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../cort
 else:win32:!win32-g++:CONFIG(release, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../cortexclient/release/cortexclient.lib
 else:win32:!win32-g++:CONFIG(debug, debug|release): PRE_TARGETDEPS += $$OUT_PWD/../cortexclient/debug/cortexclient.lib
 else:unix: PRE_TARGETDEPS += $$OUT_PWD/../cortexclient/libcortexclient.a
-
-HEADERS += \
-    Training.h

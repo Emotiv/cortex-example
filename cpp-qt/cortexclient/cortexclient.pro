@@ -27,6 +27,7 @@ SOURCES += \
     SessionCreator.cpp \
     HeadsetFinder.cpp \
     DataStreamExample.cpp \
+    Training.cpp \
     CortexClient.cpp
 
 HEADERS += \
@@ -34,7 +35,8 @@ HEADERS += \
     Headset.h \
     SessionCreator.h \
     HeadsetFinder.h \
-    DataStreamExample.h
+    DataStreamExample.h \
+    Training.h
 
 unix {
     target.path = /usr/lib

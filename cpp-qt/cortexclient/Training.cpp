@@ -34,6 +34,7 @@ Training::Training(QObject *parent) : QObject(parent) {
 void Training::start(QString detection) {
     this->detection = detection;
     actionIndex = 0;
+    actionCount = 0;
     trainingFailure = 0;
     client.open();
 }
@@ -113,10 +114,19 @@ void Training::onStreamDataReceived(QString sessionId, QString stream,
 }
 
 void Training::nextAction() {
+    static const QStringList untrainableActions = {
+        "blink", "winkL", "winkR", "horiEye"
+    };
     actionIndex++;
     trainingFailure = 0;
 
-    if (actionIndex < 3 && actionIndex < actions.size()) {
+    // some facial expression actions cannot be trained, we must skip them
+    while (untrainableActions.contains(action())) {
+        actionIndex++;
+    }
+    actionCount++;
+
+    if (actionCount < 3 && actionIndex < actions.size()) {
         // ok, let's train the next action
         client.training(token, sessionId, detection, action(), "start");
     }

@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <QCoreApplication>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QTimer>
 #include <QtDebug>
 
 
@@ -37,7 +38,6 @@ void DataStreamExample::start(QString stream, bool activateSession, QString lice
     this->activateSession = activateSession;
     this->license = license;
     nextDataTime = 0;
-    timerId = 0;
     client.open();
 }
 
@@ -72,25 +72,22 @@ void DataStreamExample::onSessionCreated(QString token, QString sessionId) {
 void DataStreamExample::onSubscribeOk(QStringList streams) {
     qInfo() << "Subscription successful for data streams" << streams;
     qInfo() << "Receiving data for 30 seconds.";
-    timerId = startTimer(30*1000);
+    QTimer::singleShot(30*1000, this, &DataStreamExample::unsubscribe);
 }
 
 void DataStreamExample::onStreamDataReceived(
         QString sessionId, QString stream, double time, const QJsonArray &data) {
     Q_UNUSED(sessionId);
-    // a data stream can publish a lot of data
-    // we display only a few data per second
+    // a data stream can publish data with a high frequency
+    // we display only a few samples per second
     if (time >= nextDataTime) {
         qInfo() << stream << data;
         nextDataTime = time + 0.2;
     }
 }
 
-void DataStreamExample::timerEvent(QTimerEvent *event) {
-    if (event->timerId() == timerId) {
-        killTimer(timerId);
-        client.unsubscribe(token, sessionId, stream);
-    }
+void DataStreamExample::unsubscribe() {
+    client.unsubscribe(token, sessionId, stream);
 }
 
 void DataStreamExample::onUnsubscribeOk(QStringList streams) {

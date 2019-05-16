@@ -44,15 +44,13 @@ private slots:
     void onSessionCreated(QString token, QString sessionId);
 
     void onSubscribeOk(QStringList streams);
+    void unsubscribe();
     void onUnsubscribeOk(QStringList streams);
 
     void onStreamDataReceived(QString sessionId, QString stream,
                               double time, const QJsonArray &data);
 
     void onCloseSessionOk();
-
-protected:
-    void timerEvent(QTimerEvent *event);
 
 private:
     CortexClient client;
@@ -65,7 +63,6 @@ private:
     QString token;
     QString sessionId;
     double nextDataTime;
-    int timerId;
 };
 
 #endif // DATASTREAMEXAMPLE_H
