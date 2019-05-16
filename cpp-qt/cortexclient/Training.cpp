@@ -18,6 +18,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <QJsonArray>
 #include <QtDebug>
 
+static const QString DefaultProfileName = "cortex-v2-example";
+
 
 Training::Training(QObject *parent) : QObject(parent) {
     connect(&client, &CortexClient::connected, this, &Training::onConnected);
@@ -27,6 +29,10 @@ Training::Training(QObject *parent) : QObject(parent) {
     connect(&client, &CortexClient::subscribeOk, this, &Training::onSubscribeOk);
     connect(&client, &CortexClient::trainingOk, this, &Training::onTrainingOk);
     connect(&client, &CortexClient::streamDataReceived, this, &Training::onStreamDataReceived);
+    connect(&client, &CortexClient::queryProfileOk, this, &Training::onQueryProfileOk);
+    connect(&client, &CortexClient::createProfileOk, this, &Training::onCreateProfileOk);
+    connect(&client, &CortexClient::loadProfileOk, this, &Training::onLoadProfileOk);
+    connect(&client, &CortexClient::saveProfileOk, this, &Training::onSaveProfileOk);
     connect(&finder, &HeadsetFinder::headsetFound, this, &Training::onHeadsetFound);
     connect(&creator, &SessionCreator::sessionCreated, this, &Training::onSessionCreated);
 }
@@ -66,6 +72,7 @@ void Training::onGetDetectionInfoOk(QStringList actions,
 
 void Training::onHeadsetFound(const Headset &headset) {
     finder.clear();
+    this->headset = headset;
     creator.createSession(&client, headset, false, "");
 }
 
@@ -73,7 +80,40 @@ void Training::onSessionCreated(QString token, QString sessionId) {
     this->token = token;
     this->sessionId = sessionId;
     creator.clear();
+    // list the training profiles
+    client.queryProfile(token);
+}
+
+void Training::onQueryProfileOk(QStringList profiles)
+{
+    if (profiles.contains(DefaultProfileName)) {
+        // the profile already exists, we can load it
+        client.loadProfile(token, headset.id, DefaultProfileName);
+    }
+    else {
+        // the profile doesn't exist, we must create it first
+        qInfo() << "Creating new training profile" << DefaultProfileName;
+        client.createProfile(token, DefaultProfileName);
+    }
+}
+
+void Training::onCreateProfileOk(QString profileName)
+{
+    qInfo() << "Training profile created" << profileName;
+    client.loadProfile(token, headset.id, profileName);
+}
+
+void Training::onLoadProfileOk(QString profileName)
+{
+    qInfo() << "Training profile loaded" << profileName;
+    // we must subscribe to the "sys" stream to receive training events
     client.subscribe(token, sessionId, "sys");
+}
+
+void Training::onSaveProfileOk(QString profileName)
+{
+    qInfo() << "Training profile saved" << profileName;
+    QCoreApplication::quit();
 }
 
 void Training::onSubscribeOk(QStringList streams) {
@@ -132,8 +172,9 @@ void Training::nextAction() {
     }
     else {
         // that's enough training for today
-        qInfo() << "Done.";
-        QCoreApplication::quit();
+        // we save the training profile before we quit
+        qInfo() << "Saving training profile" << DefaultProfileName;
+        client.saveProfile(token, headset.id, DefaultProfileName);
     }
 }
 

@@ -46,6 +46,10 @@ private slots:
 
     void onHeadsetFound(const Headset &headset);
     void onSessionCreated(QString token, QString sessionId);
+    void onQueryProfileOk(QStringList profiles);
+    void onCreateProfileOk(QString profileName);
+    void onLoadProfileOk(QString profileName);
+    void onSaveProfileOk(QString profileName);
     void onSubscribeOk(QStringList streams);
     void onTrainingOk(QString msg);
     void onStreamDataReceived(QString sessionId, QString stream,
@@ -64,6 +68,7 @@ private:
     HeadsetFinder finder;
     SessionCreator creator;
 
+    Headset headset;
     QString detection;
     QStringList actions;
 

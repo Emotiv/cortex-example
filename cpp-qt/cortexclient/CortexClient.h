@@ -40,10 +40,9 @@ public slots:
     void open();
     void close();
 
-    // list all the headsets connected to your device
+    // list all the headsets connected to your computer
     void queryHeadsets();
 
-    // login / logout
     void getUserLogin();
 
     void requestAccess(QString clientId, QString clientSecret);
@@ -61,6 +60,12 @@ public slots:
     // subscribe to a data stream
     void subscribe(QString token, QString sessionId, QString stream);
     void unsubscribe(QString token, QString sessionId, QString stream);
+
+    // training profile management for facial expression and mental command
+    void queryProfile(QString token);
+    void createProfile(QString token, QString profileName);
+    void loadProfile(QString token, QString headsetId, QString profileName);
+    void saveProfile(QString token, QString headsetId, QString profileName);
 
     // methods for training
     void getDetectionInfo(QString detection);
@@ -91,6 +96,10 @@ signals:
     void closeSessionOk();
     void subscribeOk(QStringList streams);
     void unsubscribeOk(QStringList streams);
+    void queryProfileOk(QStringList profiles);
+    void createProfileOk(QString profileName);
+    void loadProfileOk(QString profileName);
+    void saveProfileOk(QString profileName);
     void getDetectionInfoOk(QStringList actions,
                             QStringList controls, QStringList events);
     void trainingOk(QString msg);

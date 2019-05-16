@@ -106,8 +106,7 @@ void CortexClient::controlDevice(QString headsetId, QString command, QJsonObject
     sendRequest("controlDevice", params);
 }
 
-void CortexClient::createSession(QString token,
-                                 QString headsetId, bool activate) {
+void CortexClient::createSession(QString token, QString headsetId, bool activate) {
     QJsonObject params;
     params["cortexToken"] = token;
     params["headset"] = headsetId;
@@ -126,25 +125,57 @@ void CortexClient::closeSession(QString token, QString sessionId) {
 void CortexClient::subscribe(QString token, QString sessionId, QString stream) {
     QJsonObject params;
     QJsonArray streamArray;
-
     streamArray.append(stream);
     params["cortexToken"] = token;
     params["session"] = sessionId;
     params["streams"] = streamArray;
-
     sendRequest("subscribe", params);
 }
 
 void CortexClient::unsubscribe(QString token, QString sessionId, QString stream) {
     QJsonObject params;
     QJsonArray streamArray;
-
     streamArray.append(stream);
     params["cortexToken"] = token;
     params["session"] = sessionId;
     params["streams"] = streamArray;
-
     sendRequest("unsubscribe", params);
+}
+
+void CortexClient::queryProfile(QString token)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    sendRequest("queryProfile", params);
+}
+
+void CortexClient::createProfile(QString token, QString profileName)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["profile"] = profileName;
+    params["status"] = "create";
+    sendRequest("setupProfile", params);
+}
+
+void CortexClient::loadProfile(QString token, QString headsetId, QString profileName)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["headset"] = headsetId;
+    params["profile"] = profileName;
+    params["status"] = "load";
+    sendRequest("setupProfile", params);
+}
+
+void CortexClient::saveProfile(QString token, QString headsetId, QString profileName)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["headset"] = headsetId;
+    params["profile"] = profileName;
+    params["status"] = "save";
+    sendRequest("setupProfile", params);
 }
 
 void CortexClient::getDetectionInfo(QString detection) {
@@ -328,6 +359,28 @@ void CortexClient::handleResponse(QString method, const QJsonValue &result) {
             emit unsubscribeOk(streams);
         }
     }
+    else if (method == "queryProfile") {
+        QStringList profiles;
+        QJsonArray array = result.toArray();
+        for (auto value : array) {
+            profiles.append(value.toObject().value("name").toString());
+        }
+        emit queryProfileOk(profiles);
+    }
+    else if (method == "setupProfile") {
+        QJsonObject obj = result.toObject();
+        QString action = obj["action"].toString();
+        QString name = obj["name"].toString();
+        if (action == "create") {
+            emit createProfileOk(name);
+        }
+        else if (action == "load") {
+            emit loadProfileOk(name);
+        }
+        else if (action == "save") {
+            emit saveProfileOk(name);
+        }
+    }
     else if (method == "getDetectionInfo") {
         handleGetDetectionInfo(result);
     }
@@ -352,7 +405,7 @@ void CortexClient::handleResponse(QString method, const QJsonValue &result) {
     }
     else {
         // unknown method, so we don't know how to interpret the result
-        qCritical() << "unkown RPC method:" << method << result;
+        qCritical() << "Unkown API method:" << method << result;
     }
 }
 

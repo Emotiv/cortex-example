@@ -60,7 +60,14 @@ void HeadsetFinder::onQueryHeadsetsOk(const QList<Headset> &headsets) {
 
     if (headset.status == "discovered") {
         // we must connect this headset before we can use it
-        client->controlDevice(headset.id, "connect", QJsonObject());
+        QJsonObject flexMapping;
+        if (headset.id.contains("flex", Qt::CaseInsensitive)) {
+            // TODO put your Epoc Flex configuration here
+            // flexMapping["LA"] = "AF3";
+            // flexMapping["LB"] = "AF7";
+            // etc...
+        }
+        client->controlDevice(headset.id, "connect", flexMapping);
     }
     else if (headset.status == "connecting") {
         qInfo() << "Waiting for headset connection" << headset.toString();
