@@ -13,12 +13,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 ***************/
 #include "Training.h"
-
+#include "Config.h"
 #include <QCoreApplication>
 #include <QJsonArray>
 #include <QtDebug>
-
-static const QString DefaultProfileName = "cortex-v2-example";
 
 
 Training::Training(QObject *parent) : QObject(parent) {
@@ -86,14 +84,14 @@ void Training::onSessionCreated(QString token, QString sessionId) {
 
 void Training::onQueryProfileOk(QStringList profiles)
 {
-    if (profiles.contains(DefaultProfileName)) {
+    if (profiles.contains(TrainingProfileName)) {
         // the profile already exists, we can load it
-        client.loadProfile(token, headset.id, DefaultProfileName);
+        client.loadProfile(token, headset.id, TrainingProfileName);
     }
     else {
         // the profile doesn't exist, we must create it first
-        qInfo() << "Creating new training profile" << DefaultProfileName;
-        client.createProfile(token, DefaultProfileName);
+        qInfo() << "Creating new training profile" << TrainingProfileName;
+        client.createProfile(token, TrainingProfileName);
     }
 }
 
@@ -173,8 +171,8 @@ void Training::nextAction() {
     else {
         // that's enough training for today
         // we save the training profile before we quit
-        qInfo() << "Saving training profile" << DefaultProfileName;
-        client.saveProfile(token, headset.id, DefaultProfileName);
+        qInfo() << "Saving training profile" << TrainingProfileName;
+        client.saveProfile(token, headset.id, TrainingProfileName);
     }
 }
 

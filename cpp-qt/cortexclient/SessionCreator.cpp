@@ -13,17 +13,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 ***************/
 #include "SessionCreator.h"
+#include "Config.h"
 #include <QCoreApplication>
 #include <QTimer>
 #include <QJsonObject>
-
-/*
- * To get a client id and a client secret, you must connect to your Emotiv
- * account on emotiv.com and create a Cortex app.
- * https://www.emotiv.com/my-account/cortex-apps/
- */
-const QString clientId = "the client id of your Cortex app goes here";
-const QString clientSecret = "the client secret of your Cortex app goes here";
 
 
 SessionCreator::SessionCreator(QObject *parent) : QObject(parent) {
@@ -63,18 +56,19 @@ void SessionCreator::onGetUserLoginOk(QString emotivId) {
         return;
     }
     qInfo() << "You are logged in with the EmotivId" << emotivId;
-    client->requestAccess(clientId, clientSecret);
+    client->requestAccess(ClientId, ClientSecret);
 }
 
 void SessionCreator::onRequestAccessOk(bool accessGranted, QString message) {
     if (accessGranted) {
         qInfo() << "This application was authorized in CortexApp";
-        client->authorize(clientId, clientSecret, license);
+        client->authorize(ClientId, ClientSecret, license);
     }
     else {
         qInfo() << message;
+        // let's try again later
         QTimer::singleShot(2*1000, [this]() {
-            client->requestAccess(clientId, clientSecret);
+            client->requestAccess(ClientId, ClientSecret);
         });
     }
 }

@@ -31,6 +31,7 @@ SOURCES += \
     CortexClient.cpp
 
 HEADERS += \
+    Config.h \
     CortexClient.h \
     Headset.h \
     SessionCreator.h \

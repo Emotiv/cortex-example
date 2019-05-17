@@ -13,6 +13,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 ***************/
 #include "HeadsetFinder.h"
+#include "Config.h"
+
 
 HeadsetFinder::HeadsetFinder(QObject *parent) : QObject(parent) {
     client = nullptr;
@@ -60,14 +62,12 @@ void HeadsetFinder::onQueryHeadsetsOk(const QList<Headset> &headsets) {
 
     if (headset.status == "discovered") {
         // we must connect this headset before we can use it
-        QJsonObject flexMapping;
+        QJsonObject mapping;
         if (headset.id.contains("flex", Qt::CaseInsensitive)) {
-            // TODO put your Epoc Flex configuration here
-            // flexMapping["LA"] = "AF3";
-            // flexMapping["LB"] = "AF7";
-            // etc...
+            // for an Epoc Flex headset, we need a mapping
+            mapping = FlexMapping;
         }
-        client->controlDevice(headset.id, "connect", flexMapping);
+        client->controlDevice(headset.id, "connect", mapping);
     }
     else if (headset.status == "connecting") {
         qInfo() << "Waiting for headset connection" << headset.toString();
