@@ -13,7 +13,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 ***************/
 #include "DataStreamExample.h"
-
+#include "Config.h"
 #include <QCoreApplication>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -25,6 +25,7 @@ DataStreamExample::DataStreamExample(QObject *parent) : QObject(parent) {
     connect(&client, &CortexClient::connected, this, &DataStreamExample::onConnected);
     connect(&client, &CortexClient::disconnected, this, &DataStreamExample::onDisconnected);
     connect(&client, &CortexClient::errorReceived, this, &DataStreamExample::onErrorReceived);
+    connect(&client, &CortexClient::loadProfileOk, this, &DataStreamExample::onLoadProfileOk);
     connect(&client, &CortexClient::subscribeOk, this, &DataStreamExample::onSubscribeOk);
     connect(&client, &CortexClient::unsubscribeOk, this, &DataStreamExample::onUnsubscribeOk);
     connect(&client, &CortexClient::streamDataReceived, this, &DataStreamExample::onStreamDataReceived);
@@ -51,12 +52,19 @@ void DataStreamExample::onDisconnected() {
     QCoreApplication::quit();
 }
 
-void DataStreamExample::onErrorReceived() {
-    QCoreApplication::quit();
+void DataStreamExample::onErrorReceived(QString method) {
+    if (method == "setupProfile") {
+        // it's fine, we can subscribe to a data stream even without a profile
+        qInfo() << "Failed to load the training profile.";
+    }
+    else {
+        QCoreApplication::quit();
+    }
 }
 
 void DataStreamExample::onHeadsetFound(const Headset &headset) {
     finder.clear();
+    this->headset = headset;
     // next step: create a session for this headset
     creator.createSession(&client, headset, activateSession, license);
 }
@@ -65,8 +73,15 @@ void DataStreamExample::onSessionCreated(QString token, QString sessionId) {
     creator.clear();
     this->token = token;
     this->sessionId = sessionId;
+    // load the training profile (useful only for mental command and facial expression)
+    client.loadProfile(token, headset.id, TrainingProfileName);
     // next step: subscribe to a data stream
     client.subscribe(token, sessionId, stream);
+}
+
+void DataStreamExample::onLoadProfileOk(QString profileName)
+{
+    qInfo() << "Training profile loaded" << profileName;
 }
 
 void DataStreamExample::onSubscribeOk(QStringList streams) {

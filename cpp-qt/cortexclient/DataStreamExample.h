@@ -38,11 +38,12 @@ public:
 private slots:
     void onConnected();
     void onDisconnected();
-    void onErrorReceived();
+    void onErrorReceived(QString method);
 
     void onHeadsetFound(const Headset &headset);
     void onSessionCreated(QString token, QString sessionId);
 
+    void onLoadProfileOk(QString profileName);
     void onSubscribeOk(QStringList streams);
     void unsubscribe();
     void onUnsubscribeOk(QStringList streams);
@@ -56,6 +57,7 @@ private:
     CortexClient client;
     HeadsetFinder finder;
     SessionCreator creator;
+    Headset headset;
 
     bool activateSession;
     QString license;
