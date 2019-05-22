@@ -1,0 +1,452 @@
+/***************
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>
+***************/
+#include "CortexClient.h"
+
+#include <QUrl>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonParseError>
+#include <QJsonArray>
+#include <QtDebug>
+#include <QCoreApplication>
+
+
+// utility function
+QStringList arrayToStringList(const QJsonArray &array) {
+    QStringList list;
+    for (const QJsonValue &val : array) {
+        list.append(val.toString());
+    }
+    return list;
+}
+
+CortexClient::CortexClient(QObject *parent) : QObject(parent) {
+    nextRequestId = 1;
+
+    // forward the connected/disconnected signals
+    connect(&socket, &QWebSocket::connected, this, &CortexClient::connected);
+    connect(&socket, &QWebSocket::disconnected, this, &CortexClient::disconnected);
+
+    // handle errors
+    connect(&socket, static_cast<void(QWebSocket::*)(QAbstractSocket::SocketError)>(&QWebSocket::error),
+            this, &CortexClient::onError);
+    connect(&socket, &QWebSocket::sslErrors, this, &CortexClient::onSslErrors);
+
+    // handle incomming text messages
+    connect(&socket, &QWebSocket::textMessageReceived, this, &CortexClient::onMessageReceived);
+}
+
+void CortexClient::onError(QAbstractSocket::SocketError error) {
+    qCritical() << "Socket error:" << error;
+}
+
+void CortexClient::onSslErrors(const QList<QSslError> &errors) {
+    for (const QSslError &error : errors) {
+        qCritical() << "SSL error:" << error.errorString();
+    }
+}
+
+void CortexClient::open() {
+    socket.open(QUrl("wss://localhost:6868"));
+}
+
+void CortexClient::close() {
+    socket.close();
+    nextRequestId = 1;
+    methodForRequestId.clear();
+}
+
+void CortexClient::queryHeadsets() {
+    sendRequest("queryHeadsets");
+}
+
+void CortexClient::getUserLogin() {
+    sendRequest("getUserLogin");
+}
+
+void CortexClient::requestAccess(QString clientId, QString clientSecret)
+{
+    QJsonObject params;
+    params["clientId"] = clientId;
+    params["clientSecret"] = clientSecret;
+    sendRequest("requestAccess", params);
+}
+
+void CortexClient::authorize(QString clientId, QString clientSecret, QString license) {
+    QJsonObject params;
+    params["clientId"] = clientId;
+    params["clientSecret"] = clientSecret;
+    if (! license.isEmpty()) {
+        params["license"] = license;
+        params["debit"] = 1;
+    }
+    sendRequest("authorize", params);
+}
+
+void CortexClient::controlDevice(QString headsetId, QString command, QJsonObject flexMapping)
+{
+    QJsonObject params;
+    params["headset"] = headsetId;
+    params["command"] = command;
+    if (! flexMapping.isEmpty()) {
+        params["mappings"] = flexMapping;
+    }
+    sendRequest("controlDevice", params);
+}
+
+void CortexClient::createSession(QString token, QString headsetId, bool activate) {
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["headset"] = headsetId;
+    params["status"] = activate ? "active" : "open";
+    sendRequest("createSession", params);
+}
+
+void CortexClient::closeSession(QString token, QString sessionId) {
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["session"] = sessionId;
+    params["status"] = "close";
+    sendRequest("updateSession", params);
+}
+
+void CortexClient::subscribe(QString token, QString sessionId, QString stream) {
+    QJsonObject params;
+    QJsonArray streamArray;
+    streamArray.append(stream);
+    params["cortexToken"] = token;
+    params["session"] = sessionId;
+    params["streams"] = streamArray;
+    sendRequest("subscribe", params);
+}
+
+void CortexClient::unsubscribe(QString token, QString sessionId, QString stream) {
+    QJsonObject params;
+    QJsonArray streamArray;
+    streamArray.append(stream);
+    params["cortexToken"] = token;
+    params["session"] = sessionId;
+    params["streams"] = streamArray;
+    sendRequest("unsubscribe", params);
+}
+
+void CortexClient::queryProfile(QString token)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    sendRequest("queryProfile", params);
+}
+
+void CortexClient::createProfile(QString token, QString profileName)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["profile"] = profileName;
+    params["status"] = "create";
+    sendRequest("setupProfile", params);
+}
+
+void CortexClient::loadProfile(QString token, QString headsetId, QString profileName)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["headset"] = headsetId;
+    params["profile"] = profileName;
+    params["status"] = "load";
+    sendRequest("setupProfile", params);
+}
+
+void CortexClient::saveProfile(QString token, QString headsetId, QString profileName)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["headset"] = headsetId;
+    params["profile"] = profileName;
+    params["status"] = "save";
+    sendRequest("setupProfile", params);
+}
+
+void CortexClient::getDetectionInfo(QString detection) {
+    QJsonObject params;
+    params["detection"] = detection;
+    sendRequest("getDetectionInfo", params);
+}
+
+void CortexClient::training(QString token, QString sessionId, QString detection,
+                            QString action, QString control) {
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["session"] = sessionId;
+    params["detection"] = detection;
+    params["action"] = action;
+    params["status"] = control;
+    sendRequest("training", params);
+}
+
+void CortexClient::createRecord(QString token, QString sessionId, QString title)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["session"] = sessionId;
+    params["title"] = title;
+    sendRequest("createRecord", params);
+}
+
+void CortexClient::stopRecord(QString token, QString sessionId)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["session"] = sessionId;
+    sendRequest("stopRecord", params);
+}
+
+void CortexClient::injectMarker(QString token, QString sessionId,
+                                QString label, int value, qint64 time) {
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["session"] = sessionId;
+    params["label"] = label;
+    params["value"] = value;
+    params["port"] = "Cortex Example";
+    params["time"] = time;
+    sendRequest("injectMarker", params);
+}
+
+void CortexClient::updateMarker(QString token, QString sessionId, QString markerId, qint64 time)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["session"] = sessionId;
+    params["markerId"] = markerId;
+    params["time"] = time;
+    sendRequest("updateMarker", params);
+}
+
+void CortexClient::sendRequest(QString method, QJsonObject params) {
+    QJsonObject request;
+
+    // build the request
+    request["jsonrpc"] = "2.0";
+    request["id"] = nextRequestId;
+    request["method"] = method;
+    request["params"] = params;
+
+    // send the json message
+    QString message = QJsonDocument(request).toJson(QJsonDocument::Compact);
+    //qDebug() << " * send    " << message;
+    socket.sendTextMessage(message);
+
+    // remember the method used for this request
+    methodForRequestId.insert(nextRequestId, method);
+    nextRequestId++;
+}
+
+void CortexClient::onMessageReceived(QString message) {
+    //qDebug() << " * received" << message;
+
+    // parse the json message
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &err);
+    if (err.error != QJsonParseError::NoError) {
+        qCritical() << "error, failed to parse the json message: " << message;
+        return;
+    }
+
+    QJsonObject response = doc.object();
+    int id = response.value("id").toInt(-1);
+    QString sid = response.value("sid").toString();
+
+    if (id != -1) {
+        // this is a RPC response, we get the method from the id
+        // we must know the method in order to understand the result
+        QString method = methodForRequestId.value(id);
+        QJsonValue result = response.value("result");
+        QJsonValue error = response.value("error");
+
+        methodForRequestId.remove(id);
+
+        if (error.isObject()) {
+            emitError(method, error.toObject());
+        } else {
+            handleResponse(method, result);
+        }
+    }
+    else if (! sid.isEmpty()) {
+        // this message has a sid (subscription id)
+        // so this is some data from a data stream
+        double time = response.value("time").toDouble();
+        QJsonArray data;
+        QString stream;
+
+        // find the data field inside the response
+        for (auto it = response.begin(); it != response.end(); ++it) {
+            QString key = it.key();
+            QJsonValue value = it.value();
+
+            if (key != "sid" && key != "time" && value.isArray()) {
+                stream = key;
+                data = value.toArray();
+            }
+        }
+        emit streamDataReceived(sid, stream, time, data);
+    }
+}
+
+void CortexClient::handleResponse(QString method, const QJsonValue &result) {
+    if (method == "queryHeadsets") {
+        QList<Headset> headsets;
+        for (const QJsonValue val : result.toArray()) {
+            QJsonObject jheadset = val.toObject();
+            Headset hs(jheadset);
+            headsets.append(hs);
+        }
+        emit queryHeadsetsOk(headsets);
+    }
+    else if (method == "getUserLogin") {
+        QString emotivId;
+        QJsonArray users = result.toArray();
+        if (! users.isEmpty()) {
+            QJsonObject obj = users[0].toObject();
+            QString currentOSUId = obj["currentOSUId"].toString();
+            QString loggedInOSUId = obj["loggedInOSUId"].toString();
+            if (currentOSUId == loggedInOSUId) {
+                emotivId = obj["username"].toString();
+            }
+        }
+        emit getUserLoginOk(emotivId);
+    }
+    else if (method == "requestAccess") {
+        bool accessGranted = result["accessGranted"].toBool();
+        QString message = result["message"].toString();
+        emit requestAccessOk(accessGranted, message);
+    }
+    else if (method == "authorize") {
+        QString token = result.toObject().value("cortexToken").toString();
+        emit authorizeOk(token);
+    }
+    else if (method == "controlDevice") {
+        emit controlDeviceOk();
+    }
+    else if (method == "createSession") {
+        QString sessionId = result.toObject().value("id").toString();
+        emit createSessionOk(sessionId);
+    }
+    else if (method == "updateSession") {
+        QString sessionId = result.toObject().value("id").toString();
+        emit closeSessionOk();
+    }
+    else if (method == "subscribe") {
+        QStringList streams = parseSubscriptionResult(method, result.toObject());
+        if (! streams.isEmpty()) {
+            emit subscribeOk(streams);
+        }
+    }
+    else if (method == "unsubscribe") {
+        QStringList streams = parseSubscriptionResult(method, result.toObject());
+        if (! streams.isEmpty()) {
+            emit unsubscribeOk(streams);
+        }
+    }
+    else if (method == "queryProfile") {
+        QStringList profiles;
+        QJsonArray array = result.toArray();
+        for (auto value : array) {
+            profiles.append(value.toObject().value("name").toString());
+        }
+        emit queryProfileOk(profiles);
+    }
+    else if (method == "setupProfile") {
+        QJsonObject obj = result.toObject();
+        QString action = obj["action"].toString();
+        QString name = obj["name"].toString();
+        if (action == "create") {
+            emit createProfileOk(name);
+        }
+        else if (action == "load") {
+            emit loadProfileOk(name);
+        }
+        else if (action == "save") {
+            emit saveProfileOk(name);
+        }
+    }
+    else if (method == "getDetectionInfo") {
+        handleGetDetectionInfo(result);
+    }
+    else if (method == "training") {
+        emit trainingOk(result.toString());
+    }
+    else if (method == "createRecord") {
+        QJsonObject record = result.toObject().value("record").toObject();
+        emit createRecordOk(record["uuid"].toString());
+    }
+    else if (method == "stopRecord") {
+        QJsonObject record = result.toObject().value("record").toObject();
+        emit stopRecordOk(record["uuid"].toString());
+    }
+    else if (method == "injectMarker") {
+        QJsonObject marker = result.toObject().value("marker").toObject();
+        QString markerId = marker["uuid"].toString();
+        emit injectMarkerOk(markerId);
+    }
+    else if (method == "updateMarker") {
+        emit updateMarkerOk();
+    }
+    else {
+        // unknown method, so we don't know how to interpret the result
+        qCritical() << "Unkown API method:" << method << result;
+    }
+}
+
+void CortexClient::handleGetDetectionInfo(const QJsonValue &result) {
+    QJsonArray jactions = result.toObject().value("actions").toArray();
+    QJsonArray jcontrols = result.toObject().value("controls").toArray();
+    QJsonArray jevents = result.toObject().value("events").toArray();
+    emit getDetectionInfoOk(arrayToStringList(jactions),
+                            arrayToStringList(jcontrols),
+                            arrayToStringList(jevents));
+}
+
+QStringList CortexClient::parseSubscriptionResult(QString method, const QJsonObject &result)
+{
+    QJsonArray success = result["success"].toArray();
+    QJsonArray failure = result["failure"].toArray();
+    QStringList streams;
+    if (! failure.isEmpty()) {
+        for (QJsonValue f : failure) {
+            emitError(method, f.toObject());
+        }
+        return streams;
+    }
+    for (QJsonValue s : success) {
+        QJsonObject obj = s.toObject();
+        QString stream = obj["streamName"].toString();
+        QJsonArray columns = obj["cols"].toArray();
+        if (! columns.isEmpty()) {
+            qInfo() << "stream" << stream << "uses these columns:" << columns;
+        }
+        streams.append(stream);
+    }
+    return streams;
+}
+
+void CortexClient::emitError(QString method, const QJsonObject &obj) {
+    int code = obj.value("code").toInt();
+    QString message = obj.value("message").toString();
+    qCritical() << "The Cortex service returned an error:";
+    qCritical() << "\tmethod " << method;
+    qCritical() << "\tcode   " << code;
+    qCritical() << "\tmessage" << message;
+    emit errorReceived(method, code, message);
+}
