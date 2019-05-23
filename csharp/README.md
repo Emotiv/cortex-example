@@ -1,5 +1,5 @@
 # Cortex C# Examples
-These examples show how to call the Cortex APIs from C# which describe at [Cortex Document](https://emotiv.github.io/cortex-docs/)
+These examples show how to call the Cortex APIs from C# which describe at [Cortex Document](https://app.gitbook.com/@emotiv/s/cortex-api/)
 
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development.
@@ -7,7 +7,7 @@ These instructions will get you a copy of the project up and running on your loc
 * You might have [Visual Studio](https://www.visualstudio.com/) with C# supported (msvc14 or higher recommended).
 * The Cortex have to be running on your machine such as service. You can get the Cortex from (https://www.emotiv.com/developer/).
 * Register a Application at https://www.emotiv.com/my-account/cortex-apps/ and get a pair of client id and client secret. You must connect to your Emotiv account on emotiv.com and create a Cortex app. If you don't have a EmotivID, you can [register here](https://id.emotivcloud.com/eoidc/account/registration/).
-* We have updated our Terms of Use, Privacy Policy and EULA to comply with GDPR. Please login via CortexUI to read and accept our latest policies in order to proceed using the following examples.  
+* We have updated our Terms of Use, Privacy Policy and EULA to comply with GDPR. Please login via EMOTIV App to read and accept our latest policies in order to proceed using the following examples.  
 
 ### How to compile
 <!-- how to compile  -->
@@ -32,38 +32,38 @@ This section describe structure overview, core classes and examples. The C# Cort
 #### Examples
 **1. EEGLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save eeg data to EEGLogger.csv file until Esc key pressed. 
-* The basic work-flow: Login via CortexApp -> requestAccess-> Authorize (license is required) -> find and connect headset -> Create Session -> Subscribe EEG data.
+* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (license is required) -> find and connect headset -> Create Session -> Subscribe EEG data.
 
 **2. MotionLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save motion data to MotionLogger.csv file until Esc key pressed.
-* The basic work-flow: Login via CortexApp -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe Motion data.
+* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe Motion data.
 
 **3. BandPowerLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save motion data to BandPowerLogger.csv file until Esc key pressed.
-* The basic work-flow: Login via CortexApp -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe Band Power data.
+* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe Band Power data.
 
 **4. MentalCommandTraining**
 * This example opens a session with the first Emotiv headset. Then User can create/load/unload profile then train actions following console guide.
 * The example demo for train: neutral, push, pull actions but you can add more actions as getDetectionInfo Output.
-* The basic work-flow: Login -> Login via CortexApp -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe _sys_ data -> Load/Create profile -> Start training actions -> Accept/Reject training.
+* The basic work-flow: Login -> Login via EMOTIV App -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe _sys_ data -> Load/Create profile -> Start training actions -> Accept/Reject training.
 
 **5. FacialExpressionTraining**
 * This example opens a session with the first Emotiv headset. Then User can create/load/unload profile then train actions following guideline on console.
 * The example demo for train: neutral, smile, frown, clench actions but you can add more actions as getDetectionInfo Output.
-* The basic work-flow: Login -> Login via CortexApp -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe _sys_ data -> Load/Create profile -> Start training actions -> Accept/Reject training.
+* The basic work-flow: Login -> Login via EMOTIV App -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe _sys_ data -> Load/Create profile -> Start training actions -> Accept/Reject training.
 
 **6. InjectMarkers**
 * This example opens a session with the first Emotiv headset. Then createRecord and inject markers to data stream.
 * Following guideline shown on console. Press a certain key to set a label of marker into injectmarker function. The program ignores Tab, Enter, Spacebar and Backspace Key.
-* The basic work-flow: Login via CortexApp -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> CreateRecord -> InjectMarker.
+* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> CreateRecord -> InjectMarker.
 
 **7. RecordData**
 * This example opens a session with the first Emotiv headset. Then create/stop/update/delete record.
-* The basic work-flow: Login via CortexApp -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> CreateRecord -> Stop/Update/Query/Delete Record.
+* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> CreateRecord -> Stop/Update/Query/Delete Record.
 
 ### Notes
-* You must login and logout via CortexApp.
-* You must use CortexApp to grant AccessRight for the App one time for one emotiv user.
+* You must login and logout via EMOTIV App.
+* You must use EMOTIV App to grant AccessRight for the App one time for one emotiv user.
 * You need a valid license to subscribe EEG data, Performance metrics data, Record Data, InjectMarker.
 * The Examples are only demo for some Apis not all apis and to be continue updating.
 
