@@ -13,24 +13,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>
 ***************/
 #include <QCoreApplication>
-#include "Marker.h"
+#include "DataStreamExample.h"
 
 int main(int argc, char *argv[])
 {
     QCoreApplication a(argc, argv);
-    Marker m;
+    DataStreamExample dse;
 
-    qInfo() << "";
-    qInfo() << "#####";
-    qInfo() << "Reminder: to inject markers into a session, you must get an appropriate licence from Emotiv.";
-    qInfo() << "#####";
-    qInfo() << "";
-
-    // to inject markers into a session, the session must be active
-    // which means that you need an appropiate license from Emotiv
-
-    QString licenseId = ""; // you can put your license id here
-    m.start(licenseId);
-
+    dse.start("met", false);
     return a.exec();
 }

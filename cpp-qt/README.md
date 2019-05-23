@@ -26,13 +26,13 @@ For example, if you installed Qt 5.9.3 in C:\Qt and you use Visual Studio 2015, 
 
 ## Configure and run
 
-To run these examples successfully, you need to edit **Config.h**, located in the **cortexclient** folder.
+To run these examples successfully, you need to edit the file **cortexclient/Config.h**.
 
 At the top of this file, you need to set the client id and client secret of your Cortex app.
 
 To get a client id and a client secret, you must connect to your Emotiv account on [emotiv.com](https://www.emotiv.com/my-account/cortex-apps/) and create a Cortex app. If you don't have a EmotivID, you can [register here](https://id.emotivcloud.com/eoidc/account/registration/).
 
-If you use an Epoc Flex headset, you need to edit its channel mapping in **Config.h**, located in the **cortexclient** folder.
+If you use an Epoc Flex headset, you need to edit its channel mapping in **cortexclient/Config.h**.
 
 Before you run these examples, you need to login with your Emotiv id in the EMOTIV App.
 
@@ -60,23 +60,27 @@ This example opens a session with the first Emotiv headset it can find, and disp
 
 ### facial-expression-training
 
-This example opens a session with the first Emotiv headset it can find, and then ask you to train 3 facial expressions.
+This example opens a session with the first Emotiv headset it can find. It creates and loads a training profile named "cortex-v2-example". Then it asks you to train 3 facial expressions: neutral, surprise and frown.
 
 If your training is successful, then you can test your skills with the **facial-expression** example.
 
 ### facial-expression
 
-This example opens a session with the first Emotiv headset it can find, and displays its facial expressions data stream for 30 seconds.
+This example opens a session with the first Emotiv headset it can find. It loads a training profile named "cortex-v2-example". Then it displays the facial expressions data stream for 30 seconds.
 
 ### mental-command-training
 
-This example opens a session with the first Emotiv headset it can find, and then ask you to train 3 mental commands.
+This example opens a session with the first Emotiv headset it can find. It creates and loads a training profile named "cortex-v2-example". Then it asks you to train 3 mental commands: neutral, push and pull.
 
 If your training is successful, then you can test your mental command skills with the **mental-command** example.
 
 ### mental-command
 
-This example opens a session with the first Emotiv headset it can find, and displays its mental command data stream for 30 seconds.
+This example opens a session with the first Emotiv headset it can find. It loads a training profile named "cortex-v2-example". Then it displays the mental command data stream for 30 seconds.
+
+### performance-metric
+
+This example opens a session with the first Emotiv headset it can find, and displays its performance metric data stream for 30 seconds.
 
 ### eeg
 
@@ -84,11 +88,17 @@ This example opens a session with the first Emotiv headset it can find, and disp
 
 This example opens a session with the first Emotiv headset it can find, and displays its raw EEG data stream for 30 seconds.
 
+You must purchase an appropriate license from Emotiv in order to subscribe to the EEG data stream.
+
+If Cortex cannot find your license when you run this example, please try to edit **eeg/main.cpp** and manually set your license id.
+
 ### marker
 
 **WARNING: running this example will debit a session from your Emotiv license.**
 
 This example opens a session with the first Emotiv headset it can find, and inject a few markers in the session. The session ends after 30 seconds.
+
+If Cortex cannot find your license when you run this example, please try to edit **marker/main.cpp** and manually set your license id.
 
 ## Signals and slots in Qt
 
