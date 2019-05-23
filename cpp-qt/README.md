@@ -78,6 +78,10 @@ If your training is successful, then you can test your mental command skills wit
 
 This example opens a session with the first Emotiv headset it can find, and displays its mental command data stream for 30 seconds.
 
+### performance-metric
+
+This example opens a session with the first Emotiv headset it can find, and displays its performance metric data stream for 30 seconds.
+
 ### eeg
 
 **WARNING: running this example will debit a session from your Emotiv license.**
