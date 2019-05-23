@@ -27,6 +27,7 @@ int main(int argc, char *argv[])
     qInfo() << "#####";
     qInfo() << "";
 
-    dse.start("eeg", true, "");
+    QString licenseId = ""; // you can put your license id here
+    dse.start("eeg", true, licenseId);
     return a.exec();
 }

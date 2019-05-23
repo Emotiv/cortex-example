@@ -28,7 +28,9 @@ int main(int argc, char *argv[])
 
     // to inject markers into a session, the session must be active
     // which means that you need an appropiate license from Emotiv
-    m.start("");
+
+    QString licenseId = ""; // you can put your license id here
+    m.start(licenseId);
 
     return a.exec();
 }
