@@ -4,6 +4,7 @@ SUBDIRS = \
     cortexclient\
     motion \
     eeg \
+    band-power \
     mental-command \
     mental-command-training \
     facial-expression \
