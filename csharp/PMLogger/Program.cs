@@ -7,16 +7,16 @@ using CortexAccess;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 
-namespace MotionLogger
+namespace PMLogger
 {
     class Program
     {
-        const string OutFilePath = @"MotionLogger.csv";
+        const string OutFilePath = @"PMLogger.csv";
         private static FileStream OutFileStream;
 
         static void Main(string[] args)
         {
-            Console.WriteLine("Motion LOGGER");
+            Console.WriteLine("PM LOGGER");
             Console.WriteLine("Please wear Headset with good signal!!!");
 
             // Delete Output file if existed
@@ -28,9 +28,9 @@ namespace MotionLogger
 
 
             DataStreamExample dse = new DataStreamExample();
-            dse.AddStreams("mot");
+            dse.AddStreams("met");
             dse.OnSubscribed += SubscribedOK;
-            dse.OnMotionDataReceived += OnMotionDataReceived;
+            dse.OnPerfDataReceived += OnPMDataReceived;
             dse.Start();
 
             Console.WriteLine("Press Esc to exit");
@@ -51,7 +51,7 @@ namespace MotionLogger
         {
             foreach (string key in e.Keys)
             {
-                if (key == "mot")
+                if (key == "met")
                 {
                     // print header
                     ArrayList header = e[key].ToObject<ArrayList>();
@@ -81,9 +81,9 @@ namespace MotionLogger
                 OutFileStream.Write(lastVal, 0, lastVal.Length);
         }
 
-        private static void OnMotionDataReceived(object sender, ArrayList motData)
+        private static void OnPMDataReceived(object sender, ArrayList pmData)
         {
-            WriteDataToFile(motData);
+            WriteDataToFile(pmData);
         }
 
     }

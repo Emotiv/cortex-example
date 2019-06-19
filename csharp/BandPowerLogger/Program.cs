@@ -55,6 +55,8 @@ namespace BandPowerLogger
                 {
                     // print header
                     ArrayList header = e[key].ToObject<ArrayList>();
+                    //add timeStamp to header
+                    header.Insert(0, "Timestamp");
                     WriteDataToFile(header);
                 }
             }

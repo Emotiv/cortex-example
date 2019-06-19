@@ -149,12 +149,15 @@ namespace CortexAccess
         {
             Console.WriteLine(e.StreamName + " data received.");
             ArrayList data = e.Data.ToObject<ArrayList>();
+            // insert timestamp to datastream
+            data.Insert(0, e.Time);
             if (e.StreamName == "eeg")
             {
                 OnEEGDataReceived(this, data);
             }
             else if (e.StreamName == "mot")
             {
+                
                 OnMotionDataReceived(this, data);
             }
             else if (e.StreamName == "met")

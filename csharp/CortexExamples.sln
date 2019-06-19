@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.202
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EEGLogger", "EEGLogger\EEGLogger.csproj", "{EF98366A-15F8-47AF-80F9-A2A11CAA7257}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InjectMarkers", "InjectMarker\InjectMarkers.csproj", "{A4DF4C6B-90B8-4FC2-BAB7-856B3567CA98}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BandPowerLogger", "BandPowerLogger\BandPowerLogger.csproj", "{54C2D1CD-C259-439C-87C7-8BB0CBCAE541}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PMLogger", "PMLogger\PMLogger.csproj", "{18F96374-24C9-4303-9E21-171D24D7C540}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -91,6 +93,14 @@ Global
 		{54C2D1CD-C259-439C-87C7-8BB0CBCAE541}.Release_Ubuntu|Any CPU.Build.0 = Release|Any CPU
 		{54C2D1CD-C259-439C-87C7-8BB0CBCAE541}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54C2D1CD-C259-439C-87C7-8BB0CBCAE541}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18F96374-24C9-4303-9E21-171D24D7C540}.Debug_Ubuntu|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F96374-24C9-4303-9E21-171D24D7C540}.Debug_Ubuntu|Any CPU.Build.0 = Debug|Any CPU
+		{18F96374-24C9-4303-9E21-171D24D7C540}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18F96374-24C9-4303-9E21-171D24D7C540}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18F96374-24C9-4303-9E21-171D24D7C540}.Release_Ubuntu|Any CPU.ActiveCfg = Release|Any CPU
+		{18F96374-24C9-4303-9E21-171D24D7C540}.Release_Ubuntu|Any CPU.Build.0 = Release|Any CPU
+		{18F96374-24C9-4303-9E21-171D24D7C540}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18F96374-24C9-4303-9E21-171D24D7C540}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

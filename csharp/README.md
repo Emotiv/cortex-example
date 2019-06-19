@@ -61,6 +61,11 @@ This section describe structure overview, core classes and examples. The C# Cort
 * This example opens a session with the first Emotiv headset. Then create/stop/update/delete record.
 * The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> CreateRecord -> Stop/Update/Query/Delete Record.
 
+**8. PMLogger**
+* This example opens a session with the first Emotiv headset. Then subscribe and save pm data to PMLogger.csv file until Esc key pressed. 
+* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (license is required) -> find and connect headset -> Create Session -> Subscribe PM data.
+* The performance metric data frequency depend on scope of license. For low performance metric : 1 sample/ 10 seconds ; for high performance metric 2 samples/ seconds.
+
 ### Notes
 * You must login and logout via EMOTIV App.
 * You must use EMOTIV App to grant AccessRight for the App one time for one emotiv user.
