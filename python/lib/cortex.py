@@ -33,7 +33,7 @@ class CortexApiException(Exception):
 
 
 class Cortex(object):
-    CORTEX_URL = "wss://emotivcortex.com:6868"
+    CORTEX_URL = "wss://localhost:6868"
 
     def __init__(self, client_id_file_path):
         self.parse_client_id_file(client_id_file_path)
