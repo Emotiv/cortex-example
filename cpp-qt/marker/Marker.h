@@ -51,6 +51,7 @@ private slots:
     void stopRecord();
     void closeSession();
     void onCloseSessionOK();
+    void onGetRecordInfosOk(QJsonObject record);
 
 private:
     CortexClient client;

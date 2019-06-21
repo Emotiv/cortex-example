@@ -212,6 +212,14 @@ void CortexClient::stopRecord(QString token, QString sessionId)
     sendRequest("stopRecord", params);
 }
 
+void CortexClient::getRecordInfos(QString token, QString recordId)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["recordIds"] = QJsonArray{recordId};
+    sendRequest("getRecordInfos", params);
+}
+
 void CortexClient::injectMarker(QString token, QString sessionId,
                                 QString label, int value, qint64 time) {
     QJsonObject params;
@@ -395,6 +403,10 @@ void CortexClient::handleResponse(QString method, const QJsonValue &result) {
     else if (method == "stopRecord") {
         QJsonObject record = result.toObject().value("record").toObject();
         emit stopRecordOk(record["uuid"].toString());
+    }
+    else if (method == "getRecordInfos") {
+        QJsonObject record = result.toArray().at(0).toObject();
+        emit getRecordInfosOk(record);
     }
     else if (method == "injectMarker") {
         QJsonObject marker = result.toObject().value("marker").toObject();

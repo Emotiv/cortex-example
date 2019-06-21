@@ -27,6 +27,7 @@ Marker::Marker(QObject *parent) : QObject(parent) {
     connect(&client, &CortexClient::closeSessionOk, this, &Marker::onCloseSessionOK);
     connect(&client, &CortexClient::injectMarkerOk, this, &Marker::onInjectMarkerOK);
     connect(&client, &CortexClient::updateMarkerOk, this, &Marker::onUpdateMarkerOK);
+    connect(&client, &CortexClient::getRecordInfosOk, this, &Marker::onGetRecordInfosOk);
 
     connect(&finder, &HeadsetFinder::headsetFound, this, &Marker::onHeadsetFound);
     connect(&creator, &SessionCreator::sessionCreated, this, &Marker::onSessionCreated);
@@ -118,5 +119,11 @@ void Marker::closeSession() {
 }
 
 void Marker::onCloseSessionOK() {
+    client.getRecordInfos(token, recordId);
+}
+
+void Marker::onGetRecordInfosOk(QJsonObject record)
+{
+    qDebug().noquote() << "The record:" << record;
     client.close();
 }
