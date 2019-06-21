@@ -48,8 +48,10 @@ private slots:
     void onInjectMarkerOK(QString markerId);
     void onUpdateMarkerOK();
 
+    void stopRecord();
     void closeSession();
     void onCloseSessionOK();
+    void onGetRecordInfosOk(QJsonObject record);
 
 private:
     CortexClient client;

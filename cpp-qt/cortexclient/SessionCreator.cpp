@@ -51,7 +51,7 @@ void SessionCreator::createSession(CortexClient* client,
 
 void SessionCreator::onGetUserLoginOk(QString emotivId) {
     if (emotivId.isEmpty()) {
-        qInfo() << "First, you must login with Cortex App";
+        qInfo() << "First, you must login with EMOTIV App";
         QCoreApplication::quit();
         return;
     }
@@ -61,8 +61,10 @@ void SessionCreator::onGetUserLoginOk(QString emotivId) {
 
 void SessionCreator::onRequestAccessOk(bool accessGranted, QString message) {
     if (accessGranted) {
-        qInfo() << "This application was authorized in CortexApp";
-        client->authorize(ClientId, ClientSecret, license);
+        qInfo() << "This application was authorized in EMOTIV App";
+        // if we want to activate the session, then we need to debit the license
+        int debit = activate ? 1 : 0;
+        client->authorize(ClientId, ClientSecret, license, debit);
     }
     else {
         qInfo() << message;

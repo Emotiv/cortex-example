@@ -84,14 +84,14 @@ void CortexClient::requestAccess(QString clientId, QString clientSecret)
     sendRequest("requestAccess", params);
 }
 
-void CortexClient::authorize(QString clientId, QString clientSecret, QString license) {
+void CortexClient::authorize(QString clientId, QString clientSecret, QString license, int debit) {
     QJsonObject params;
     params["clientId"] = clientId;
     params["clientSecret"] = clientSecret;
     if (! license.isEmpty()) {
         params["license"] = license;
-        params["debit"] = 1;
     }
+    params["debit"] = debit;
     sendRequest("authorize", params);
 }
 
@@ -212,6 +212,14 @@ void CortexClient::stopRecord(QString token, QString sessionId)
     sendRequest("stopRecord", params);
 }
 
+void CortexClient::getRecordInfos(QString token, QString recordId)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["recordIds"] = QJsonArray{recordId};
+    sendRequest("getRecordInfos", params);
+}
+
 void CortexClient::injectMarker(QString token, QString sessionId,
                                 QString label, int value, qint64 time) {
     QJsonObject params;
@@ -245,7 +253,7 @@ void CortexClient::sendRequest(QString method, QJsonObject params) {
 
     // send the json message
     QString message = QJsonDocument(request).toJson(QJsonDocument::Compact);
-    //qDebug() << " * send    " << message;
+    qDebug().noquote() << " * send    " << message;
     socket.sendTextMessage(message);
 
     // remember the method used for this request
@@ -254,8 +262,6 @@ void CortexClient::sendRequest(QString method, QJsonObject params) {
 }
 
 void CortexClient::onMessageReceived(QString message) {
-    //qDebug() << " * received" << message;
-
     // parse the json message
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &err);
@@ -269,6 +275,8 @@ void CortexClient::onMessageReceived(QString message) {
     QString sid = response.value("sid").toString();
 
     if (id != -1) {
+        qDebug().noquote() << " * received" << message;
+
         // this is a RPC response, we get the method from the id
         // we must know the method in order to understand the result
         QString method = methodForRequestId.value(id);
@@ -289,6 +297,7 @@ void CortexClient::onMessageReceived(QString message) {
         double time = response.value("time").toDouble();
         QJsonArray data;
         QString stream;
+        //qDebug().noquote() << " * STEAM" << message;
 
         // find the data field inside the response
         for (auto it = response.begin(); it != response.end(); ++it) {
@@ -394,6 +403,10 @@ void CortexClient::handleResponse(QString method, const QJsonValue &result) {
     else if (method == "stopRecord") {
         QJsonObject record = result.toObject().value("record").toObject();
         emit stopRecordOk(record["uuid"].toString());
+    }
+    else if (method == "getRecordInfos") {
+        QJsonObject record = result.toArray().at(0).toObject();
+        emit getRecordInfosOk(record);
     }
     else if (method == "injectMarker") {
         QJsonObject marker = result.toObject().value("marker").toObject();

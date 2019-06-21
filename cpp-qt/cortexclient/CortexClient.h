@@ -48,7 +48,7 @@ public slots:
     void requestAccess(QString clientId, QString clientSecret);
 
     // get an authorization token
-    void authorize(QString clientId, QString clientSecret, QString license);
+    void authorize(QString clientId, QString clientSecret, QString license, int debit);
 
     void controlDevice(QString headsetId, QString command, QJsonObject flexMapping);
 
@@ -74,6 +74,7 @@ public slots:
 
     void createRecord(QString token, QString sessionId, QString title);
     void stopRecord(QString token, QString sessionId);
+    void getRecordInfos(QString token, QString recordId);
 
     // insert a marker, to mark an event in a session
     // you can use injectMarker alone, to mark an instant event
@@ -105,6 +106,7 @@ signals:
     void trainingOk(QString msg);
     void createRecordOk(QString recordId);
     void stopRecordOk(QString recordId);
+    void getRecordInfosOk(QJsonObject record);
     void injectMarkerOk(QString markerId);
     void updateMarkerOk();
 
