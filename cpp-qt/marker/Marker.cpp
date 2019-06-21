@@ -23,6 +23,7 @@ Marker::Marker(QObject *parent) : QObject(parent) {
     connect(&client, &CortexClient::disconnected, this, &Marker::onDisconnected);
     connect(&client, &CortexClient::errorReceived, this, &Marker::onErrorReceived);
     connect(&client, &CortexClient::createRecordOk, this, &Marker::onRecordCreated);
+    connect(&client, &CortexClient::stopRecordOk, this, &Marker::closeSession);
     connect(&client, &CortexClient::closeSessionOk, this, &Marker::onCloseSessionOK);
     connect(&client, &CortexClient::injectMarkerOk, this, &Marker::onInjectMarkerOK);
     connect(&client, &CortexClient::updateMarkerOk, this, &Marker::onUpdateMarkerOK);
@@ -64,6 +65,7 @@ void Marker::onSessionCreated(QString token, QString sessionId) {
 void Marker::onRecordCreated(QString recordId)
 {
     qInfo() << "Record created, id" << recordId;
+    this->recordId = recordId;
 
     // after a few seconds, inject some markers
     QTimer::singleShot(5*1000, this, &Marker::injectMarker1);
@@ -71,7 +73,7 @@ void Marker::onRecordCreated(QString recordId)
     QTimer::singleShot(21*1000, this, &Marker::injectStopMarker2);
 
     // close the session after 30 seconds
-    QTimer::singleShot(30*1000, this, &Marker::closeSession);
+    QTimer::singleShot(30*1000, this, &Marker::stopRecord);
 }
 
 void Marker::injectMarker1() {
@@ -102,6 +104,12 @@ void Marker::onInjectMarkerOK(QString markerId) {
 void Marker::onUpdateMarkerOK()
 {
     qInfo() << "Update marker OK";
+}
+
+void Marker::stopRecord()
+{
+    qInfo() << "Stopping the record";
+    client.stopRecord(token, sessionId);
 }
 
 void Marker::closeSession() {

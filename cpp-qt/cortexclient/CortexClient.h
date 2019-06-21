@@ -48,7 +48,7 @@ public slots:
     void requestAccess(QString clientId, QString clientSecret);
 
     // get an authorization token
-    void authorize(QString clientId, QString clientSecret, QString license);
+    void authorize(QString clientId, QString clientSecret, QString license, int debit);
 
     void controlDevice(QString headsetId, QString command, QJsonObject flexMapping);
 

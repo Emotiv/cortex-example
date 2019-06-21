@@ -84,14 +84,14 @@ void CortexClient::requestAccess(QString clientId, QString clientSecret)
     sendRequest("requestAccess", params);
 }
 
-void CortexClient::authorize(QString clientId, QString clientSecret, QString license) {
+void CortexClient::authorize(QString clientId, QString clientSecret, QString license, int debit) {
     QJsonObject params;
     params["clientId"] = clientId;
     params["clientSecret"] = clientSecret;
     if (! license.isEmpty()) {
         params["license"] = license;
-        params["debit"] = 1;
     }
+    params["debit"] = debit;
     sendRequest("authorize", params);
 }
 
@@ -245,7 +245,7 @@ void CortexClient::sendRequest(QString method, QJsonObject params) {
 
     // send the json message
     QString message = QJsonDocument(request).toJson(QJsonDocument::Compact);
-    //qDebug() << " * send    " << message;
+    qDebug().noquote() << " * send    " << message;
     socket.sendTextMessage(message);
 
     // remember the method used for this request
@@ -254,8 +254,6 @@ void CortexClient::sendRequest(QString method, QJsonObject params) {
 }
 
 void CortexClient::onMessageReceived(QString message) {
-    //qDebug() << " * received" << message;
-
     // parse the json message
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(message.toUtf8(), &err);
@@ -269,6 +267,8 @@ void CortexClient::onMessageReceived(QString message) {
     QString sid = response.value("sid").toString();
 
     if (id != -1) {
+        qDebug().noquote() << " * received" << message;
+
         // this is a RPC response, we get the method from the id
         // we must know the method in order to understand the result
         QString method = methodForRequestId.value(id);
@@ -289,6 +289,7 @@ void CortexClient::onMessageReceived(QString message) {
         double time = response.value("time").toDouble();
         QJsonArray data;
         QString stream;
+        //qDebug().noquote() << " * STEAM" << message;
 
         // find the data field inside the response
         for (auto it = response.begin(); it != response.end(); ++it) {
