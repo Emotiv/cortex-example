@@ -300,7 +300,7 @@ class Cortex {
             }, 
             "id": SUB_REQUEST_ID
         }
-        console.log('sub eeg request: ', subEEGRequest)
+        console.log('sub eeg request: ', subRequest)
         socket.send(JSON.stringify(subRequest))
         socket.on('message', (data)=>{
             try {
