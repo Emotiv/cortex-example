@@ -68,8 +68,12 @@ void CortexClient::close() {
     methodForRequestId.clear();
 }
 
-void CortexClient::queryHeadsets() {
-    sendRequest("queryHeadsets");
+void CortexClient::queryHeadsets(QString headsetId) {
+    QJsonObject params;
+    if (! headsetId.isEmpty()) {
+        params["id"] = headsetId;
+    }
+    sendRequest("queryHeadsets", params);
 }
 
 void CortexClient::getUserLogin() {
@@ -220,6 +224,19 @@ void CortexClient::getRecordInfos(QString token, QString recordId)
     sendRequest("getRecordInfos", params);
 }
 
+void CortexClient::exportRecordToCSV(QString token, QString recordId,
+                                     QString folder, QStringList streams)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["recordIds"] = QJsonArray{recordId};
+    params["folder"] = folder;
+    params["streamTypes"] = QJsonArray::fromStringList(streams);
+    params["format"] = "CSV";
+    params["version"] = "V2";
+    sendRequest("exportRecord", params);
+}
+
 void CortexClient::injectMarker(QString token, QString sessionId,
                                 QString label, int value, qint64 time) {
     QJsonObject params;
@@ -273,6 +290,7 @@ void CortexClient::onMessageReceived(QString message) {
     QJsonObject response = doc.object();
     int id = response.value("id").toInt(-1);
     QString sid = response.value("sid").toString();
+    QJsonObject warning = response.value("warning").toObject();
 
     if (id != -1) {
         qDebug().noquote() << " * received" << message;
@@ -310,6 +328,9 @@ void CortexClient::onMessageReceived(QString message) {
             }
         }
         emit streamDataReceived(sid, stream, time, data);
+    }
+    else if (! warning.isEmpty()) {
+        qInfo().noquote() << " * warning " << message;
     }
 }
 
@@ -408,6 +429,16 @@ void CortexClient::handleResponse(QString method, const QJsonValue &result) {
         QJsonObject record = result.toArray().at(0).toObject();
         emit getRecordInfosOk(record);
     }
+    else if (method == "exportRecord") {
+        QJsonArray failure = result.toObject().value("failure").toArray();
+        QJsonArray success = result.toObject().value("success").toArray();
+        if (! failure.isEmpty()) {
+            emitError(method, failure[0].toObject());
+        }
+        else {
+            emit exportRecordOk(success[0].toObject().value("recordId").toString());
+        }
+    }
     else if (method == "injectMarker") {
         QJsonObject marker = result.toObject().value("marker").toObject();
         QString markerId = marker["uuid"].toString();
@@ -418,7 +449,7 @@ void CortexClient::handleResponse(QString method, const QJsonValue &result) {
     }
     else {
         // unknown method, so we don't know how to interpret the result
-        qCritical() << "Unkown API method:" << method << result;
+        qCritical() << "Result from an unexpected API method:" << method << result;
     }
 }
 

@@ -16,6 +16,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <QtDebug>
 #include <QCoreApplication>
 #include <QDateTime>
+#include <QThread>
+#include <QDir>
 
 
 Marker::Marker(QObject *parent) : QObject(parent) {
@@ -23,11 +25,11 @@ Marker::Marker(QObject *parent) : QObject(parent) {
     connect(&client, &CortexClient::disconnected, this, &Marker::onDisconnected);
     connect(&client, &CortexClient::errorReceived, this, &Marker::onErrorReceived);
     connect(&client, &CortexClient::createRecordOk, this, &Marker::onRecordCreated);
-    connect(&client, &CortexClient::stopRecordOk, this, &Marker::closeSession);
-    connect(&client, &CortexClient::closeSessionOk, this, &Marker::onCloseSessionOK);
     connect(&client, &CortexClient::injectMarkerOk, this, &Marker::onInjectMarkerOK);
     connect(&client, &CortexClient::updateMarkerOk, this, &Marker::onUpdateMarkerOK);
+    connect(&client, &CortexClient::stopRecordOk, this, &Marker::onRecordStopped);
     connect(&client, &CortexClient::getRecordInfosOk, this, &Marker::onGetRecordInfosOk);
+    connect(&client, &CortexClient::exportRecordOk, this, &Marker::onExportRecordOk);
 
     connect(&finder, &HeadsetFinder::headsetFound, this, &Marker::onHeadsetFound);
     connect(&creator, &SessionCreator::sessionCreated, this, &Marker::onSessionCreated);
@@ -53,6 +55,7 @@ void Marker::onErrorReceived() {
 }
 
 void Marker::onHeadsetFound(const Headset &headset) {
+    this->headsetId = headset.id;
     finder.clear();
     creator.createSession(&client, headset, true, license);
 }
@@ -60,6 +63,7 @@ void Marker::onHeadsetFound(const Headset &headset) {
 void Marker::onSessionCreated(QString token, QString sessionId) {
     this->token = token;
     this->sessionId = sessionId;
+    creator.clear();
     client.createRecord(token, sessionId, "Cortex Examples C++");
 }
 
@@ -113,17 +117,39 @@ void Marker::stopRecord()
     client.stopRecord(token, sessionId);
 }
 
-void Marker::closeSession() {
-    qInfo() << "Closing the session";
-    client.closeSession(token, sessionId);
-}
-
-void Marker::onCloseSessionOK() {
+void Marker::onRecordStopped()
+{
+    // we can get the record now and we will display it
     client.getRecordInfos(token, recordId);
+    // but to export the record we must disconnect the headset first
+    client.controlDevice(headsetId, "disconnect");
+    // it can take a few milliseconds to disconnect the headset, so we check its status
+    connect(&client, &CortexClient::queryHeadsetsOk, this, &Marker::onQueryHeadsetOk);
+    client.queryHeadsets(headsetId);
 }
 
 void Marker::onGetRecordInfosOk(QJsonObject record)
 {
     qDebug().noquote() << "The record:" << record;
+}
+
+void Marker::onQueryHeadsetOk(const QList<Headset> &headsets)
+{
+    if (headsets.isEmpty() || headsets.first().status == "discovered") {
+        // the headset is disconnected, we can export the record
+        QThread::sleep(1);
+        QString folder = QDir::homePath();
+        qInfo() << "Exporting the record to the folder" << folder;
+        client.exportRecordToCSV(token, recordId, folder, {"MOTION","PM","BP"});
+    }
+    else {
+        // try again
+        client.queryHeadsets(headsetId);
+    }
+}
+
+void Marker::onExportRecordOk(QString recordId)
+{
+    qInfo() << "The record was successfuly exported, id" << recordId;
     client.close();
 }
