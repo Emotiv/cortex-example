@@ -41,7 +41,7 @@ public slots:
     void close();
 
     // list all the headsets connected to your computer
-    void queryHeadsets();
+    void queryHeadsets(QString headsetId = "");
 
     void getUserLogin();
 
@@ -50,7 +50,7 @@ public slots:
     // get an authorization token
     void authorize(QString clientId, QString clientSecret, QString license, int debit);
 
-    void controlDevice(QString headsetId, QString command, QJsonObject flexMapping);
+    void controlDevice(QString headsetId, QString command, QJsonObject flexMapping = QJsonObject());
 
     // open a session, so we can then get data from a headset
     // you need a license to activate the session
@@ -75,6 +75,7 @@ public slots:
     void createRecord(QString token, QString sessionId, QString title);
     void stopRecord(QString token, QString sessionId);
     void getRecordInfos(QString token, QString recordId);
+    void exportRecordToCSV(QString token, QString recordId, QString folder, QStringList streams);
 
     // insert a marker, to mark an event in a session
     // you can use injectMarker alone, to mark an instant event
@@ -107,6 +108,7 @@ signals:
     void createRecordOk(QString recordId);
     void stopRecordOk(QString recordId);
     void getRecordInfosOk(QJsonObject record);
+    void exportRecordOk(QString recordId);
     void injectMarkerOk(QString markerId);
     void updateMarkerOk();
 

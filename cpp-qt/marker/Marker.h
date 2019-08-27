@@ -49,9 +49,10 @@ private slots:
     void onUpdateMarkerOK();
 
     void stopRecord();
-    void closeSession();
-    void onCloseSessionOK();
+    void onRecordStopped();
     void onGetRecordInfosOk(QJsonObject record);
+    void onQueryHeadsetOk(const QList<Headset> &headsets);
+    void onExportRecordOk(QString recordId);
 
 private:
     CortexClient client;
@@ -60,6 +61,7 @@ private:
 
     QString license;
     QString token;
+    QString headsetId;
     QString sessionId;
     QString recordId;
     QString markerId;
