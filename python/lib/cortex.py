@@ -199,7 +199,7 @@ class Cortex(object):
         params = {'clientId': self.client_id,
                   'clientSecret': self.client_secret}
         if license_id:
-            params['license_id'] = license_id
+            params['license'] = license_id
         if debit:
             params['debit'] = debit
 
