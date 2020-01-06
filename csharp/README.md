@@ -13,7 +13,7 @@ These instructions will get you a copy of the project up and running on your loc
 <!-- how to compile  -->
 1. Open CortexExamples.sln by Visual Studio IDE
 2. Use Nuget Package Manager to install _Newtonsoft.Json, SuperSocket.ClientEngine.Core, WebSocket4Net_ for CortexAccess project
-3. Put your login information and your client id and client secret to source. More detail please see below.
+3. Login via EMOTIV App and put  your client id and client secret to Config.cs. More detail please see below.
 4. You can compile and run the examples directly from the IDE.
 
 ### Code structure
@@ -22,7 +22,7 @@ This section describe structure overview, core classes and examples. The C# Cort
 <!-- Structure overview -->
 #### Structure overview
 * CortexClient: Responsible for sending requests to Cortex and handle responses, warning, data from Cortex.
-* Config: Contain configurations. User must fill clientId, client Secret of App. To get EEG, PM , Record Data, InjectMarker license is required.
+* Config: Contain configurations. User must fill clientId, client Secret of App. To get EEG, PM license is required.
 * Authorizer: Responsible for getUserLogin, requestAccess, authorize for App.
 * HeadsetFinder: Reponsible for finding headsets, connect headset.
 * SessionCreator: Responsible for createSession, updateSession for work-flow.
@@ -69,7 +69,7 @@ This section describe structure overview, core classes and examples. The C# Cort
 ### Notes
 * You must login and logout via EMOTIV App.
 * You must use EMOTIV App to grant AccessRight for the App one time for one emotiv user.
-* You need a valid license to subscribe EEG data, Performance metrics data, Record Data, InjectMarker.
+* You need a valid license to subscribe EEG data, Performance metrics data.
 * The Examples are only demo for some Apis not all apis and to be continue updating.
 
 
