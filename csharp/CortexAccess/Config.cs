@@ -2,13 +2,18 @@
 {
     static class Config
     {
-        public static int DebitNumber = 5;// Default
+        /*
+         * To get a client id and a client secret, you must connect to your Emotiv
+         * account on emotiv.com and create a Cortex app.
+         * https://www.emotiv.com/my-account/cortex-apps/
+         */
+        public static string AppClientId = "The client id of your Cortex app goes here";
+        public static string AppClientSecret = "The client secret of your Cortex app goes here";
 
-        public static string LicenseId = "put your license here";
-        public static string AppClientId = "put your client Id";
-        public static string AppClientSecret = "put your clientSecret";
-
-        // default debit number
+        // If you use an Epoc Flex headset, then you must put your configuration here
+        public static string FlexMapping = @"{
+                                  'CMS':'TP8', 'DRL':'P6',
+                                  'RM':'TP10','RN':'P4','RO':'P8'}";
 
     }
 
@@ -33,5 +38,6 @@
         public const int UserLoginOnAnotherOsUser = 16;
         public const int EULAAccepted = 17;
         public const int StreamWritingClosed = 18;
+        public const int HeadsetConnected = 104;
     }
 }

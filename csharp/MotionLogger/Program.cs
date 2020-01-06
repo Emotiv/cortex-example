@@ -12,6 +12,8 @@ namespace MotionLogger
     class Program
     {
         const string OutFilePath = @"MotionLogger.csv";
+        const string licenseID = ""; // Do not need license id when subscribe motion
+
         private static FileStream OutFileStream;
 
         static void Main(string[] args)
@@ -31,7 +33,7 @@ namespace MotionLogger
             dse.AddStreams("mot");
             dse.OnSubscribed += SubscribedOK;
             dse.OnMotionDataReceived += OnMotionDataReceived;
-            dse.Start();
+            dse.Start(licenseID);
 
             Console.WriteLine("Press Esc to exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }

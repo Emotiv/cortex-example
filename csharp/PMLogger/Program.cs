@@ -12,6 +12,7 @@ namespace PMLogger
     class Program
     {
         const string OutFilePath = @"PMLogger.csv";
+        const string licenseID = "put_your_license_here";
         private static FileStream OutFileStream;
 
         static void Main(string[] args)
@@ -31,7 +32,9 @@ namespace PMLogger
             dse.AddStreams("met");
             dse.OnSubscribed += SubscribedOK;
             dse.OnPerfDataReceived += OnPMDataReceived;
-            dse.Start();
+
+            // Need a valid license key and activeSession when subscribe performance metric data
+            dse.Start(licenseID, true);
 
             Console.WriteLine("Press Esc to exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }
@@ -68,15 +71,29 @@ namespace PMLogger
             int i = 0;
             for (; i < data.Count - 1; i++)
             {
-                byte[] val = Encoding.UTF8.GetBytes(data[i].ToString() + ", ");
+                string value;
+                if (data[i] != null)
+                {
+                    value = data[i].ToString();
+                }
+                else
+                    value = "nil"; // mean no value data when the contact quality are low
+                byte[] val = Encoding.UTF8.GetBytes(value + ", ");
 
                 if (OutFileStream != null)
                     OutFileStream.Write(val, 0, val.Length);
                 else
                     break;
+
             }
             // Last element
-            byte[] lastVal = Encoding.UTF8.GetBytes(data[i].ToString() + "\n");
+            string lastValue;
+            if (data[i] != null)
+                lastValue = data[i].ToString();
+            else
+                lastValue = "nil"; // mean no value data when the contact quality are low
+
+            byte[] lastVal = Encoding.UTF8.GetBytes(lastValue + "\n");
             if (OutFileStream != null)
                 OutFileStream.Write(lastVal, 0, lastVal.Length);
         }

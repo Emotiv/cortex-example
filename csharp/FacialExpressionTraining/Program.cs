@@ -8,12 +8,12 @@ namespace FacialExpressionTraining
 {
     class Program
     {
-        private static string _currentAction = "";
-        private static string _profileName = ""; // Put profile ProfileName here
+        private static string _profileName = "put_your_profile_here"; // new profile name for creating or existed profile name for loading
 
         private static Training _trainer = new Training();
         private static bool _isSucceeded = false;
         private static bool _isProfileLoaded = false;
+        private static string _currentAction = "";
 
         private static CortexClient _ctxClient;
         private static AutoResetEvent _readyForTrainingEvent = new AutoResetEvent(false);
@@ -45,6 +45,7 @@ namespace FacialExpressionTraining
                 Console.WriteLine("Press 3 to start Clench training.");
                 Console.WriteLine("Press A to accept training.");
                 Console.WriteLine("Press R to reject training.");
+                Console.WriteLine("Press H to show all commands.");
                 Console.WriteLine("Press Esc to quit");
                 Console.WriteLine("Ignore Tab, Enter, Spacebar and Backspace key");
 
@@ -141,6 +142,20 @@ namespace FacialExpressionTraining
                             _isSucceeded = false; // reset
                         }
                     }
+                    else if (keyInfo.Key == ConsoleKey.H)
+                    {
+                        Console.WriteLine("Press C to create a Profile.");
+                        Console.WriteLine("Press L to load a Profile.");
+                        Console.WriteLine("Press U to unload a Profile.");
+                        Console.WriteLine("Press 0 to start Neutral training.");
+                        Console.WriteLine("Press 1 to start Smile training.");
+                        Console.WriteLine("Press 2 to start Frown training.");
+                        Console.WriteLine("Press 3 to start Clench training.");
+                        Console.WriteLine("Press A to accept training.");
+                        Console.WriteLine("Press R to reject training.");
+                        Console.WriteLine("Press H to show all commands");
+                        Console.WriteLine("Press Esc to quit");
+                    }
                     else if (keyInfo.Key == ConsoleKey.Tab) continue;
                     else if (keyInfo.Key == ConsoleKey.Backspace) continue;
                     else if (keyInfo.Key == ConsoleKey.Enter) continue;
@@ -186,7 +201,7 @@ namespace FacialExpressionTraining
         private static void TrainingSucceededOK(object sender, bool isSucceeded)
         {
             _isSucceeded = isSucceeded;
-            Console.WriteLine("Please accept or reject the training");
+            Console.WriteLine("Please accept(A) or reject(R) the training");
         }
 
         private static void ReadyForTraining(object sender, bool e)

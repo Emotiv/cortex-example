@@ -11,6 +11,7 @@ namespace CortexAccess
         private List<string> _streams;
         private string _cortexToken;
         private string _sessionId;
+        private bool _isActiveSession;
 
         private HeadsetFinder _headsetFinder;
         private Authorizer _authorizer;
@@ -53,6 +54,8 @@ namespace CortexAccess
             _sessionCreator = new SessionCreator();
             _cortexToken = "";
             _sessionId = "";
+            _isActiveSession = false;
+
             _streams = new List<string>();
             // Event register
             _ctxClient = CortexClient.Instance;
@@ -63,7 +66,7 @@ namespace CortexAccess
 
             _authorizer.OnAuthorized += AuthorizedOK;
             _headsetFinder.OnHeadsetConnected += HeadsetConnectedOK;
-            _sessionCreator.OnSessionActivated += SessionActivatedOk;
+            _sessionCreator.OnSessionCreated += SessionCreatedOk;
             _sessionCreator.OnSessionClosed += SessionClosedOK;
         }
 
@@ -121,7 +124,7 @@ namespace CortexAccess
             }
         }
 
-        private void SessionActivatedOk(object sender, string sessionId)
+        private void SessionCreatedOk(object sender, string sessionId)
         {
             // subscribe
             _sessionId = sessionId;
@@ -131,8 +134,10 @@ namespace CortexAccess
         private void HeadsetConnectedOK(object sender, string headsetId)
         {
             //Console.WriteLine("HeadsetConnectedOK " + headsetId);
+            // Wait a moment before creating session
+            System.Threading.Thread.Sleep(1500);
             // CreateSession
-            _sessionCreator.Create(_cortexToken, headsetId);
+            _sessionCreator.Create(_cortexToken, headsetId, _isActiveSession);
         }
 
         private void AuthorizedOK(object sender, string cortexToken)
@@ -183,9 +188,10 @@ namespace CortexAccess
             }
         }
         // start
-        public void Start()
+        public void Start(string licenseID="", bool activeSession = false)
         {
-            _authorizer.Start();
+            _isActiveSession = activeSession;
+            _authorizer.Start(licenseID);
         }
 
         // Unsubscribe

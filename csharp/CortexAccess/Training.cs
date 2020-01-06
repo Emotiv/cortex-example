@@ -13,6 +13,7 @@ namespace CortexAccess
         private string _sessionId;
         private string _detection;
         private bool _isProfileLoaded;
+        private string _headsetId; // Id of current headset
         private List<string> _availActions; // available actions
 
         private HeadsetFinder _headsetFinder;
@@ -53,7 +54,7 @@ namespace CortexAccess
 
             _authorizer.OnAuthorized += AuthorizedOK;
             _headsetFinder.OnHeadsetConnected += HeadsetConnectedOK;
-            _sessionCreator.OnSessionActivated += SessionActivatedOk;
+            _sessionCreator.OnSessionCreated += SessionCreatedOk;
             _sessionCreator.OnSessionClosed += SessionClosedOK;
         }
 
@@ -108,7 +109,7 @@ namespace CortexAccess
                              eventType == "MC_DataErased" ||
                              eventType == "MC_Reset")
                     {
-                        _ctxClient.SetupProfile(_cortexToken, _profileName, "save");
+                        _ctxClient.SetupProfile(_cortexToken, _profileName, "save", _headsetId);
                     }
 
                 }
@@ -127,7 +128,7 @@ namespace CortexAccess
                              eventType == "FE_DataErased" ||
                              eventType == "FE_Reset")
                     {
-                        _ctxClient.SetupProfile(_cortexToken, _profileName, "save");
+                        _ctxClient.SetupProfile(_cortexToken, _profileName, "save", _headsetId);
                     }
 
                 }
@@ -187,7 +188,7 @@ namespace CortexAccess
             _ctxClient.QueryProfile(_cortexToken);
         }
 
-        private void SessionActivatedOk(object sender, string sessionId)
+        private void SessionCreatedOk(object sender, string sessionId)
         {
             // subscribe
             _sessionId = sessionId;
@@ -199,7 +200,8 @@ namespace CortexAccess
         private void HeadsetConnectedOK(object sender, string headsetId)
         {
             //Console.WriteLine("HeadsetConnectedOK " + headsetId);
-
+            _headsetId = headsetId;
+            System.Threading.Thread.Sleep(1500); // wait a moment before creating session to make sure headset ready.
             // CreateSession
             _sessionCreator.Create(_cortexToken, headsetId);
         }
@@ -265,7 +267,7 @@ namespace CortexAccess
         public void LoadProfile(string profileName)
         {
             if (_profileLists.Contains(profileName))
-                _ctxClient.SetupProfile(_cortexToken, profileName, "load");
+                _ctxClient.SetupProfile(_cortexToken, profileName, "load", _headsetId);
             else
                 Console.WriteLine("The profile can not be loaded. The name " + profileName + " has not existed.");
         }
@@ -273,7 +275,7 @@ namespace CortexAccess
         public void UnLoadProfile(string profileName)
         {
             if (_profileLists.Contains(profileName))
-                _ctxClient.SetupProfile(_cortexToken, profileName, "unload");
+                _ctxClient.SetupProfile(_cortexToken, profileName, "unload", _headsetId);
             else
                 Console.WriteLine("The profile can not be unloaded. The name " + profileName + " has not existed.");
         }
