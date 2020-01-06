@@ -22,7 +22,7 @@ This section describe structure overview, core classes and examples. The C# Cort
 <!-- Structure overview -->
 #### Structure overview
 * CortexClient: Responsible for sending requests to Cortex and handle responses, warning, data from Cortex.
-* Config: Contain configurations. User must fill clientId, client Secret of App. To get EEG, PM license is required.
+* Config: Contain configurations. User must fill clientId, client Secret of App. To get EEG and Performance metric data, an appropriate license is required.
 * Authorizer: Responsible for getUserLogin, requestAccess, authorize for App.
 * HeadsetFinder: Reponsible for finding headsets, connect headset.
 * SessionCreator: Responsible for createSession, updateSession for work-flow.
@@ -32,7 +32,7 @@ This section describe structure overview, core classes and examples. The C# Cort
 #### Examples
 **1. EEGLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save eeg data to EEGLogger.csv file until Esc key pressed. 
-* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (license is required) -> find and connect headset -> Create Session -> Subscribe EEG data.
+* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (an appropriate license is required) -> find and connect headset -> Create Session -> Subscribe EEG data.
 
 **2. MotionLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save motion data to MotionLogger.csv file until Esc key pressed.
@@ -63,7 +63,7 @@ This section describe structure overview, core classes and examples. The C# Cort
 
 **8. PMLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save pm data to PMLogger.csv file until Esc key pressed. 
-* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (license is required) -> find and connect headset -> Create Session -> Subscribe PM data.
+* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (an appropriate license is required) -> find and connect headset -> Create Session -> Subscribe PM data.
 * The performance metric data frequency depend on scope of license. For low performance metric : 1 sample/ 10 seconds ; for high performance metric 2 samples/ seconds.
 
 ### Notes
