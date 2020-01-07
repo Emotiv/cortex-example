@@ -36,7 +36,7 @@ namespace PMLogger
             // Need a valid license key and activeSession when subscribe performance metric data
             dse.Start(licenseID, true);
 
-            Console.WriteLine("Press Esc to exit");
+            Console.WriteLine("Press Esc to flush data to file and exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }
 
             // Unsubcribe stream
@@ -77,7 +77,7 @@ namespace PMLogger
                     value = data[i].ToString();
                 }
                 else
-                    value = "nil"; // mean no value data when the contact quality are low
+                    value = "null"; // mean no value data when the contact quality are low
                 byte[] val = Encoding.UTF8.GetBytes(value + ", ");
 
                 if (OutFileStream != null)
@@ -91,7 +91,7 @@ namespace PMLogger
             if (data[i] != null)
                 lastValue = data[i].ToString();
             else
-                lastValue = "nil"; // mean no value data when the contact quality are low
+                lastValue = "null"; // mean no value data when the contact quality are low
 
             byte[] lastVal = Encoding.UTF8.GetBytes(lastValue + "\n");
             if (OutFileStream != null)

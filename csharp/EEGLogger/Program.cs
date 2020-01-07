@@ -36,7 +36,7 @@ namespace EEGLogger
             // Need a valid license key and activeSession when subscribe eeg data
             dse.Start(licenseID, true);
 
-            Console.WriteLine("Press Esc to exit");
+            Console.WriteLine("Press Esc to flush data to file and exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }
 
             // Unsubcribe stream

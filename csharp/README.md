@@ -33,14 +33,21 @@ This section describe structure overview, core classes and examples. The C# Cort
 **1. EEGLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save eeg data to EEGLogger.csv file until Esc key pressed. 
 * The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (an appropriate license is required) -> find and connect headset -> Create Session -> Subscribe EEG data.
+* Notes: 
+  - 1) Need put an appropriate license in Program.cs
+  - 2) Press Esc to flush data to output file and exit.
 
 **2. MotionLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save motion data to MotionLogger.csv file until Esc key pressed.
 * The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe Motion data.
+* Notes: 
+  - 1) Press Esc to flush data to output file and exit.
 
 **3. BandPowerLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save motion data to BandPowerLogger.csv file until Esc key pressed.
 * The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe Band Power data.
+* Notes: 
+  - 1) Press Esc to flush data to output file and exit.
 
 **4. MentalCommandTraining**
 * This example opens a session with the first Emotiv headset. Then User can create/load/unload profile then train actions following console guide.
@@ -65,7 +72,10 @@ This section describe structure overview, core classes and examples. The C# Cort
 * This example opens a session with the first Emotiv headset. Then subscribe and save pm data to PMLogger.csv file until Esc key pressed. 
 * The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (an appropriate license is required) -> find and connect headset -> Create Session -> Subscribe PM data.
 * The performance metric data frequency depend on scope of license. For low performance metric : 1 sample/ 10 seconds ; for high performance metric 2 samples/ seconds.
-
+* Notes: 
+  - 1) Need put an appropriate license in Program.cs
+  - 2) Press Esc to flush data to output file and exit.
+  - 3) Each performance metric is a decimal number between 0 and 1. Zero means "low power", 1 means "high power". If the detection cannot run because of a bad contact quality then the value can also be **null**
 ### Notes
 * You must login and logout via EMOTIV App.
 * You must use EMOTIV App to grant AccessRight for the App one time for one emotiv user.

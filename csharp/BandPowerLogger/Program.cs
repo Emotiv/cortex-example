@@ -33,7 +33,7 @@ namespace BandPowerLogger
             dse.OnBandPowerDataReceived += OnBandPowerOK;
             dse.Start();
 
-            Console.WriteLine("Press Esc to exit");
+            Console.WriteLine("Press Esc to flush data to file and exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }
 
             // Unsubcribe stream
