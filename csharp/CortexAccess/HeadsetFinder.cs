@@ -53,18 +53,24 @@ namespace CortexAccess
                 _aTimer.Dispose();
 
                 Headset headset = headsets.First<Headset>();
-                if (headset.Status == "connected")
+                if (headset.Status == "discovered")
+                {
+                    JObject flexMappings = new JObject();
+                    if (headset.HeadsetID.IndexOf("FLEX", StringComparison.OrdinalIgnoreCase) > 0)
+                    {
+                        // For an Epoc Flex headset, we need a mapping
+                        flexMappings = JObject.Parse(Config.FlexMapping);
+                    }
+                    _ctxClient.ControlDevice("connect", headset.HeadsetID, flexMappings);
+                }
+                else if (headset.Status == "connected")
                 {
                     _headsetId = headset.HeadsetID;
                     OnHeadsetConnected(this, _headsetId);
                 }
-                else
+                else if (headset.Status == "connecting")
                 {
-                    if (!String.IsNullOrEmpty(headset.HeadsetID))
-                    {
-                        _ctxClient.ControlDevice("connect", headset.HeadsetID, new JObject());
-                    }
-                    
+                    Console.WriteLine(" Waiting for headset connection " + headset.HeadsetID);
                 }
             }
             else

@@ -33,7 +33,7 @@ namespace InjectMarker
 
             _authorizer.OnAuthorized += AuthorizedOK;
             _headsetFinder.OnHeadsetConnected += HeadsetConnectedOK;
-            _sessionCreator.OnSessionActivated += SessionActivatedOk;
+            _sessionCreator.OnSessionCreated += SessionCreatedOk;
             _sessionCreator.OnSessionClosed += SessionClosedOK;
 
             Console.WriteLine("Prepare to inject marker");
@@ -42,9 +42,10 @@ namespace InjectMarker
 
             if (_readyForInjectMarkerEvent.WaitOne(50000))
             {
-                Console.WriteLine("Press certain key to inject marker");
+                Console.WriteLine("Press certain key except below keys to inject marker");
                 Console.WriteLine("Press S to stop record and quit");
                 Console.WriteLine("Press Esc to quit");
+                Console.WriteLine("Press H to show all commands");
                 Console.WriteLine("Ignore Tab, Enter, Spacebar and Backspace key");
 
                 int valueMaker = 1;
@@ -59,6 +60,14 @@ namespace InjectMarker
                         _ctxClient.StopRecord(_cortexToken, _sessionId);
                         Thread.Sleep(10000);
                         break;
+                    }
+                    if (keyInfo.Key == ConsoleKey.H)
+                    {
+                        Console.WriteLine("Press certain key except below keys to inject marker");
+                        Console.WriteLine("Press S to stop record and quit");
+                        Console.WriteLine("Press Esc to quit");
+                        Console.WriteLine("Press H to show all commands");
+                        Console.WriteLine("Ignore Tab, Enter, Spacebar and Backspace key");
                     }
                     else if (keyInfo.Key == ConsoleKey.Tab) continue;
                     else if (keyInfo.Key == ConsoleKey.Backspace) continue;
@@ -119,7 +128,7 @@ namespace InjectMarker
             _isRecording = true;
         }
 
-        private static void SessionActivatedOk(object sender, string sessionId)
+        private static void SessionCreatedOk(object sender, string sessionId)
         {
             _sessionId = sessionId;
             // create Record
@@ -132,8 +141,10 @@ namespace InjectMarker
         {
             Console.WriteLine("HeadsetConnectedOK " + headsetId);
 
+            // Wait a moment before creating session
+            System.Threading.Thread.Sleep(1500);
             // CreateSession
-            _sessionCreator.Create(_cortexToken, headsetId);
+            _sessionCreator.Create(_cortexToken, headsetId, true);
         }
 
         private static void AuthorizedOK(object sender, string cortexToken)

@@ -9,6 +9,8 @@ namespace CortexAccess
         private string _emotivId;
         private bool _isEulaAccepted;
         private bool _hasAccessRight;
+        private string _licenseID;
+        private ushort _debitNo = 5; // default value
 
         // Event
         public event EventHandler<string> OnAuthorized;
@@ -52,7 +54,7 @@ namespace CortexAccess
             if (isEULAAccepted)
             {
                 // Authorize again
-                _ctxClient.Authorize(Config.LicenseId, Config.DebitNumber);
+                _ctxClient.Authorize(_licenseID, _debitNo);
             }
             else
             {
@@ -82,7 +84,7 @@ namespace CortexAccess
             {
                 if (String.IsNullOrEmpty(_cortexToken))
                 {
-                    _ctxClient.Authorize(Config.LicenseId, Config.DebitNumber);
+                    _ctxClient.Authorize(_licenseID, _debitNo);
                 }
             }
             else
@@ -108,7 +110,7 @@ namespace CortexAccess
             if (hasAccessRight)
             {
                 // Authorize
-                _ctxClient.Authorize(Config.LicenseId, Config.DebitNumber);
+                _ctxClient.Authorize(_licenseID, _debitNo);
             }
             else
             {
@@ -187,8 +189,9 @@ namespace CortexAccess
         }
 
         // Start
-        public void Start()
+        public void Start(string licenseID ="")
         {
+            _licenseID = licenseID;
             _ctxClient.Open();
         }
     }

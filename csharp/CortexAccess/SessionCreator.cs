@@ -12,7 +12,6 @@ namespace CortexAccess
 
         //event
         public event EventHandler<string> OnSessionCreated;
-        public event EventHandler<string> OnSessionActivated;
         public event EventHandler<string> OnSessionClosed;
 
         //Constructor
@@ -34,14 +33,7 @@ namespace CortexAccess
             _sessionId = e.SessionId;
             _status = e.Status;
             _applicationId = e.ApplicationId;
-            if (_status == SessionStatus.Opened)
-            {
-                OnSessionCreated(this, _sessionId);
-            }
-            else
-            {
-                OnSessionActivated(this, _sessionId);
-            }         
+            OnSessionCreated(this, _sessionId);
         }
         private void UpdateSessionOk(object sender, SessionEventArgs e)
         {
@@ -55,7 +47,7 @@ namespace CortexAccess
             else if (_status == SessionStatus.Activated)
             {
                 _sessionId = e.SessionId;
-                OnSessionActivated(this, _sessionId);
+                OnSessionCreated(this, _sessionId);
             }
         }
 
@@ -93,13 +85,14 @@ namespace CortexAccess
         }
 
         // Create
-        public void Create(string cortexToken, string headsetId)
+        public void Create(string cortexToken, string headsetId, bool activeSession = false)
         {
             if (!String.IsNullOrEmpty(cortexToken) &&
                 !String.IsNullOrEmpty(headsetId))
             {
                 _cortexToken = cortexToken;
-                _ctxClient.CreateSession(CortexToken, headsetId, "active");
+                string status = activeSession ? "active" : "open";
+                _ctxClient.CreateSession(CortexToken, headsetId, status);
             }
             else
             {

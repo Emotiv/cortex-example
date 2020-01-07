@@ -35,7 +35,7 @@ namespace RecordData
 
             _authorizer.OnAuthorized += AuthorizedOK;
             _headsetFinder.OnHeadsetConnected += HeadsetConnectedOK;
-            _sessionCreator.OnSessionActivated += SessionActivatedOk;
+            _sessionCreator.OnSessionCreated += SessionCreatedOk;
             _sessionCreator.OnSessionClosed += SessionClosedOK;
 
 
@@ -51,6 +51,7 @@ namespace RecordData
                 Console.WriteLine("Press Q to query record");
                 Console.WriteLine("Press D to delete record");
                 Console.WriteLine("Press U to update record");
+                Console.WriteLine("Press H to show all commands");
                 Console.WriteLine("Press Esc to quit");
                 Console.WriteLine("Ignore Tab, Enter, Spacebar and Backspace key");
 
@@ -112,6 +113,17 @@ namespace RecordData
                         {
                             Console.WriteLine("Please queryRecords first before call deleteRecord which delete first record in Lists");
                         }                       
+                    }
+                    else if (keyInfo.Key == ConsoleKey.H)
+                    {
+                        Console.WriteLine("Press certain key to inject marker");
+                        Console.WriteLine("Press C to create record");
+                        Console.WriteLine("Press S to stop record");
+                        Console.WriteLine("Press Q to query record");
+                        Console.WriteLine("Press D to delete record");
+                        Console.WriteLine("Press U to update record");
+                        Console.WriteLine("Press H to show all commands");
+                        Console.WriteLine("Press Esc to quit");
                     }
                     else if (keyInfo.Key == ConsoleKey.Tab) continue;
                     else if (keyInfo.Key == ConsoleKey.Backspace) continue;
@@ -179,7 +191,7 @@ namespace RecordData
             _currRecordId = record.Uuid;
         }
 
-        private static void SessionActivatedOk(object sender, string sessionId)
+        private static void SessionCreatedOk(object sender, string sessionId)
         {
             _sessionId = sessionId;
             _readyForRecordDataEvent.Set();
@@ -188,9 +200,10 @@ namespace RecordData
         private static void HeadsetConnectedOK(object sender, string headsetId)
         {
             Console.WriteLine("HeadsetConnectedOK " + headsetId);
-
+            // Wait a moment before creating session
+            System.Threading.Thread.Sleep(1500);
             // CreateSession
-            _sessionCreator.Create(_cortexToken, headsetId);
+            _sessionCreator.Create(_cortexToken, headsetId, true);
         }
 
         private static void AuthorizedOK(object sender, string cortexToken)

@@ -13,7 +13,7 @@ These instructions will get you a copy of the project up and running on your loc
 <!-- how to compile  -->
 1. Open CortexExamples.sln by Visual Studio IDE
 2. Use Nuget Package Manager to install _Newtonsoft.Json, SuperSocket.ClientEngine.Core, WebSocket4Net_ for CortexAccess project
-3. Put your login information and your client id and client secret to source. More detail please see below.
+3. Login via EMOTIV App and put  your client id and client secret to Config.cs. More detail please see below.
 4. You can compile and run the examples directly from the IDE.
 
 ### Code structure
@@ -22,7 +22,7 @@ This section describe structure overview, core classes and examples. The C# Cort
 <!-- Structure overview -->
 #### Structure overview
 * CortexClient: Responsible for sending requests to Cortex and handle responses, warning, data from Cortex.
-* Config: Contain configurations. User must fill clientId, client Secret of App. To get EEG, PM , Record Data, InjectMarker license is required.
+* Config: Contain configurations. User must fill clientId, client Secret of App. To get EEG and Performance metric data, an appropriate license is required.
 * Authorizer: Responsible for getUserLogin, requestAccess, authorize for App.
 * HeadsetFinder: Reponsible for finding headsets, connect headset.
 * SessionCreator: Responsible for createSession, updateSession for work-flow.
@@ -32,15 +32,22 @@ This section describe structure overview, core classes and examples. The C# Cort
 #### Examples
 **1. EEGLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save eeg data to EEGLogger.csv file until Esc key pressed. 
-* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (license is required) -> find and connect headset -> Create Session -> Subscribe EEG data.
+* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (an appropriate license is required) -> find and connect headset -> Create Session -> Subscribe EEG data.
+* Notes: 
+  - 1) Need put an appropriate license in Program.cs
+  - 2) Press Esc to flush data to output file and exit.
 
 **2. MotionLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save motion data to MotionLogger.csv file until Esc key pressed.
 * The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe Motion data.
+* Notes: 
+  - 1) Press Esc to flush data to output file and exit.
 
 **3. BandPowerLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save motion data to BandPowerLogger.csv file until Esc key pressed.
 * The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize() -> find and connect headset -> Create Session -> Subscribe Band Power data.
+* Notes: 
+  - 1) Press Esc to flush data to output file and exit.
 
 **4. MentalCommandTraining**
 * This example opens a session with the first Emotiv headset. Then User can create/load/unload profile then train actions following console guide.
@@ -63,13 +70,16 @@ This section describe structure overview, core classes and examples. The C# Cort
 
 **8. PMLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save pm data to PMLogger.csv file until Esc key pressed. 
-* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (license is required) -> find and connect headset -> Create Session -> Subscribe PM data.
+* The basic work-flow: Login via EMOTIV App -> requestAccess-> Authorize (an appropriate license is required) -> find and connect headset -> Create Session -> Subscribe PM data.
 * The performance metric data frequency depend on scope of license. For low performance metric : 1 sample/ 10 seconds ; for high performance metric 2 samples/ seconds.
-
+* Notes: 
+  - 1) Need put an appropriate license in Program.cs
+  - 2) Press Esc to flush data to output file and exit.
+  - 3) Each performance metric is a decimal number between 0 and 1. Zero means "low power", 1 means "high power". If the detection cannot run because of a bad contact quality then the value can also be **null**
 ### Notes
 * You must login and logout via EMOTIV App.
 * You must use EMOTIV App to grant AccessRight for the App one time for one emotiv user.
-* You need a valid license to subscribe EEG data, Performance metrics data, Record Data, InjectMarker.
+* You need a valid license to subscribe EEG data, Performance metrics data.
 * The Examples are only demo for some Apis not all apis and to be continue updating.
 
 

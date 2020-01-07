@@ -12,6 +12,7 @@ namespace EEGLogger
     class Program
     {
         const string OutFilePath = @"EEGLogger.csv";
+        const string licenseID = "put_your_license_here";
         private static FileStream OutFileStream;
 
         static void Main(string[] args)
@@ -28,12 +29,14 @@ namespace EEGLogger
 
 
             DataStreamExample dse = new DataStreamExample();
-            dse.AddStreams("eeg");
+            dse.AddStreams("eeg");                          // You can add more streams to subscribe multiple streams
             dse.OnSubscribed += SubscribedOK;
             dse.OnEEGDataReceived += OnEEGDataReceived;
-            dse.Start();
 
-            Console.WriteLine("Press Esc to exit");
+            // Need a valid license key and activeSession when subscribe eeg data
+            dse.Start(licenseID, true);
+
+            Console.WriteLine("Press Esc to flush data to file and exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }
 
             // Unsubcribe stream
