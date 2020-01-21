@@ -535,15 +535,11 @@ namespace CortexAccess
             JObject param = new JObject();
             param.Add("clientId", Config.AppClientId);
             param.Add("clientSecret", Config.AppClientSecret);
-            if (String.IsNullOrEmpty(licenseID))
-            {
-                param.Add("debit", 0);
-            }
-            else
+            if (!string.IsNullOrEmpty(licenseID))
             {
                 param.Add("license", licenseID);
-                param.Add("debit", debitNumber);
             }
+            param.Add("debit", debitNumber);
             SendTextMessage(param, "authorize", true);
         }
 
