@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/btnSubscribeTrainingFEEvent"
+        android:layout_width="250dp"
+        android:layout_height="50dp"
+        android:text="subscribe training event"
+        android:textAllCaps="false"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        />
+
+    <Button
+        android:id="@+id/btnCreateProfile"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="create profile"
+        android:textAllCaps="false"
+        android:layout_below="@+id/btnSubscribeTrainingFEEvent"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        />
+
+    <Button
+        android:id="@+id/btnLoadProfile"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="load profile"
+        android:textAllCaps="false"
+        android:layout_below="@+id/btnSubscribeTrainingFEEvent"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        />
+
+    <Button
+        android:id="@+id/btnTrainingFENeutral"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="train FE Neutral"
+        android:textAllCaps="false"
+        android:layout_below="@+id/btnLoadProfile"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        />
+
+    <Button
+        android:id="@+id/btnTrainingFESmile"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:text="train FE Smile"
+        android:textAllCaps="false"
+        android:layout_below="@+id/btnLoadProfile"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        />
+
+</RelativeLayout>

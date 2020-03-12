@@ -1,0 +1,2 @@
+include ':cortexclient', ':headset-session', ':authorize', ':record-marker', ':eeg', ':motion', ':performance-metrics', ':facial-expression', ':mental-command', ':band-power', ':facial-expression-training', ':mental-command-training'
+rootProject.name='CortexV2Example'

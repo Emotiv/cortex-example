@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:orientation="horizontal">
+
+    <TextView
+        android:id="@+id/tvHeadsetName"
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="0.45"
+        android:textSize="13dp"
+        android:gravity="center_vertical"
+        android:paddingLeft="3dp"
+        android:text="EPOCPLUS"
+        />
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="0.3">
+
+        <TextView
+            android:id="@+id/tvHeadsetConnectedBy"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="13dp"
+            android:paddingLeft="3dp"
+            android:gravity="center_vertical"
+            android:text="bluetooth"
+            />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#f2f2f2"
+            android:layout_alignParentLeft="true"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="0dp"
+        android:layout_height="40dp"
+        android:layout_weight="0.25" >
+
+        <TextView
+            android:id="@+id/tvHeadsetStatus"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textSize="13dp"
+            android:paddingLeft="2dp"
+            android:gravity="center_vertical"
+            android:text="connecting"
+            />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#f2f2f2"
+            android:layout_alignParentLeft="true"
+            />
+
+    </RelativeLayout>
+
+</LinearLayout>

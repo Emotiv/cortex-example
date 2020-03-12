@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:orientation="vertical">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center_horizontal"
+            />
+
+        <Button
+            android:id="@+id/btnGetUserLogin"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:textAllCaps="false"
+            android:text="getUserLogin"
+            android:enabled="false"
+            />
+
+        <Button
+            android:id="@+id/btnHasAccessRight"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:textAllCaps="false"
+            android:text="hasAccessRight"
+            android:enabled="false"
+            />
+
+        <Button
+            android:id="@+id/btnRequestAccess"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:textAllCaps="false"
+            android:text="requestAccess"
+            android:enabled="false"
+            />
+
+        <Button
+            android:id="@+id/btnAuthorize"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:textAllCaps="false"
+            android:text="authorize"
+            android:enabled="false"
+            />
+
+        <Button
+            android:id="@+id/btnGetUserInformation"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:textAllCaps="false"
+            android:text="getUserInformation"
+            android:enabled="false"
+            />
+
+        <Button
+            android:id="@+id/btnGetLicenseInfo"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:textAllCaps="false"
+            android:text="getLicenseInfo"
+            android:enabled="false"
+            />
+
+        <TextView
+            android:id="@+id/tvEmotivID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"/>
+
+    </LinearLayout>
+
+</ScrollView>
