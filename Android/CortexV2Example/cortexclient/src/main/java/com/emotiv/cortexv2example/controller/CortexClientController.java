@@ -127,6 +127,7 @@ public class CortexClientController implements WebSocketInterface {
 
             } else {
                 if (mCortexClientInterface != null) {
+                    Log.e(TAG, "Error code: " + dataStream.getErrorCode() + " Error msg: " + dataStream.getErrorString());
                     mCortexClientInterface.onError(dataStream.getErrorCode(), dataStream.getErrorString());
                 }
             }
