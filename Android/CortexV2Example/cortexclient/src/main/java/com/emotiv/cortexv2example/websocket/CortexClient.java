@@ -54,7 +54,8 @@ public class CortexClient {
             JSONObject params = new JSONObject();
             params.put("clientId", Constant.CLIENT_ID);
             params.put("clientSecret", Constant.CLIENT_SECRET);
-            params.put("debit", 5000);
+            params.put("debit", Constant.DEBIT_NUMBER);
+            params.put("license", Constant.LICENSE_ID);
             mWebSocketManager.sendRequest(Constant.ACCESS_STREAM, Constant.AUTHORIZE_REQUEST_ID, "authorize", params, true);
         } catch (Exception e) { e.printStackTrace(); }
     }

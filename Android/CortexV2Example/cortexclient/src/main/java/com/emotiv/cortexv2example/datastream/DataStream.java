@@ -72,7 +72,6 @@ public class DataStream extends BaseStream {
                     JSONObject userInfoJson = jsonObj.getJSONObject("result");
                     mAccessObject.setFirstName(userInfoJson.getString("firstName"));
                     mAccessObject.setLastName(userInfoJson.getString("lastName"));
-                    mAccessObject.setEmail(userInfoJson.getString("email"));
                     mAccessObject.setEmotivID(userInfoJson.getString("username"));
                 }
                 else if (requestType == Constant.QUERY_HEADSET_REQUEST_ID) {
