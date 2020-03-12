@@ -8,6 +8,8 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import com.emotiv.cortexv2example.adapter.HeadsetListAdapter;
 import com.emotiv.cortexv2example.controller.CortexClientController;
 import com.emotiv.cortexv2example.interfaces.CortexClientInterface;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements CortexClientInter
         setContentView(R.layout.activity_main);
         initView();
         connectToServer();
+        Toast.makeText(MainActivity.this, "Please make sure you have already connected Emotiv headset from Emotiv App", Toast.LENGTH_LONG).show();
     }
 
     private void initView() {
