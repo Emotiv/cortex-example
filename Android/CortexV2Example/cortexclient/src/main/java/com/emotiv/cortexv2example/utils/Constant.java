@@ -14,6 +14,8 @@ public class Constant {
     public final static String CLIENT_ID = "";
     public final static String CLIENT_SECRET = "";
     public final static int DEBIT_NUMBER = 10;
+    // if LICENSE_ID is empty our system will choose a valid license from your emotiv account
+    // if want to use a specific license. Please put your license here
     public final static String LICENSE_ID = "";
     // The name of the training profile used for the facial expression and mental command
     public final static String TRAINING_PROFILE_NAME = "cortex-v2-example";
