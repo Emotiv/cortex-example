@@ -11,8 +11,8 @@ public class Constant {
      * account on emotiv.com and create a Cortex app.
      * https://www.emotiv.com/my-account/cortex-apps/
      */
-    public final static String CLIENT_ID = "YWqjZqG9NbZYwltaQwRHTOvWsfR6Pb5po4sakSMB";
-    public final static String CLIENT_SECRET = "V71BeDjbX1oBmTv1hYzCm6d6CpiOX6MUkgelec22Plrt54io5yfNKpYStSvYEkFR9t5HiFKnIXuIFljLFIF3MpDr8l6IY5EGRXNJIRLWXMIHhBon2j2210j9uYsNtv9d";
+    public final static String CLIENT_ID = "";
+    public final static String CLIENT_SECRET = "";
     public final static int DEBIT_NUMBER = 10;
     public final static String LICENSE_ID = "";
     // The name of the training profile used for the facial expression and mental command

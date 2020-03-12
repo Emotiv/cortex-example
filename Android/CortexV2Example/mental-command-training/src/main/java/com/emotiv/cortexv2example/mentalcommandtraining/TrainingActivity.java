@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import com.emotiv.cortexv2example.controller.CortexClientController;
 import com.emotiv.cortexv2example.controller.SysController;
@@ -198,15 +200,47 @@ public class TrainingActivity extends AppCompatActivity implements CortexClientI
         curDetection = detection;
         curAction = action;
         Log.i(TAG, "sys event: " + detection + " | " + action + " | " + event);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(TrainingActivity.this, "Training started... Please wait for result from Cortex", Toast.LENGTH_LONG).show();
+                btnSubscribeTrainingMCEvent.setEnabled(false);
+                btnCreateProfile.setEnabled(false);
+                btnLoadProfile.setEnabled(false);
+                btnTrainingMCNeutral.setEnabled(false);
+                btnTrainingMCPush.setEnabled(false);
+            }
+        });
     }
 
     @Override
     public void onTrainingFailed() {
-
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(TrainingActivity.this, "Training Failed", Toast.LENGTH_LONG).show();
+                btnSubscribeTrainingMCEvent.setEnabled(true);
+                btnCreateProfile.setEnabled(true);
+                btnLoadProfile.setEnabled(true);
+                btnTrainingMCNeutral.setEnabled(true);
+                btnTrainingMCPush.setEnabled(true);
+            }
+        });
     }
 
     @Override
     public void onTrainingSucceeded() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(TrainingActivity.this, "Training Succeeded...", Toast.LENGTH_LONG).show();
+                btnSubscribeTrainingMCEvent.setEnabled(true);
+                btnCreateProfile.setEnabled(true);
+                btnLoadProfile.setEnabled(true);
+                btnTrainingMCNeutral.setEnabled(true);
+                btnTrainingMCPush.setEnabled(true);
+            }
+        });
         CortexClient.getInstance().training(cortexToken, curDetection, SessionObject.getInstance().getCurrentActivedSession(), curAction, "accept", Constant.ACCEPT_TRAINING_PROFILE_REQUEST_ID);
     }
 
