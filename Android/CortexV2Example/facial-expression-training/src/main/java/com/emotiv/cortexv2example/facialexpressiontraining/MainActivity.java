@@ -15,12 +15,9 @@ import com.emotiv.cortexv2example.adapter.HeadsetListAdapter;
 import com.emotiv.cortexv2example.controller.CortexClientController;
 import com.emotiv.cortexv2example.interfaces.CortexClientInterface;
 import com.emotiv.cortexv2example.objects.HeadsetObject;
-import com.emotiv.cortexv2example.objects.SessionObject;
-import com.emotiv.cortexv2example.utils.Utilities;
 import com.emotiv.cortexv2example.websocket.CortexClient;
 import com.emotiv.cortexv2example.websocket.WebSocketManager;
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CortexClientInterface, View.OnClickListener {
 
@@ -70,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements CortexClientInter
     @Override
     protected void onResume() {
         super.onResume();
-        Utilities.checkAndRequestPermissions(this);
         CortexClientController.getInstance().setCortexClientInterface(this);
     }
 
