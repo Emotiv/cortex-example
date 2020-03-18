@@ -2,7 +2,7 @@
 ## Prerequisites
 - Android device (Android version >= 7)
 - EMOTIV App for Android
-- Emotiv headset (if you don't have, you can buy purchase one [here](https://www.emotiv.com))
+- Emotiv headset (if you don't have, you can purchase one [here](https://www.emotiv.com))
 - Emotiv account (if you don't have, you can register [here](https://www.emotiv.com))
 
 ## EMOTIV App for Android
@@ -55,14 +55,20 @@ facial-expression-training | [BCI](https://emotiv.gitbook.io/cortex-api/bci) & [
 
 ## Cortex API for Android
 Although [Cortex API documentation](https://emotiv.gitbook.io/cortex-api/) is only for desktop, you can base on that to develop on Android since most of APIs are the same, except for these below APIs:
-(coming soon: a table of APIs with some explanation)
+
+APIs | Desktop version | Mobile version
+--------|--------|--------
+[controlDevice](https://emotiv.gitbook.io/cortex-api/headset/controldevice)|available values for `command` parameter: "connect", "disconnect", "refresh".|available values for `command` parameter: "refresh". <br>*You can only connect or disconnect headsets via EMOTIV App*.
+[queryHeadsets](https://emotiv.gitbook.io/cortex-api/headset/queryheadsets)|return all discovered headsets.|return one and only connected headset.
+[exportRecords](https://emotiv.gitbook.io/cortex-api/records/exportrecord)|Supported.|Not supported.
+
 
 ## Cortex security certificates
 Your app must configure a custom Certificate Authorities (CA) to trust Cortex websocket connection. See [Network security configuration on Android](https://developer.android.com/training/articles/security-config). You can also look into `cortexclient` module for example:
 
 In `AndroidManifest.xml`:
 
-	<application
+    <application
         ...
         android:networkSecurityConfig="@xml/network_security_config"
         ...
@@ -70,7 +76,7 @@ In `AndroidManifest.xml`:
 
 In `res/xml/network_security_config.xml`:
 
-	<trust-anchors>
+    <trust-anchors>
         <certificates src="@raw/emotivca"/>
         <certificates src="system"/>
     </trust-anchors>
