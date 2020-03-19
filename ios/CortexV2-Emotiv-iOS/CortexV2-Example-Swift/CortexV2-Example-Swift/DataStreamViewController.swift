@@ -148,8 +148,12 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
         if sessionId == "" {
             NSLog("Please create session")
         } else {
-            self.dataView.isHidden = true
-            self.trainingView.isHidden = false
+            if self.stream == "session" {
+                client.closeSession(token: self.token, sessionId: self.sessionId)
+            } else {
+                self.dataView.isHidden = true
+                self.trainingView.isHidden = false
+            }
         }
     }
     
@@ -191,7 +195,13 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
         if stream != "authorize" {
             authorizeView.isHidden = true
             dataView.isHidden = false
-            
+        }
+
+        if stream == "session" {
+            training.isHidden = false
+            subscribeBtn.isHidden = true
+            unsubscribeBtn.isHidden = true
+            self.training.setTitle("updateSession(Close)", for: UIControl.State.normal)
         }
         
         self.subscribeBtn.setTitle("subcribe " + nameStream, for: UIControl.State.normal)
@@ -327,6 +337,10 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
             weakSelf.stopRecord.isEnabled = false
             weakSelf.injectMarker.isEnabled = false
             weakSelf.client.getRecordInfos(token: weakSelf.token, recordId: recordId)
+        }
+        
+        client.onCloseSessionOk = {
+            NSLog("Close session successful")
         }
     }
     

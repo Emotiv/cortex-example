@@ -24,6 +24,7 @@ class CortexClient {
     var onHasAccesRightOk: ((Bool, String) -> Void)!
     var onAuthorizeOk: ((String) -> Void)!
     var onCreateSessionOk: ((String) -> Void)!
+    var onUpdateSessionOk: (() -> Void)!
     var onCloseSessionOk: (() -> Void)!
     var onSubscribeOk: (([String]) -> Void)!
     var onUnsubscribeOk: (([String]) -> Void)!
@@ -103,6 +104,14 @@ class CortexClient {
         params["cortexToken"] = token
         params["headset"] = headsetId
         params["status"] = activate ? "active" : "open"
+        sendRequest(method: "createSession", params: params)
+    }
+    
+    func updateSession(token: String, headsetId: String, activate: Bool) {
+        var params: [String: Any] = [:]
+        params["cortexToken"] = token
+        params["headset"] = headsetId
+        params["status"] = activate ? "active" : "close"
         sendRequest(method: "createSession", params: params)
     }
 
