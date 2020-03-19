@@ -4,6 +4,7 @@
 - EMOTIV App for iOS
 - Emotiv headset (if you don't have, you can purchase one [here](https://www.emotiv.com))
 - Emotiv account (if you don't have, you can register [here](https://www.emotiv.com))
+- The client id/secret of your cortex app (if you don't have, you can register [here](https://www.emotiv.com/my-account/cortex-apps/))
 
 ## EMOTIV App for iOS
 [What is EMOTIV App (for desktop)?](https://emotiv.gitbook.io/cortex-manual/)
@@ -50,6 +51,11 @@ facial-expression-training / mental-command-training | [BCI](https://emotiv.gitb
 
 - Choose the module you want to build and run on iOS device.
 - The module app has a list of buttons demonstrating an API call. Try click on each button, you can see a pair of request/response json strings printed out in console log
+
+### Attention
+Before run example, you have to set the client id/secret in file:
+- CortexV2-Emotiv-iOS/CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC/Config.m for Objective C project.
+- CortexV2-Emotiv-iOS/CortexV2-Example-Swift/CortexV2-Example-Swift/Config.swift for Swift project.
 
 ## Cortex API for iOS
 Although [Cortex API documentation](https://emotiv.gitbook.io/cortex-api/) is only for desktop, you can base on that to develop on iOS since most of APIs are the same, except for these below APIs:
