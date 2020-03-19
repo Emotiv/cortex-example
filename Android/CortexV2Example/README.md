@@ -1,9 +1,10 @@
 
 ## Prerequisites
-- Android device (Android version >= 7)
+- Android device with Android 7.0 (API level 24) or higher
 - EMOTIV App for Android
 - Emotiv headset (if you don't have, you can purchase one [here](https://www.emotiv.com))
 - Emotiv account (if you don't have, you can register [here](https://www.emotiv.com))
+- A pair of client id, client secret of your Cortex app (if you don't have, you can register [here](https://www.emotiv.com/my-account/cortex-apps/))
 
 ## EMOTIV App for Android
 [What is EMOTIV App (for desktop)?](https://emotiv.gitbook.io/cortex-manual/)
@@ -12,7 +13,7 @@ EMOTIV App for Android is required for any other apps which want to access EEG r
 * log in Emotiv system
 * manage headset connections
 * manage 3rd app permissions
-* It also provides a secure web socket connection (at wss://localhost:6868) for your app to read data from, make training action, etc. See more details in [Cortex API Documentation](https://emotiv.gitbook.io/cortex-api/).
+* It also provides a secure web socket connection (at wss://localhost:6868) for your app to read data from, make training actions, etc. See more details in [Cortex API Documentation](https://emotiv.gitbook.io/cortex-api/).
 
 ### Installing
 ##### Unreleased version (only for Emotiv-partner developers)
@@ -28,18 +29,20 @@ EMOTIV App for Android is required for any other apps which want to access EEG r
 Not available yet.
 
 ## Try EMOTIV App
-- Open EMOTIV App, make sure you accept all permission request pop ups.
+- Open EMOTIV App, accept all permission requests. Make sure Bluetooth service & Location service are turned on, EMOTIV App needs these services to work with headsets.
 - Log in using your Emotiv account. You are on the page of "Available Devices".
 - Turn on your Emotiv headset, wait for the headset to show up.
 	- *Note: If you don't see the headset after 30s, you can try to turn it off then on again.*
 - After the headset is shown up on the list, click to connect.
+	- After the headset is connected on EMOTIV App, you can access to this headset from your app using [queryHeadsets](https://emotiv.gitbook.io/cortex-api/headset/queryheadsets) API.
+	- We support only one connected headset. You cannot connect more than one headset at the same time.
 - You can navigate to other pages using the top left menu icon.
 - If you see anything inconvenience, you can find `Send Feedback` in the menu.
 
 ## Try Cortex V2 Example
 - Cortex V2 Example demonstrates how to work with Cortex API. To get started, you may want to look at the API documentation: https://emotiv.gitbook.io/cortex-api/.
 	- *Note: API documentation is only for desktop version but should be almost the same on mobile. Exceptions will be noted below.*
-- Open project under Android/CortexV2Example by Android Studio. You can see CortexV2Example is a set of modules, each module contains example code for a specific feature:
+- Open project under `Android/CortexV2Example` by Android Studio. You can see CortexV2Example is a set of modules, each module contains example code for a specific feature:
 
 Module| Related Cortex APIs
 ----------------|----------------
@@ -47,11 +50,17 @@ cortexclient |[Connecting to the Cortex API](https://emotiv.gitbook.io/cortex-ap
 authorize |[Authentication](https://emotiv.gitbook.io/cortex-api/authentication)
 headset-session | [Headsets](https://emotiv.gitbook.io/cortex-api/headset) & [Sessions](https://emotiv.gitbook.io/cortex-api/session)
 record-marker | [Record](https://emotiv.gitbook.io/cortex-api/records) & [Markers](https://emotiv.gitbook.io/cortex-api/markers)
-eeg / motion / bandpower / facial-expression mental-command / performance-metrics | [Data Subscription](https://emotiv.gitbook.io/cortex-api/data-subscription)
-facial-expression-training | [BCI](https://emotiv.gitbook.io/cortex-api/bci) & [Advanced BCI](https://emotiv.gitbook.io/cortex-api/advanced-bci)
+eeg / motion / bandpower / facial-expression / mental-command / performance-metrics | [Data Subscription](https://emotiv.gitbook.io/cortex-api/data-subscription)
+facial-expression-training / mental-command-training | [BCI](https://emotiv.gitbook.io/cortex-api/bci) & [Advanced BCI](https://emotiv.gitbook.io/cortex-api/advanced-bci)
+
+- Before running example code, you need to replace values of `CLIENT_ID`, `CLIENT_SECRET` in `cortexclient/src/main/java/com/emotiv/cortexv2example/utils/Constant.java` file with your client id, client secret:
+
+
+    public final static String CLIENT_ID = "<put your client id here>";
+    public final static String CLIENT_SECRET = "<put your client secret here>";
 
 - Choose the module you want to build and run on Android device. Make sure you accept all permission requests.
-- The module app has a list of buttons demonstrating an API call. Try click on each button, you can see a pair of request/response json strings printed out in Android Studio `logcat`.
+- The module app has a list of buttons demonstrating API calls. Try click on each button, you can see a pair of request/response json strings printed out in Android Studio `logcat`.
 
 ## Cortex API for Android
 Although [Cortex API documentation](https://emotiv.gitbook.io/cortex-api/) is only for desktop, you can base on that to develop on Android since most of APIs are the same, except for these below APIs:
