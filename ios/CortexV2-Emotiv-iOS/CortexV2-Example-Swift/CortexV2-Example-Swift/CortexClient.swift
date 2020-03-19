@@ -2,7 +2,7 @@
 //  CortexClient.swift
 //  CortexV2-Example-Swift
 //
-//  Created by nvtu on 2/21/20.
+//  Created by Emotiv Inc on 2/21/20.
 //  Copyright © 2020 Emotiv. All rights reserved.
 //
 
@@ -21,6 +21,7 @@ class CortexClient {
     var onQueryHeadsetsOk: (([Headset]) -> Void)!
     var onGetUserLoginOk: ((String) -> Void)!
     var onRequestAccessOk: ((Bool, String) -> Void)!
+    var onHasAccesRightOk: ((Bool, String) -> Void)!
     var onAuthorizeOk: ((String) -> Void)!
     var onCreateSessionOk: ((String) -> Void)!
     var onCloseSessionOk: (() -> Void)!
@@ -37,6 +38,8 @@ class CortexClient {
     var onGetRecordInfosOk: (([String : Any]) -> Void)!
     var onInjectMarkerOk: ((String) -> Void)!
     var onUpdateMarkerOk: (() -> Void)!
+    var onGetUserInformationOk: (() -> Void)!
+    var onGetLicenseInformationOk: (() -> Void)!
     
     // we received an error message in response to a RPC request
     var onErrorReceived: ((String, Int, String) -> Void)!
@@ -75,6 +78,13 @@ class CortexClient {
         params["clientId"] = clientId
         params["clientSecret"] = clientSecret
         sendRequest(method: "requestAccess", params: params)
+    }
+    
+    func hasAccessRight(clientId: String, clientSecret: String) {
+        var params: [String: Any] = [:]
+        params["clientId"] = clientId
+        params["clientSecret"] = clientSecret
+        sendRequest(method: "hasAccessRight", params: params)
     }
     
     func authorize(clientId: String, clientSecret: String, license: String, debit: Int) {
@@ -201,6 +211,13 @@ class CortexClient {
         sendRequest(method: "getRecordInfos", params: params)
     }
     
+    func getLicenseInfos(token: String)
+    {
+        var params: [String: Any] = [:]
+        params["cortexToken"] = token
+        sendRequest(method: "getLicenseInfo", params: params)
+    }
+    
     func injectMarker(token: String, sessionId: String, label: String, value: Int, time: Int64) {
         var params: [String: Any] = [:]
         params["cortexToken"] = token
@@ -220,6 +237,13 @@ class CortexClient {
         params["markerId"] = markerId
         params["time"] = time
         sendRequest(method: "updateMarker", params: params)
+    }
+    
+    func getUserInformation(token: String)
+    {
+        var params: [String: Any] = [:]
+        params["cortexToken"] = token
+        sendRequest(method: "getUserInformation", params: params)
     }
 
     fileprivate func sendRequest(method: String, params: [String: Any] = [:]) {
@@ -280,6 +304,12 @@ class CortexClient {
             let message = (result as! [String: Any])["message"] as? String ?? ""
             if self.onRequestAccessOk != nil {
                 self.onRequestAccessOk!(accessGranted, message)
+            }
+        } else if method == "hasAccessRight" {
+            let accessGranted = (result as! [String: Any])["accessGranted"] as? Bool ?? false
+            let message = (result as! [String: Any])["message"] as? String ?? ""
+            if self.onHasAccesRightOk != nil {
+                self.onHasAccesRightOk!(accessGranted, message)
             }
         } else if method == "authorize" {
             let token = (result as! [String: Any])["cortexToken"] as? String ?? ""
@@ -365,6 +395,14 @@ class CortexClient {
         } else if (method == "updateMarker") {
             if self.onUpdateMarkerOk != nil {
                 self.onUpdateMarkerOk!()
+            }
+        } else if (method == "getUserInformation") {
+            if self.onGetUserInformationOk != nil {
+                self.onGetUserInformationOk!()
+            }
+        } else if (method == "getLicenseInfo") {
+            if self.onGetLicenseInformationOk != nil {
+                self.onGetLicenseInformationOk!()
             }
         } else {
             // unknown method, so we don't know how to interpret the result

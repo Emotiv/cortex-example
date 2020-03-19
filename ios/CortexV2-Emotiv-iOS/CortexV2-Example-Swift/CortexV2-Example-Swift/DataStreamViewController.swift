@@ -2,69 +2,219 @@
 //  DataStreamViewController.swift
 //  CortexV2-Example-Swift
 //
-//  Created by nvtu on 2/21/20.
+//  Created by Emotiv Inc on 2/21/20.
 //  Copyright © 2020 Emotiv. All rights reserved.
 //
 
 import UIKit
 
-class DataStreamViewController: UIViewController {
+class DataStreamViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
+    @IBOutlet weak var authorizeView: UIView!
+    @IBOutlet weak var dataView: UIView!
+    @IBOutlet weak var trainingView: UIView!
+    @IBOutlet weak var headsetTableView: UITableView!
+    @IBOutlet weak var markerView: UIView!
+    @IBOutlet weak var streamView: UIView!
+    
+    @IBOutlet weak var subscribeBtn: UIButton!
+    @IBOutlet weak var unsubscribeBtn: UIButton!
+    @IBOutlet weak var createSession: UIButton!
+    @IBOutlet weak var getLicenseInfo: UIButton!
+    @IBOutlet weak var getUserInfo: UIButton!
+    @IBOutlet weak var training1: UIButton!
+    @IBOutlet weak var training2: UIButton!
+    @IBOutlet weak var training: UIButton!
+    @IBOutlet weak var loadProfile: UIButton!
+    @IBOutlet weak var subscribeTraining: UIButton!
+    @IBOutlet weak var createProfile: UIButton!
+    @IBOutlet weak var injectMarker: UIButton!
+    @IBOutlet weak var stopRecord: UIButton!
+    @IBOutlet weak var createRecord: UIButton!
+    @IBOutlet weak var warning: UILabel!
+    
     var client = CortexClient.sharedInstance
     var creator = SessionCreator()
     var finder = HeadsetFinder()
     var headset = Headset()
-    var activateSession: Bool = false
+    var headsetList: [Headset] = [Headset]()
+    var activateSession: Bool = true
     var license: String = ""
 
     var token: String = ""
     var sessionId: String = ""
     var stream: String = ""
-
+    
+    var action: String = ""
+    var recordId: String = ""
+    var markerId: String = ""
+    
+    let cellReuseIdentifier = "HeadsetTableViewCell"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        handleUI()
 
+        let headsetTableViewCell = UINib(nibName: cellReuseIdentifier, bundle: nil)
+        self.headsetTableView.register(headsetTableViewCell, forCellReuseIdentifier: cellReuseIdentifier)
+        headsetTableView.delegate = self
+        headsetTableView.dataSource = self
+        
         handleCortexEvent()
         handleHeadsetEvent()
         handleSessiontEvent()
         start()
-        // Do any additional setup after loading the view.
+    }
+    
+    @IBAction func getUserLogin(_ sender: Any) {
+        client.getUserLogin()
+    }
+    
+    @IBAction func hasAccessRight(_ sender: Any) {
+        client.hasAccessRight(clientId: ClientId, clientSecret: ClientSecret)
+    }
+    
+    @IBAction func requestAccess(_ sender: Any) {
+        client.requestAccess(clientId: ClientId, clientSecret: ClientSecret)
+    }
+    
+    @IBAction func authorize(_ sender: Any) {
+        client.authorize(clientId: ClientId, clientSecret: ClientSecret, license: license, debit: activateSession ? 1 : 0)
+    }
+    
+    @IBAction func getUserInformation(_ sender: Any) {
+        client.getUserInformation(token: token)
+    }
+    
+    @IBAction func getLicenseInfo(_ sender: Any) {
+        client.getLicenseInfos(token: token)
+    }
+    
+    @IBAction func queryHeadsets(_ sender: Any) {
+        finder.findHeadsets()
+    }
+    
+    @IBAction func createSession(_ sender: Any) {
+        creator.createSession(token: token, headset: headset, activate: activateSession, license: license)
+    }
+    
+    @IBAction func subcribe(_ sender: Any) {
+        client.subscribe(token: token, sessionId: sessionId, stream: stream)
+    }
+    
+    @IBAction func unsubscribe(_ sender: Any) {
+        client.unsubscribe(token: token, sessionId: sessionId, stream: stream)
+    }
+    
+    @IBAction func subcribeTraining(_ sender: Any) {
+        client.subscribe(token: token, sessionId: sessionId, stream: "sys")
+    }
+    
+    @IBAction func createProfile(_ sender: Any) {
+        client.createProfile(token: token, profileName: TrainingProfileName)
+    }
+    
+    @IBAction func loadProfile(_ sender: Any) {
+        client.loadProfile(token: token, headsetId: headset.id, profileName: TrainingProfileName)
+    }
+    
+    @IBAction func trainNeutral(_ sender: Any) {
+        self.action = "neutral"
+        client.training(token: token, sessionId: sessionId, detection: stream , action: self.action, control: "start")
+        self.enableButton(enable: false)
+        NSLog("waiting training result from Cortex")
+    }
+    
+    @IBAction func trainPush(_ sender: Any) {
+        self.action = stream == "mentalCommand" ? "push" : "smile"
+        client.training(token: token, sessionId: sessionId, detection: stream , action: self.action, control: "start")
+        self.enableButton(enable: false)
+        NSLog("waiting training result from Cortex")
+    }
+    
+    @IBAction func createRecord(_ sender: Any) {
+        client.createRecord(token: token, sessionId: sessionId, title: "Cortex Examples Swift")
+    }
+    
+    @IBAction func injectMarker(_ sender: Any) {
+        client.injectMarker(token: token, sessionId: sessionId, label: "test1", value: 41, time: Int64(Date().timeIntervalSince1970 * 1000));
+    }
+    
+    @IBAction func stopRecord(_ sender: Any) {
+        client.stopRecord(token: token, sessionId: sessionId)
+    }
+    
+    @IBAction func training(_ sender: Any) {
+        if sessionId == "" {
+            NSLog("Please create session")
+        } else {
+            self.dataView.isHidden = true
+            self.trainingView.isHidden = false
+        }
     }
     
     func start() {
         client.open()
     }
     
-    func handleCortexEvent() {
-        client.onConnected = { [weak self] in
-            guard let weakSelf = self else { return }
-            weakSelf.finder.findHeadsets()
+    func handleUI() {
+        var nameStream = ""
+        if stream == "mot" {
+            nameStream = "motion"
+        } else if stream == "eeg" {
+            nameStream = "eeg"
+        } else if stream == "pow" {
+            nameStream = "Band Power"
+        } else if stream == "com" {
+            nameStream = "MC"
+        } else if stream == "fac" {
+            nameStream = "FE"
+        } else if stream == "met" {
+            nameStream = "PM"
+        } else if stream == "facialExpression" {
+            training.isHidden = false
+            subscribeBtn.isHidden = true
+            unsubscribeBtn.isHidden = true
+            training1.setTitle("train FE Neutral", for: UIControl.State.normal)
+            training2.setTitle("train FE Smile", for: UIControl.State.normal)
+        } else if stream == "mentalCommand" {
+            training.isHidden = false
+            subscribeBtn.isHidden = true
+            unsubscribeBtn.isHidden = true
+            training1.setTitle("train MC Neutral", for: UIControl.State.normal)
+            training2.setTitle("train MC Push", for: UIControl.State.normal)
+        } else if stream == "marker" {
+            streamView.isHidden = true
+            markerView.isHidden = false
         }
         
-        client.onDisconnected = { [weak self] in
+        self.subscribeBtn.setTitle("subcribe " + nameStream, for: UIControl.State.normal)
+        self.unsubscribeBtn.setTitle("unsubcribe " + nameStream, for: UIControl.State.normal)
+    }
+    
+    func handleCortexEvent() {
+        client.onConnected = {
+            NSLog("Connected.")
+        }
+        
+        client.onDisconnected = {
             NSLog("Disconnected.")
         }
         
-
         client.onErrorReceived = { (method, code, message) in
-            if method == "setupProfile" {
-                // it's fine, we can subscribe to a data stream even without a profile
-                NSLog("Failed to load the training profile.")
-            }
+            
         }
         
-        client.onLoadProfileOk = { (profileName) in
-            NSLog("Training profile loaded \(profileName)")
+        client.onGetUserLoginOk = { (emotivId) in
+           if emotivId == "" {
+               NSLog("First, you must login with EMOTIV App")
+               return
+           }
+           NSLog("You are logged in with the EmotivId \(emotivId)")
         }
         
-        client.onSubscribeOk = { [weak self] (streams) in
-            guard let weakSelf = self else { return }
+        client.onSubscribeOk = { (streams) in
             NSLog("Subscription successful for data streams \(streams)")
-            NSLog("Receiving data for 30 seconds.")
-            Timer.scheduledTimer(withTimeInterval: 30, repeats: false) { [weak weakSelf] (time) in
-                guard let weakSelf2 = weakSelf else { return }
-                weakSelf2.client.unsubscribe(token: weakSelf2.token, sessionId: weakSelf2.sessionId, stream: weakSelf2.stream)
-            }
         }
         
         client.onStreamDataReceived = { (sessionId, stream, time, data) in
@@ -79,19 +229,92 @@ class DataStreamViewController: UIViewController {
             weakSelf.client.closeSession(token: weakSelf.token, sessionId: weakSelf.sessionId)
         }
         
-        client.onCloseSessionOk = { [weak self] in
-            guard let weakSelf = self else { return }
+        client.onCloseSessionOk = {
             NSLog("Session closed.")
-            weakSelf.client.close()
+        }
+        
+        client.onGetLicenseInformationOk = {
+            NSLog("Get License Information successful")
+        }
+        
+        client.onGetUserInformationOk = {
+            NSLog("Get User Information successful")
+        }
+        
+        client.onAuthorizeOk = { [weak self] (token) in
+            guard let weakSelf = self else { return }
+            weakSelf.token = token
+            NSLog("Authorize successful, token \(token)")
+            weakSelf.finder.findHeadsets()
+            weakSelf.authorizeView.isHidden = true
+            weakSelf.dataView.isHidden = false
+        }
+        
+        client.onSubscribeOk = { [weak self] (streams) in
+            guard let weakSelf = self else { return }
+            NSLog("Subscription to data stream successful \(streams)")
+            weakSelf.training1.isEnabled = true
+            weakSelf.training2.isEnabled = true
+        }
+        
+        client.onSaveProfileOk = { (profileName) in
+            NSLog("Training profile saved \(profileName)")
+        }
+        
+        client.onLoadProfileOk = { [weak self] (profileName) in
+            guard let weakSelf = self else { return }
+            NSLog("Training profile loaded \(profileName)")
+            weakSelf.training1.isEnabled = true
+            weakSelf.training2.isEnabled = true
+        }
+        
+        client.onCreateProfileOk = { (profileName) in
+            NSLog("Training profile created \(profileName)")
+        }
+        
+        client.onStreamDataReceived = { [weak self] (sessionId, stream, time, data) in
+            guard let weakSelf = self else { return }
+            if weakSelf.isEvent(data: data, event: "Started") {
+                NSLog("")
+                NSLog("Please, focus on the action for a few seconds")
+            } else if weakSelf.isEvent(data: data, event: "Succeeded") {
+                weakSelf.client.training(token: weakSelf.token, sessionId: weakSelf.sessionId, detection: weakSelf.stream, action: weakSelf.action, control: "accept")
+            } else if weakSelf.isEvent(data: data, event: "Failed") {
+                weakSelf.enableButton(enable: true)
+            } else if weakSelf.isEvent(data: data, event: "Completed") {
+                NSLog("Well done! You successfully trained")
+                weakSelf.enableButton(enable: true)
+            }
+            
+        }
+        
+        client.onCreateRecordOk = { [weak self] (recordId) in
+            guard let weakSelf = self else { return }
+            weakSelf.recordId = recordId
+            weakSelf.stopRecord.isEnabled = true
+            weakSelf.injectMarker.isEnabled = true
+        }
+        
+        client.onInjectMarkerOk = { [weak self] (markerId) in
+            guard let weakSelf = self else { return }
+            NSLog("Inject marker OK, marker id \(markerId)")
+            weakSelf.markerId = markerId
+        }
+        
+        client.onStopRecordOk = { [weak self] (recordId) in
+            guard let weakSelf = self else { return }
+            weakSelf.stopRecord.isEnabled = false
+            weakSelf.injectMarker.isEnabled = false
+            weakSelf.client.getRecordInfos(token: weakSelf.token, recordId: recordId)
         }
     }
     
     private func handleHeadsetEvent() {
-        finder.onHeadsetFound = { [weak self] (headset) in
+        finder.onHeadsetFound = { [weak self] (headset, headsets) in
             guard let weakSelf = self else { return }
             weakSelf.headset = headset
-            // next step: create a session for this headset
-            weakSelf.creator.createSession(headset: headset, activate: weakSelf.activateSession, license: weakSelf.license)
+            weakSelf.headsetList = headsets
+            weakSelf.headsetTableView.reloadData()
         }
     }
     
@@ -100,11 +323,51 @@ class DataStreamViewController: UIViewController {
             guard let weakSelf = self else { return }
             weakSelf.token = token
             weakSelf.sessionId = sessionId
-            // load the training profile (useful only for mental command and facial expression)
-            weakSelf.client.loadProfile(token: token, headsetId: weakSelf.headset.id, profileName: TrainingProfileName)
-            // next step: subscribe to a data stream
-            weakSelf.client.subscribe(token: token, sessionId: sessionId, stream: weakSelf.stream)
         }
+    }
+    
+    private func enableButton(enable: Bool) {
+        self.training1.isEnabled = enable
+        self.training2.isEnabled = enable
+        self.createProfile.isEnabled = enable
+        self.loadProfile.isEnabled = enable
+        self.subscribeTraining.isEnabled = enable
+    }
+    
+    private func isEvent(data: NSArray, event: String) -> Bool {
+        for val in data {
+            if val is String && (val as! String).contains(event) {
+                return true
+            }
+        }
+        return false
+    }
+    
+    // number of rows in table view
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return headsetList.count
+    }
+
+    // create a cell for each table view row
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let hscell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier) as? HeadsetTableViewCell
+        hscell?.status.text = headsetList[indexPath.row].status
+        hscell?.headsetName.text = headsetList[indexPath.row].id
+        hscell?.connectedBy.text = headsetList[indexPath.row].connectedBy
+        return hscell ?? UITableViewCell()
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let headerCell = tableView.dequeueReusableCell(withIdentifier: cellReuseIdentifier) as? HeadsetTableViewCell
+        return headerCell ?? UITableViewCell()
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 50
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return 50
     }
 }
 

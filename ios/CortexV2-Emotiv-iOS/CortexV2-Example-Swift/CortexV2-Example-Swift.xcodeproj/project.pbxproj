@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		56E77269241B7ED70015846E /* DataStreamViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56E77268241B7ED70015846E /* DataStreamViewController.xib */; };
+		56E77270241F7FB40015846E /* HeadsetTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56E7726E241F7FB40015846E /* HeadsetTableViewCell.swift */; };
+		56E77271241F7FB40015846E /* HeadsetTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 56E7726F241F7FB40015846E /* HeadsetTableViewCell.xib */; };
 		D60834EA668F8D57138F4458 /* Pods_CortexV2_Example_Swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 97C1F4B0EAA1930646345DEC /* Pods_CortexV2_Example_Swift.framework */; };
 		E93E86E723FF7AE500D3125D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93E86E623FF7AE500D3125D /* AppDelegate.swift */; };
 		E93E86EB23FF7AE500D3125D /* DataStreamViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93E86EA23FF7AE500D3125D /* DataStreamViewController.swift */; };
@@ -18,8 +21,6 @@
 		E93E86FF23FF8C4200D3125D /* HeadsetFinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93E86FE23FF8C4200D3125D /* HeadsetFinder.swift */; };
 		E93E870123FF8D0100D3125D /* Headset.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93E870023FF8D0100D3125D /* Headset.swift */; };
 		E93E870323FFBC2F00D3125D /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93E870223FFBC2F00D3125D /* Config.swift */; };
-		E93E872723FFD60E00D3125D /* TrainingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93E872623FFD60E00D3125D /* TrainingViewController.swift */; };
-		E93E872D23FFE19A00D3125D /* MarkerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E93E872C23FFE19A00D3125D /* MarkerViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,9 @@
 		25EDDA2B03A2E9388E59CA83 /* Pods-CortexV2-Example-Swift.facialexpressiontraining.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CortexV2-Example-Swift.facialexpressiontraining.xcconfig"; path = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.facialexpressiontraining.xcconfig"; sourceTree = "<group>"; };
 		26465BB87EACF41519ABF8DE /* Pods-CortexV2-Example-Swift.marker.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CortexV2-Example-Swift.marker.xcconfig"; path = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.marker.xcconfig"; sourceTree = "<group>"; };
 		2AB73A52FF9F8A4C2E74CA69 /* Pods-CortexV2-Example-Swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CortexV2-Example-Swift.release.xcconfig"; path = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.release.xcconfig"; sourceTree = "<group>"; };
+		56E77268241B7ED70015846E /* DataStreamViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = DataStreamViewController.xib; sourceTree = "<group>"; };
+		56E7726E241F7FB40015846E /* HeadsetTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadsetTableViewCell.swift; sourceTree = "<group>"; };
+		56E7726F241F7FB40015846E /* HeadsetTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeadsetTableViewCell.xib; sourceTree = "<group>"; };
 		97C1F4B0EAA1930646345DEC /* Pods_CortexV2_Example_Swift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CortexV2_Example_Swift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		994C2E0E136ED9617AD6C079 /* Pods-CortexV2-Example-Swift.motion.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CortexV2-Example-Swift.motion.xcconfig"; path = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.motion.xcconfig"; sourceTree = "<group>"; };
 		A1B243352537777BB16005D9 /* Pods-CortexV2-Example-Swift.eeg.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CortexV2-Example-Swift.eeg.xcconfig"; path = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.eeg.xcconfig"; sourceTree = "<group>"; };
@@ -44,8 +48,6 @@
 		E93E86FE23FF8C4200D3125D /* HeadsetFinder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeadsetFinder.swift; sourceTree = "<group>"; };
 		E93E870023FF8D0100D3125D /* Headset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Headset.swift; sourceTree = "<group>"; };
 		E93E870223FFBC2F00D3125D /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
-		E93E872623FFD60E00D3125D /* TrainingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrainingViewController.swift; sourceTree = "<group>"; };
-		E93E872C23FFE19A00D3125D /* MarkerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkerViewController.swift; sourceTree = "<group>"; };
 		EF1CDC0190AB6E0C9C3A3CE5 /* Pods-CortexV2-Example-Swift.performancemetric.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CortexV2-Example-Swift.performancemetric.xcconfig"; path = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.performancemetric.xcconfig"; sourceTree = "<group>"; };
 		F3A9B3585DA51D9A09BB8874 /* Pods-CortexV2-Example-Swift.facialexpression.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CortexV2-Example-Swift.facialexpression.xcconfig"; path = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.facialexpression.xcconfig"; sourceTree = "<group>"; };
 		FB8A47599FAA2B5BE8987751 /* Pods-CortexV2-Example-Swift.mentalcommand.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CortexV2-Example-Swift.mentalcommand.xcconfig"; path = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.mentalcommand.xcconfig"; sourceTree = "<group>"; };
@@ -113,8 +115,6 @@
 				E93E870223FFBC2F00D3125D /* Config.swift */,
 				E93E86E623FF7AE500D3125D /* AppDelegate.swift */,
 				E93E86EA23FF7AE500D3125D /* DataStreamViewController.swift */,
-				E93E872623FFD60E00D3125D /* TrainingViewController.swift */,
-				E93E872C23FFE19A00D3125D /* MarkerViewController.swift */,
 				E93E86FA23FF7CD300D3125D /* CortexClient.swift */,
 				E93E86FC23FF846300D3125D /* SessionCreator.swift */,
 				E93E86FE23FF8C4200D3125D /* HeadsetFinder.swift */,
@@ -123,6 +123,9 @@
 				E93E86EF23FF7AE600D3125D /* Assets.xcassets */,
 				E93E86F123FF7AE600D3125D /* LaunchScreen.storyboard */,
 				E93E86F423FF7AE600D3125D /* Info.plist */,
+				56E77268241B7ED70015846E /* DataStreamViewController.xib */,
+				56E7726E241F7FB40015846E /* HeadsetTableViewCell.swift */,
+				56E7726F241F7FB40015846E /* HeadsetTableViewCell.xib */,
 			);
 			path = "CortexV2-Example-Swift";
 			sourceTree = "<group>";
@@ -188,7 +191,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E93E86F323FF7AE600D3125D /* LaunchScreen.storyboard in Resources */,
+				56E77271241F7FB40015846E /* HeadsetTableViewCell.xib in Resources */,
 				E93E86F023FF7AE600D3125D /* Assets.xcassets in Resources */,
+				56E77269241B7ED70015846E /* DataStreamViewController.xib in Resources */,
 				E93E86EE23FF7AE500D3125D /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -243,11 +248,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				E93E86FB23FF7CD300D3125D /* CortexClient.swift in Sources */,
-				E93E872D23FFE19A00D3125D /* MarkerViewController.swift in Sources */,
 				E93E86FF23FF8C4200D3125D /* HeadsetFinder.swift in Sources */,
-				E93E872723FFD60E00D3125D /* TrainingViewController.swift in Sources */,
 				E93E86EB23FF7AE500D3125D /* DataStreamViewController.swift in Sources */,
 				E93E870323FFBC2F00D3125D /* Config.swift in Sources */,
+				56E77270241F7FB40015846E /* HeadsetTableViewCell.swift in Sources */,
 				E93E86E723FF7AE500D3125D /* AppDelegate.swift in Sources */,
 				E93E870123FF8D0100D3125D /* Headset.swift in Sources */,
 				E93E86FD23FF846300D3125D /* SessionCreator.swift in Sources */,
@@ -405,6 +409,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Example-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -425,6 +430,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Example-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -506,6 +512,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Example-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -587,6 +594,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Example-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -668,6 +676,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Example-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -749,6 +758,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Example-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -830,6 +840,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Example-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -911,6 +922,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Example-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -992,6 +1004,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Example-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = mentalCommand;
@@ -1074,6 +1087,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Example-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = facialExpression;
@@ -1156,6 +1170,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Example-Swift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = marker;

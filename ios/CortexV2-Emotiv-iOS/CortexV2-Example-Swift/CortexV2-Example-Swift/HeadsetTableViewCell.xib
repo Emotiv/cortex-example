@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="KGk-i7-Jjw" customClass="HeadsetTableViewCell" customModule="CortexV2_Example_Swift" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="395" height="44"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
+                <rect key="frame" x="0.0" y="0.0" width="395" height="44"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Headset Name(ID)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Eop-Yf-Hal">
+                        <rect key="frame" x="8" y="11.5" width="162" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Connected By" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WK3-iq-8fM">
+                        <rect key="frame" x="175" y="11.5" width="122" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Status" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xEJ-On-UkL">
+                        <rect key="frame" x="302" y="11.5" width="85" height="21"/>
+                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                        <nil key="textColor"/>
+                        <nil key="highlightedColor"/>
+                    </label>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="Eop-Yf-Hal" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="5Rw-9K-PCE"/>
+                    <constraint firstItem="WK3-iq-8fM" firstAttribute="leading" secondItem="Eop-Yf-Hal" secondAttribute="trailing" constant="5" id="FZ7-wB-16J"/>
+                    <constraint firstItem="xEJ-On-UkL" firstAttribute="leading" secondItem="WK3-iq-8fM" secondAttribute="trailing" constant="5" id="GlH-Z3-IqM"/>
+                    <constraint firstItem="Eop-Yf-Hal" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="K6a-ck-fgd"/>
+                    <constraint firstItem="WK3-iq-8fM" firstAttribute="width" secondItem="xEJ-On-UkL" secondAttribute="width" multiplier="10:7" id="e2v-LB-ijU"/>
+                    <constraint firstItem="Eop-Yf-Hal" firstAttribute="width" secondItem="WK3-iq-8fM" secondAttribute="width" multiplier="4:3" id="l1d-CS-7Cb"/>
+                    <constraint firstAttribute="trailing" secondItem="xEJ-On-UkL" secondAttribute="trailing" constant="8" id="tO1-Dx-NNv"/>
+                    <constraint firstItem="WK3-iq-8fM" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="v78-Th-B7z"/>
+                    <constraint firstItem="xEJ-On-UkL" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="w76-Qd-1Hy"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" systemColor="opaqueSeparatorColor" red="0.77647058820000003" green="0.77647058820000003" blue="0.7843137255" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <connections>
+                <outlet property="connectedBy" destination="WK3-iq-8fM" id="FtD-1E-nlC"/>
+                <outlet property="headsetName" destination="Eop-Yf-Hal" id="qsu-i3-hqy"/>
+                <outlet property="status" destination="xEJ-On-UkL" id="suT-mn-GAB"/>
+            </connections>
+            <point key="canvasLocation" x="186.23188405797103" y="130.58035714285714"/>
+        </tableViewCell>
+    </objects>
+</document>

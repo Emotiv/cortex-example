@@ -2,7 +2,7 @@
 //  HeadsetFinder.swift
 //  CortexV2-Example-Swift
 //
-//  Created by nvtu on 2/21/20.
+//  Created by Emotiv Inc on 2/21/20.
 //  Copyright © 2020 Emotiv. All rights reserved.
 //
 
@@ -13,7 +13,7 @@ class HeadsetFinder {
     private var client = CortexClient.sharedInstance
     private var timer: Timer!
     
-    var onHeadsetFound: ((Headset) -> Void)!
+    var onHeadsetFound: ((Headset, [Headset]) -> Void)!
     
     init() {
         handleCortexEvent()
@@ -41,7 +41,7 @@ class HeadsetFinder {
             if headset.status == "connected" {
                 if weakSelf.onHeadsetFound != nil {
                     weakSelf.timer.invalidate()
-                    weakSelf.onHeadsetFound!(headset)
+                    weakSelf.onHeadsetFound!(headset, headsets)
                 }
             }
         }

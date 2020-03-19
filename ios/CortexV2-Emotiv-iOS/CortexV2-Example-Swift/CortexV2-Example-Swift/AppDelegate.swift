@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  CortexV2-Example-Swift
 //
-//  Created by nvtu on 2/21/20.
+//  Created by Emotiv Inc on 2/21/20.
 //  Copyright © 2020 Emotiv. All rights reserved.
 //
 
@@ -20,12 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             let nsDictionary = NSDictionary(contentsOfFile: path)
             let stream = nsDictionary!["STREAM_NAME"] as? String ?? ""
             
-            var view = DataStreamViewController()
-            if stream == "facialExpression" || stream == "mentalCommand" {
-                view = TrainingViewController()
-            } else if stream == "marker" {
-                view = MarkerViewController()
-            }
+            let view = DataStreamViewController()
             view.stream = stream
             
             if stream == "eeg" || stream == "marker" {
@@ -34,11 +29,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 NSLog("Reminder: to subscribe to the EEG data stream, you must get an appropriate licence from Emotiv.")
                 NSLog("#####")
                 NSLog("#")
-                view.stream = "eeg"
                 view.license = "" // you can put your license id here
                 view.activateSession = true
             }
             self.window?.rootViewController = view
+            self.window!.backgroundColor = UIColor.white
+
+            self.window!.makeKeyAndVisible()
         }
         return true
     }

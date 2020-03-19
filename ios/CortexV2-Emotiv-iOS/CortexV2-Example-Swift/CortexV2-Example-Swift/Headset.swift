@@ -2,7 +2,7 @@
 //  Headset.swift
 //  CortexV2-Example-Swift
 //
-//  Created by nvtu on 2/21/20.
+//  Created by Emotiv Inc on 2/21/20.
 //  Copyright © 2020 Emotiv. All rights reserved.
 //
 
