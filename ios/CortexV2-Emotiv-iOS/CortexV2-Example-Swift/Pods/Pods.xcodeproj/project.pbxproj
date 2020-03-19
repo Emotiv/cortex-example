@@ -7,20 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00B8E265221EE51CA694453A5FC59E65 /* SSLClientCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48F7922C44A3645750BD18CCCF671B0 /* SSLClientCertificate.swift */; };
-		0230C98D032A031F4295EF67DE735357 /* SSLSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F921BA6434A655F9C82F0F81BE47A /* SSLSecurity.swift */; };
-		059801D6468386EAF67BC4FE1733B9B8 /* Starscream-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 01FB5DEA2CF4E44263A62924A53A069E /* Starscream-dummy.m */; };
-		14A538F6D28BDB84ECB911F9D4AD7654 /* Compression.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA2E057170ECA65E2F05A5B595252784 /* Compression.swift */; };
-		170C370232FBC5C179A1A7C2BC140874 /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9AA0D25BD7BD2C495D776FC8B846DC /* WebSocket.swift */; };
-		258568FFD1E4871D45D43D25B288A0C9 /* Starscream-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F7A2315DC555AEF64DA8D50B51DA7F1 /* Starscream-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		27FB0F64A33F96E899338DB58BBDF86E /* Pods-CortexV2-Example-Swift-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 5C531A9FAB1C107B7D4EF08E42FE1F10 /* Pods-CortexV2-Example-Swift-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		AE7C9E7F5215CC2830A0C9A792504005 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
-		C6E59622C339E317AD9A51CFF2CAF716 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
-		E61ABAAC18C627AC7DE1BC97C7454DE4 /* Pods-CortexV2-Example-Swift-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 809E053141BFB8E91F20C853D8B1B21B /* Pods-CortexV2-Example-Swift-dummy.m */; };
+		59EF4604B3A2F75448E676478605E180 /* Starscream-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 01FB5DEA2CF4E44263A62924A53A069E /* Starscream-dummy.m */; };
+		815BE4111CA103A5EB01BBE6093DD1E0 /* SSLSecurity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F921BA6434A655F9C82F0F81BE47A /* SSLSecurity.swift */; };
+		8C75A6505B477BD0C8698F0583A3E201 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
+		92B201CD99A9733EC3848352B6BA61E0 /* Compression.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA2E057170ECA65E2F05A5B595252784 /* Compression.swift */; };
+		9A4425F6511628342D7649A4498DDA6B /* WebSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B9AA0D25BD7BD2C495D776FC8B846DC /* WebSocket.swift */; };
+		AFEE422709F7DFAE3CFD9FC58C09CBBB /* SSLClientCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E48F7922C44A3645750BD18CCCF671B0 /* SSLClientCertificate.swift */; };
+		BFE61A6BBE46EF7682F4CF2D4A6BA935 /* Pods-CortexV2-Example-Swift-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 8B27A8DD2E7EE0AD62E1E01D09572A64 /* Pods-CortexV2-Example-Swift-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		DC96EA4073F19A879015FC17CC108592 /* Pods-CortexV2-Example-Swift-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A3D2D6200A7D89138C358F56FDD231 /* Pods-CortexV2-Example-Swift-dummy.m */; };
+		EABA6CC5187FE75AD91D7FBB403690E0 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */; };
+		EDAA8819BC7A193119E4BDE0B01142EC /* Starscream-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 7F7A2315DC555AEF64DA8D50B51DA7F1 /* Starscream-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		F5E416DFC52B2BCD389F97DE927BB649 /* PBXContainerItemProxy */ = {
+		476EB51052723549C2353E1F11456C88 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = BFDFE7DC352907FC980B868725387E98 /* Project object */;
 			proxyType = 1;
@@ -31,93 +31,60 @@
 
 /* Begin PBXFileReference section */
 		01FB5DEA2CF4E44263A62924A53A069E /* Starscream-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Starscream-dummy.m"; sourceTree = "<group>"; };
-		0836ED223B8662FDCBDF8C921633E365 /* Pods-CortexV2-Example-Swift.motion.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.motion.xcconfig"; sourceTree = "<group>"; };
-		15F6CCCEEF5117CC2BF6C51A4A8D942E /* Pods-CortexV2-Example-Swift.facialexpressiontraining.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.facialexpressiontraining.xcconfig"; sourceTree = "<group>"; };
-		1EE04178BEAEAB9EA48106802DE48C5B /* Pods-CortexV2-Example-Swift.mentalcommand.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.mentalcommand.xcconfig"; sourceTree = "<group>"; };
+		162F69283B63945CCBFCE3A2853D9A7B /* Pods-CortexV2-Example-Swift.mentalcommand.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.mentalcommand.xcconfig"; sourceTree = "<group>"; };
+		1CC368E94E38E5F3A0595885E89703B1 /* Pods-CortexV2-Example-Swift.eeg.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.eeg.xcconfig"; sourceTree = "<group>"; };
+		2108103F46C1F48A2EFE26FAE95407AA /* Pods-CortexV2-Example-Swift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.debug.xcconfig"; sourceTree = "<group>"; };
+		299DF4FC24FC1331EE768394B9EE4589 /* Pods-CortexV2-Example-Swift-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-CortexV2-Example-Swift-acknowledgements.markdown"; sourceTree = "<group>"; };
 		2EF130DB1D020533A3D8DDE0CB985BD3 /* Starscream.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = Starscream.modulemap; sourceTree = "<group>"; };
 		3212113385A8FBBDB272BD23C409FF61 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
-		343F4FF512747404956D706875F1E8AE /* Pods-CortexV2-Example-Swift-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-CortexV2-Example-Swift-frameworks.sh"; sourceTree = "<group>"; };
-		356E084ABAA18B2805DD922D495A4276 /* Pods-CortexV2-Example-Swift.facialexpression.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.facialexpression.xcconfig"; sourceTree = "<group>"; };
-		38CEDCA00FB5FE33817E60EE6978CD9B /* Pods-CortexV2-Example-Swift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.debug.xcconfig"; sourceTree = "<group>"; };
 		3B9AA0D25BD7BD2C495D776FC8B846DC /* WebSocket.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WebSocket.swift; path = Sources/Starscream/WebSocket.swift; sourceTree = "<group>"; };
 		3DCEA6169B33E34F1E6E7128F65DC025 /* Starscream-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Starscream-prefix.pch"; sourceTree = "<group>"; };
+		3DE78271D35F2840DCE0CB870294A031 /* Pods-CortexV2-Example-Swift.facialexpression.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.facialexpression.xcconfig"; sourceTree = "<group>"; };
 		407332FF322E6C6DE7C85CFCBC7461E0 /* Pods_CortexV2_Example_Swift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Pods_CortexV2_Example_Swift.framework; path = "Pods-CortexV2-Example-Swift.framework"; sourceTree = BUILT_PRODUCTS_DIR; };
+		42640618AE20A318BCED3BE1737B17C9 /* Pods-CortexV2-Example-Swift.facialexpressiontraining.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.facialexpressiontraining.xcconfig"; sourceTree = "<group>"; };
 		44E219F4030CE498CF0D43505F1973F7 /* Starscream-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Starscream-Info.plist"; sourceTree = "<group>"; };
-		4A92E3A8BABC34490462F0A8B9F79726 /* Pods-CortexV2-Example-Swift-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-CortexV2-Example-Swift-acknowledgements.markdown"; sourceTree = "<group>"; };
-		50D6ABFDA8AC0468D761AE071BEF1A02 /* Pods-CortexV2-Example-Swift.mentalcommandtraining.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.mentalcommandtraining.xcconfig"; sourceTree = "<group>"; };
-		5C531A9FAB1C107B7D4EF08E42FE1F10 /* Pods-CortexV2-Example-Swift-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-CortexV2-Example-Swift-umbrella.h"; sourceTree = "<group>"; };
+		4799342BA8B9BFDB9390224D00DC8D89 /* Pods-CortexV2-Example-Swift.authorize.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.authorize.xcconfig"; sourceTree = "<group>"; };
+		55D59A1BF021D3892D46B56C040AE0E4 /* Pods-CortexV2-Example-Swift.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-CortexV2-Example-Swift.modulemap"; sourceTree = "<group>"; };
+		61736FAB6A9FACC503DA489B4E411EDC /* Pods-CortexV2-Example-Swift-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-CortexV2-Example-Swift-acknowledgements.plist"; sourceTree = "<group>"; };
+		62881CBA65C88D7386D9DAB0D3926D79 /* Pods-CortexV2-Example-Swift.motion.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.motion.xcconfig"; sourceTree = "<group>"; };
+		63A3D2D6200A7D89138C358F56FDD231 /* Pods-CortexV2-Example-Swift-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-CortexV2-Example-Swift-dummy.m"; sourceTree = "<group>"; };
 		64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Starscream.xcconfig; sourceTree = "<group>"; };
-		7C43AF4BC51CEC48CA4B80391302C267 /* Pods-CortexV2-Example-Swift.marker.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.marker.xcconfig"; sourceTree = "<group>"; };
 		7F7A2315DC555AEF64DA8D50B51DA7F1 /* Starscream-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Starscream-umbrella.h"; sourceTree = "<group>"; };
-		809E053141BFB8E91F20C853D8B1B21B /* Pods-CortexV2-Example-Swift-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-CortexV2-Example-Swift-dummy.m"; sourceTree = "<group>"; };
 		891B2270823847ED23F2ECFC28F935EC /* Starscream.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; name = Starscream.framework; path = Starscream.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8B27A8DD2E7EE0AD62E1E01D09572A64 /* Pods-CortexV2-Example-Swift-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-CortexV2-Example-Swift-umbrella.h"; sourceTree = "<group>"; };
+		8E4530F2D08A4083C20E43B71CFA068A /* Pods-CortexV2-Example-Swift.marker.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.marker.xcconfig"; sourceTree = "<group>"; };
+		9211346F1361AC090B5212C7954E8D48 /* Pods-CortexV2-Example-Swift.bandpower.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.bandpower.xcconfig"; sourceTree = "<group>"; };
 		9D940727FF8FB9C785EB98E56350EF41 /* Podfile */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		9DAD57618B26A4C7C52E949781C80756 /* Pods-CortexV2-Example-Swift.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-CortexV2-Example-Swift.modulemap"; sourceTree = "<group>"; };
-		A1A9545D6ACD8C9BDC0435DEB4A2D699 /* Pods-CortexV2-Example-Swift-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-CortexV2-Example-Swift-acknowledgements.plist"; sourceTree = "<group>"; };
-		A8EB3899877CD9857079DF5F57B93FB7 /* Pods-CortexV2-Example-Swift.eeg.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.eeg.xcconfig"; sourceTree = "<group>"; };
-		AD2C45F2D37F3C1242FDB4DC465A6D05 /* Pods-CortexV2-Example-Swift-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-CortexV2-Example-Swift-Info.plist"; sourceTree = "<group>"; };
 		BA2E057170ECA65E2F05A5B595252784 /* Compression.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Compression.swift; path = Sources/Starscream/Compression.swift; sourceTree = "<group>"; };
-		BC72A011F136ABCE7E6011B8D016F090 /* Pods-CortexV2-Example-Swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.release.xcconfig"; sourceTree = "<group>"; };
-		C08E15A0B379FF2023B2129E42A85429 /* Pods-CortexV2-Example-Swift.performancemetric.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.performancemetric.xcconfig"; sourceTree = "<group>"; };
+		CCBB8A3B9318A25188305336C9EEBE82 /* Pods-CortexV2-Example-Swift.mentalcommandtraining.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.mentalcommandtraining.xcconfig"; sourceTree = "<group>"; };
 		D59F921BA6434A655F9C82F0F81BE47A /* SSLSecurity.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SSLSecurity.swift; path = Sources/Starscream/SSLSecurity.swift; sourceTree = "<group>"; };
-		E079CC2CC506D5F48330ED216F3DB7A0 /* Pods-CortexV2-Example-Swift.bandpower.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.bandpower.xcconfig"; sourceTree = "<group>"; };
+		D7C9B42B91ECC98DEF738FCD6BDC376D /* Pods-CortexV2-Example-Swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.release.xcconfig"; sourceTree = "<group>"; };
 		E48F7922C44A3645750BD18CCCF671B0 /* SSLClientCertificate.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SSLClientCertificate.swift; path = Sources/Starscream/SSLClientCertificate.swift; sourceTree = "<group>"; };
+		E9699ADC781DDF6B29FAC0183A97E287 /* Pods-CortexV2-Example-Swift-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-CortexV2-Example-Swift-Info.plist"; sourceTree = "<group>"; };
+		F4BF29666FFF6FF5FB01632D3D76DFEF /* Pods-CortexV2-Example-Swift.performancemetric.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-CortexV2-Example-Swift.performancemetric.xcconfig"; sourceTree = "<group>"; };
+		F8F1B9939C40537EDDDD93FC74277EE2 /* Pods-CortexV2-Example-Swift-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-CortexV2-Example-Swift-frameworks.sh"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		2325995F33C212264BD3B13AFA8F863D /* Frameworks */ = {
+		724894E4674176B04C09ACACE92EFF17 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AE7C9E7F5215CC2830A0C9A792504005 /* Foundation.framework in Frameworks */,
+				8C75A6505B477BD0C8698F0583A3E201 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		35D816E5C4599D8743446DF4F13B905F /* Frameworks */ = {
+		7B62F192AEE882C3F972762CD6A291F5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C6E59622C339E317AD9A51CFF2CAF716 /* Foundation.framework in Frameworks */,
+				EABA6CC5187FE75AD91D7FBB403690E0 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0F6A95CF015811C287077B23DD38F058 /* Targets Support Files */ = {
-			isa = PBXGroup;
-			children = (
-				691AA91745947CBEAE601B66B3940113 /* Pods-CortexV2-Example-Swift */,
-			);
-			name = "Targets Support Files";
-			sourceTree = "<group>";
-		};
-		691AA91745947CBEAE601B66B3940113 /* Pods-CortexV2-Example-Swift */ = {
-			isa = PBXGroup;
-			children = (
-				9DAD57618B26A4C7C52E949781C80756 /* Pods-CortexV2-Example-Swift.modulemap */,
-				4A92E3A8BABC34490462F0A8B9F79726 /* Pods-CortexV2-Example-Swift-acknowledgements.markdown */,
-				A1A9545D6ACD8C9BDC0435DEB4A2D699 /* Pods-CortexV2-Example-Swift-acknowledgements.plist */,
-				809E053141BFB8E91F20C853D8B1B21B /* Pods-CortexV2-Example-Swift-dummy.m */,
-				343F4FF512747404956D706875F1E8AE /* Pods-CortexV2-Example-Swift-frameworks.sh */,
-				AD2C45F2D37F3C1242FDB4DC465A6D05 /* Pods-CortexV2-Example-Swift-Info.plist */,
-				5C531A9FAB1C107B7D4EF08E42FE1F10 /* Pods-CortexV2-Example-Swift-umbrella.h */,
-				E079CC2CC506D5F48330ED216F3DB7A0 /* Pods-CortexV2-Example-Swift.bandpower.xcconfig */,
-				38CEDCA00FB5FE33817E60EE6978CD9B /* Pods-CortexV2-Example-Swift.debug.xcconfig */,
-				A8EB3899877CD9857079DF5F57B93FB7 /* Pods-CortexV2-Example-Swift.eeg.xcconfig */,
-				356E084ABAA18B2805DD922D495A4276 /* Pods-CortexV2-Example-Swift.facialexpression.xcconfig */,
-				15F6CCCEEF5117CC2BF6C51A4A8D942E /* Pods-CortexV2-Example-Swift.facialexpressiontraining.xcconfig */,
-				7C43AF4BC51CEC48CA4B80391302C267 /* Pods-CortexV2-Example-Swift.marker.xcconfig */,
-				1EE04178BEAEAB9EA48106802DE48C5B /* Pods-CortexV2-Example-Swift.mentalcommand.xcconfig */,
-				50D6ABFDA8AC0468D761AE071BEF1A02 /* Pods-CortexV2-Example-Swift.mentalcommandtraining.xcconfig */,
-				0836ED223B8662FDCBDF8C921633E365 /* Pods-CortexV2-Example-Swift.motion.xcconfig */,
-				C08E15A0B379FF2023B2129E42A85429 /* Pods-CortexV2-Example-Swift.performancemetric.xcconfig */,
-				BC72A011F136ABCE7E6011B8D016F090 /* Pods-CortexV2-Example-Swift.release.xcconfig */,
-			);
-			name = "Pods-CortexV2-Example-Swift";
-			path = "Target Support Files/Pods-CortexV2-Example-Swift";
-			sourceTree = "<group>";
-		};
 		74B354FEE42AB825E96690DF7F109CC3 /* Starscream */ = {
 			isa = PBXGroup;
 			children = (
@@ -137,6 +104,14 @@
 				74B354FEE42AB825E96690DF7F109CC3 /* Starscream */,
 			);
 			name = Pods;
+			sourceTree = "<group>";
+		};
+		9E4C33898450669BB36D27C72B7DE666 /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				D227B5B987B4CF53A277550D3FDB9555 /* Pods-CortexV2-Example-Swift */,
+			);
+			name = "Targets Support Files";
 			sourceTree = "<group>";
 		};
 		C0834CEBB1379A84116EF29F93051C60 /* iOS */ = {
@@ -163,7 +138,7 @@
 				D210D550F4EA176C3123ED886F8F87F5 /* Frameworks */,
 				97C5288770E1953BDB40F8F908E40D46 /* Pods */,
 				C13A1CB1AA21EB6524E5207502DCEE78 /* Products */,
-				0F6A95CF015811C287077B23DD38F058 /* Targets Support Files */,
+				9E4C33898450669BB36D27C72B7DE666 /* Targets Support Files */,
 			);
 			sourceTree = "<group>";
 		};
@@ -173,6 +148,33 @@
 				C0834CEBB1379A84116EF29F93051C60 /* iOS */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D227B5B987B4CF53A277550D3FDB9555 /* Pods-CortexV2-Example-Swift */ = {
+			isa = PBXGroup;
+			children = (
+				55D59A1BF021D3892D46B56C040AE0E4 /* Pods-CortexV2-Example-Swift.modulemap */,
+				299DF4FC24FC1331EE768394B9EE4589 /* Pods-CortexV2-Example-Swift-acknowledgements.markdown */,
+				61736FAB6A9FACC503DA489B4E411EDC /* Pods-CortexV2-Example-Swift-acknowledgements.plist */,
+				63A3D2D6200A7D89138C358F56FDD231 /* Pods-CortexV2-Example-Swift-dummy.m */,
+				F8F1B9939C40537EDDDD93FC74277EE2 /* Pods-CortexV2-Example-Swift-frameworks.sh */,
+				E9699ADC781DDF6B29FAC0183A97E287 /* Pods-CortexV2-Example-Swift-Info.plist */,
+				8B27A8DD2E7EE0AD62E1E01D09572A64 /* Pods-CortexV2-Example-Swift-umbrella.h */,
+				4799342BA8B9BFDB9390224D00DC8D89 /* Pods-CortexV2-Example-Swift.authorize.xcconfig */,
+				9211346F1361AC090B5212C7954E8D48 /* Pods-CortexV2-Example-Swift.bandpower.xcconfig */,
+				2108103F46C1F48A2EFE26FAE95407AA /* Pods-CortexV2-Example-Swift.debug.xcconfig */,
+				1CC368E94E38E5F3A0595885E89703B1 /* Pods-CortexV2-Example-Swift.eeg.xcconfig */,
+				3DE78271D35F2840DCE0CB870294A031 /* Pods-CortexV2-Example-Swift.facialexpression.xcconfig */,
+				42640618AE20A318BCED3BE1737B17C9 /* Pods-CortexV2-Example-Swift.facialexpressiontraining.xcconfig */,
+				8E4530F2D08A4083C20E43B71CFA068A /* Pods-CortexV2-Example-Swift.marker.xcconfig */,
+				162F69283B63945CCBFCE3A2853D9A7B /* Pods-CortexV2-Example-Swift.mentalcommand.xcconfig */,
+				CCBB8A3B9318A25188305336C9EEBE82 /* Pods-CortexV2-Example-Swift.mentalcommandtraining.xcconfig */,
+				62881CBA65C88D7386D9DAB0D3926D79 /* Pods-CortexV2-Example-Swift.motion.xcconfig */,
+				F4BF29666FFF6FF5FB01632D3D76DFEF /* Pods-CortexV2-Example-Swift.performancemetric.xcconfig */,
+				D7C9B42B91ECC98DEF738FCD6BDC376D /* Pods-CortexV2-Example-Swift.release.xcconfig */,
+			);
+			name = "Pods-CortexV2-Example-Swift";
+			path = "Target Support Files/Pods-CortexV2-Example-Swift";
 			sourceTree = "<group>";
 		};
 		E1C262BC966EEAEBD1297175B34EF373 /* Support Files */ = {
@@ -192,19 +194,19 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		AAB795F0B3F99B4370B3B89FF622C749 /* Headers */ = {
+		5BEB4D9690CCF4ACAED2ECDF7C3EA4C6 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				258568FFD1E4871D45D43D25B288A0C9 /* Starscream-umbrella.h in Headers */,
+				BFE61A6BBE46EF7682F4CF2D4A6BA935 /* Pods-CortexV2-Example-Swift-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		C5E1A453AC871F8389834BCB1A752C55 /* Headers */ = {
+		F89648B977DBAF7A500375C2FAF7E8A4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				27FB0F64A33F96E899338DB58BBDF86E /* Pods-CortexV2-Example-Swift-umbrella.h in Headers */,
+				EDAA8819BC7A193119E4BDE0B01142EC /* Starscream-umbrella.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -213,12 +215,12 @@
 /* Begin PBXNativeTarget section */
 		9B78EE4AF6AE03E79D88886319853FF7 /* Starscream */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = BE243754182FD66E05FDFC435CFCB495 /* Build configuration list for PBXNativeTarget "Starscream" */;
+			buildConfigurationList = 4E0250DB320D4E385BB8F633992EB703 /* Build configuration list for PBXNativeTarget "Starscream" */;
 			buildPhases = (
-				AAB795F0B3F99B4370B3B89FF622C749 /* Headers */,
-				1442A4B1A258056BC05331A52A8BCF25 /* Sources */,
-				2325995F33C212264BD3B13AFA8F863D /* Frameworks */,
-				B5C628E207BA492D4D7EE77DB0195E0C /* Resources */,
+				F89648B977DBAF7A500375C2FAF7E8A4 /* Headers */,
+				4DB3DCA6338C1B7D9E8C9D51E5C418F1 /* Sources */,
+				7B62F192AEE882C3F972762CD6A291F5 /* Frameworks */,
+				564B69BD4EFA3C4A305A7BB41AA18AEA /* Resources */,
 			);
 			buildRules = (
 			);
@@ -231,17 +233,17 @@
 		};
 		C433A8F2CD27D6D6653F688E5B82E456 /* Pods-CortexV2-Example-Swift */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 334406D087EAD2EBDCD4A4F6204741BE /* Build configuration list for PBXNativeTarget "Pods-CortexV2-Example-Swift" */;
+			buildConfigurationList = 3762DCDAA3060231CC6559E8CFAD275E /* Build configuration list for PBXNativeTarget "Pods-CortexV2-Example-Swift" */;
 			buildPhases = (
-				C5E1A453AC871F8389834BCB1A752C55 /* Headers */,
-				7DE42F88E1F45F079A4C7981A573365B /* Sources */,
-				35D816E5C4599D8743446DF4F13B905F /* Frameworks */,
-				0D3C7C155DE2E806C0EEE7AB06A425A2 /* Resources */,
+				5BEB4D9690CCF4ACAED2ECDF7C3EA4C6 /* Headers */,
+				B4E70B0CF0A968AD7C3968DC2EE3555F /* Sources */,
+				724894E4674176B04C09ACACE92EFF17 /* Frameworks */,
+				B4E9286C0660F6A0D0CFFAE6112A6CEA /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				59144B6ECF00F01F94DA2E3494500D36 /* PBXTargetDependency */,
+				6A6BF0460BD1B79D7EDA8F2BC33D57D8 /* PBXTargetDependency */,
 			);
 			name = "Pods-CortexV2-Example-Swift";
 			productName = "Pods-CortexV2-Example-Swift";
@@ -263,6 +265,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
 			productRefGroup = C13A1CB1AA21EB6524E5207502DCEE78 /* Products */;
@@ -276,14 +279,14 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		0D3C7C155DE2E806C0EEE7AB06A425A2 /* Resources */ = {
+		564B69BD4EFA3C4A305A7BB41AA18AEA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		B5C628E207BA492D4D7EE77DB0195E0C /* Resources */ = {
+		B4E9286C0660F6A0D0CFFAE6112A6CEA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -293,39 +296,78 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1442A4B1A258056BC05331A52A8BCF25 /* Sources */ = {
+		4DB3DCA6338C1B7D9E8C9D51E5C418F1 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				14A538F6D28BDB84ECB911F9D4AD7654 /* Compression.swift in Sources */,
-				00B8E265221EE51CA694453A5FC59E65 /* SSLClientCertificate.swift in Sources */,
-				0230C98D032A031F4295EF67DE735357 /* SSLSecurity.swift in Sources */,
-				059801D6468386EAF67BC4FE1733B9B8 /* Starscream-dummy.m in Sources */,
-				170C370232FBC5C179A1A7C2BC140874 /* WebSocket.swift in Sources */,
+				92B201CD99A9733EC3848352B6BA61E0 /* Compression.swift in Sources */,
+				AFEE422709F7DFAE3CFD9FC58C09CBBB /* SSLClientCertificate.swift in Sources */,
+				815BE4111CA103A5EB01BBE6093DD1E0 /* SSLSecurity.swift in Sources */,
+				59EF4604B3A2F75448E676478605E180 /* Starscream-dummy.m in Sources */,
+				9A4425F6511628342D7649A4498DDA6B /* WebSocket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7DE42F88E1F45F079A4C7981A573365B /* Sources */ = {
+		B4E70B0CF0A968AD7C3968DC2EE3555F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E61ABAAC18C627AC7DE1BC97C7454DE4 /* Pods-CortexV2-Example-Swift-dummy.m in Sources */,
+				DC96EA4073F19A879015FC17CC108592 /* Pods-CortexV2-Example-Swift-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		59144B6ECF00F01F94DA2E3494500D36 /* PBXTargetDependency */ = {
+		6A6BF0460BD1B79D7EDA8F2BC33D57D8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Starscream;
 			target = 9B78EE4AF6AE03E79D88886319853FF7 /* Starscream */;
-			targetProxy = F5E416DFC52B2BCD389F97DE927BB649 /* PBXContainerItemProxy */;
+			targetProxy = 476EB51052723549C2353E1F11456C88 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		00810F2F17858941E9E4239858159060 /* MentalCommand */ = {
+		0287F03F7E3FEF10C88EF185BB40138D /* MentalCommand */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 162F69283B63945CCBFCE3A2853D9A7B /* Pods-CortexV2-Example-Swift.mentalcommand.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = MentalCommand;
+		};
+		0AE8F0893935D5AB4D3D43384B417C1C /* FacialExpressionTraining */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
 			buildSettings = {
@@ -359,14 +401,12 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = MentalCommand;
+			name = FacialExpressionTraining;
 		};
-		0463720519241CE3217CB206B334C4DF /* BandPower */ = {
+		0AEBC2E971C7DC85039444715185301E /* PerformanceMetric */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E079CC2CC506D5F48330ED216F3DB7A0 /* Pods-CortexV2-Example-Swift.bandpower.xcconfig */;
+			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -376,146 +416,28 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
+				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
+				PRODUCT_MODULE_NAME = Starscream;
+				PRODUCT_NAME = Starscream;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = BandPower;
-		};
-		08C93E9D815BB079A0F42CC0A65C222C /* Marker */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7C43AF4BC51CEC48CA4B80391302C267 /* Pods-CortexV2-Example-Swift.marker.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Marker;
-		};
-		0AB0E4D59C9B586DB345E57BC31CD892 /* EEG */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = A8EB3899877CD9857079DF5F57B93FB7 /* Pods-CortexV2-Example-Swift.eeg.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = EEG;
-		};
-		0E3E73943F7BB26242F6AE64B08D87F7 /* MentalCommandTraining */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 50D6ABFDA8AC0468D761AE071BEF1A02 /* Pods-CortexV2-Example-Swift.mentalcommandtraining.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = MentalCommandTraining;
+			name = PerformanceMetric;
 		};
 		11A225F69055B5C37A1D89E72E19DD38 /* Motion */ = {
 			isa = XCBuildConfiguration;
@@ -577,12 +499,10 @@
 			};
 			name = Motion;
 		};
-		241D6C85B59BF3936FA75F81BB2B8A87 /* MentalCommand */ = {
+		15FD53AD81BE2329E0AEBCE6FD78D4BA /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1EE04178BEAEAB9EA48106802DE48C5B /* Pods-CortexV2-Example-Swift.mentalcommand.xcconfig */;
+			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -592,29 +512,28 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
+				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
+				PRODUCT_MODULE_NAME = Starscream;
+				PRODUCT_NAME = Starscream;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = MentalCommand;
+			name = Release;
 		};
 		257497152829C177993B5EC99C1D227A /* Release */ = {
 			isa = XCBuildConfiguration;
@@ -736,9 +655,81 @@
 			};
 			name = Marker;
 		};
-		31DF7F22739ED444E0ACA9F2A2C0C167 /* PerformanceMetric */ = {
+		31E36CAD4AF26783BDD715E13B5AECE9 /* Authorize */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C08E15A0B379FF2023B2129E42A85429 /* Pods-CortexV2-Example-Swift.performancemetric.xcconfig */;
+			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
+				PRODUCT_MODULE_NAME = Starscream;
+				PRODUCT_NAME = Starscream;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Authorize;
+		};
+		34422F905428043E671A9BFD9715A06E /* FacialExpression */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
+				PRODUCT_MODULE_NAME = Starscream;
+				PRODUCT_NAME = Starscream;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = FacialExpression;
+		};
+		36941534B1426287533BCB5B8883047F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D7C9B42B91ECC98DEF738FCD6BDC376D /* Pods-CortexV2-Example-Swift.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -773,9 +764,9 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = PerformanceMetric;
+			name = Release;
 		};
-		35700B16FD75FE9B7141A12A882155AA /* BandPower */ = {
+		3E42C281CDDECF705B7EF0D865F37121 /* EEG */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
 			buildSettings = {
@@ -809,9 +800,9 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = BandPower;
+			name = EEG;
 		};
-		383BCB5A41506D131EB9EFFEE1A20866 /* FacialExpressionTraining */ = {
+		430F41C492545FC395B9E9E3641EC531 /* Marker */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
 			buildSettings = {
@@ -845,7 +836,7 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = FacialExpressionTraining;
+			name = Marker;
 		};
 		481E0685F409416C32986E24B0E6FDB3 /* MentalCommand */ = {
 			isa = XCBuildConfiguration;
@@ -906,6 +897,42 @@
 				SYMROOT = "${SRCROOT}/../build";
 			};
 			name = MentalCommand;
+		};
+		48B105487E6596550B7FA67A31662F4A /* Motion */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
+				PRODUCT_MODULE_NAME = Starscream;
+				PRODUCT_NAME = Starscream;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Motion;
 		};
 		51ECB4FE99912DE792F89C0D1AE730CD /* BandPower */ = {
 			isa = XCBuildConfiguration;
@@ -1027,9 +1054,87 @@
 			};
 			name = FacialExpressionTraining;
 		};
-		57230D7F0A3F8E5F3F99E640E72E0E5C /* Debug */ = {
+		6C6DBF53DAA549E95899538B1C3547ED /* Authorize */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 38CEDCA00FB5FE33817E60EE6978CD9B /* Pods-CortexV2-Example-Swift.debug.xcconfig */;
+			baseConfigurationReference = 4799342BA8B9BFDB9390224D00DC8D89 /* Pods-CortexV2-Example-Swift.authorize.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Authorize;
+		};
+		76EF694670AAFBCA1B86A8252C8CB095 /* MentalCommandTraining */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = CCBB8A3B9318A25188305336C9EEBE82 /* Pods-CortexV2-Example-Swift.mentalcommandtraining.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = MentalCommandTraining;
+		};
+		89EC0F5D480EF4C7817505BE413CC4A6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2108103F46C1F48A2EFE26FAE95407AA /* Pods-CortexV2-Example-Swift.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1065,45 +1170,9 @@
 			};
 			name = Debug;
 		};
-		633321DDCE5A3BDC0BA51C5D1A239348 /* FacialExpression */ = {
+		934708501D745BD0753526EEFF79668D /* Motion */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
-				PRODUCT_MODULE_NAME = Starscream;
-				PRODUCT_NAME = Starscream;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = FacialExpression;
-		};
-		6767B3C16C1E1A961CF98B504A5DDAF5 /* Motion */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0836ED223B8662FDCBDF8C921633E365 /* Pods-CortexV2-Example-Swift.motion.xcconfig */;
+			baseConfigurationReference = 62881CBA65C88D7386D9DAB0D3926D79 /* Pods-CortexV2-Example-Swift.motion.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1139,42 +1208,6 @@
 				VERSION_INFO_PREFIX = "";
 			};
 			name = Motion;
-		};
-		6F868048E6AA47BC7359FF27A8B0A7C8 /* EEG */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
-				PRODUCT_MODULE_NAME = Starscream;
-				PRODUCT_NAME = Starscream;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = EEG;
 		};
 		9DC55D5A1316B1533A537E75C908E345 /* MentalCommandTraining */ = {
 			isa = XCBuildConfiguration;
@@ -1356,10 +1389,12 @@
 			};
 			name = FacialExpression;
 		};
-		A75E8FE5F648BE546FE7845766271CF1 /* PerformanceMetric */ = {
+		A52F3446C49834E362D16EE802BD8E2C /* Marker */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
+			baseConfigurationReference = 8E4530F2D08A4083C20E43B71CFA068A /* Pods-CortexV2-Example-Swift.marker.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_IDENTITY = "";
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1369,58 +1404,23 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
+				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
-				PRODUCT_MODULE_NAME = Starscream;
-				PRODUCT_NAME = Starscream;
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = PerformanceMetric;
-		};
-		AB1A76CB7DF667EA9B27CC34A7F2FB7C /* Marker */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
-				PRODUCT_MODULE_NAME = Starscream;
-				PRODUCT_NAME = Starscream;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -1428,7 +1428,85 @@
 			};
 			name = Marker;
 		};
-		AC99A7E8CF04A4AFDAF9E142E2D444EF /* MentalCommandTraining */ = {
+		AB34937518E99F7E0F6F469666135522 /* FacialExpression */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3DE78271D35F2840DCE0CB870294A031 /* Pods-CortexV2-Example-Swift.facialexpression.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = FacialExpression;
+		};
+		AC94DD791A00E1E24130D00E4774D89B /* BandPower */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9211346F1361AC090B5212C7954E8D48 /* Pods-CortexV2-Example-Swift.bandpower.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = BandPower;
+		};
+		B3714878FBBE34B7C4940A76F7C81C04 /* MentalCommand */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
 			buildSettings = {
@@ -1462,7 +1540,42 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = MentalCommandTraining;
+			name = MentalCommand;
+		};
+		B85E9262068CDF8338B43C5D46D8D0C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
+				PRODUCT_MODULE_NAME = Starscream;
+				PRODUCT_NAME = Starscream;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
 		};
 		B8BC33FA4FF8907A8D0067FD307F6EF0 /* PerformanceMetric */ = {
 			isa = XCBuildConfiguration;
@@ -1524,9 +1637,9 @@
 			};
 			name = PerformanceMetric;
 		};
-		C13A609A7BA08053312BC0AB366FE070 /* Release */ = {
+		B947F6035286CEA90EB33D737A989A26 /* PerformanceMetric */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC72A011F136ABCE7E6011B8D016F090 /* Pods-CortexV2-Example-Swift.release.xcconfig */;
+			baseConfigurationReference = F4BF29666FFF6FF5FB01632D3D76DFEF /* Pods-CortexV2-Example-Swift.performancemetric.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1561,50 +1674,11 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = PerformanceMetric;
 		};
-		D028C1E16327C581A4C61B8B3F6BC975 /* FacialExpression */ = {
+		BCE3FB8C69FF4763A118277D8EBA3729 /* FacialExpressionTraining */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 356E084ABAA18B2805DD922D495A4276 /* Pods-CortexV2-Example-Swift.facialexpression.xcconfig */;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				CLANG_ENABLE_OBJC_WEAK = NO;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MACH_O_TYPE = staticlib;
-				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
-				OTHER_LDFLAGS = "";
-				OTHER_LIBTOOLFLAGS = "";
-				PODS_ROOT = "$(SRCROOT)";
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
-				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = FacialExpression;
-		};
-		D1190DDDC81B2D00AB3DF02248EB4FEE /* FacialExpressionTraining */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 15F6CCCEEF5117CC2BF6C51A4A8D942E /* Pods-CortexV2-Example-Swift.facialexpressiontraining.xcconfig */;
+			baseConfigurationReference = 42640618AE20A318BCED3BE1737B17C9 /* Pods-CortexV2-Example-Swift.facialexpressiontraining.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1641,41 +1715,65 @@
 			};
 			name = FacialExpressionTraining;
 		};
-		D9E742515D25D09706EAC4C4B9C9FEFA /* Motion */ = {
+		BEB32B40787707A6BCC4A8C5E7D84548 /* Authorize */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"POD_CONFIGURATION_AUTHORIZE=1",
 					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
 				);
-				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
-				PRODUCT_MODULE_NAME = Starscream;
-				PRODUCT_NAME = Starscream;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRIP_INSTALLED_PRODUCT = NO;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
+				SYMROOT = "${SRCROOT}/../build";
 			};
-			name = Motion;
+			name = Authorize;
 		};
 		DD8F832993327D1DD8046C3CBCBD97CD /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1741,42 +1839,7 @@
 			};
 			name = Debug;
 		};
-		DE05B07AE6790B52392FE530514E8AFB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
-			buildSettings = {
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
-				CURRENT_PROJECT_VERSION = 1;
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
-				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
-				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = (
-					"$(inherited)",
-					"@executable_path/Frameworks",
-					"@loader_path/Frameworks",
-				);
-				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
-				PRODUCT_MODULE_NAME = Starscream;
-				PRODUCT_NAME = Starscream;
-				SDKROOT = iphoneos;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
-			};
-			name = Debug;
-		};
-		F15376CBA0BAA7768D7DBEC0666D9559 /* Release */ = {
+		E968A495E6A5BFA2BA70B6C0D1111DE2 /* MentalCommandTraining */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
 			buildSettings = {
@@ -1810,25 +1873,101 @@
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
-			name = Release;
+			name = MentalCommandTraining;
+		};
+		EF9BA2D778CE9989F18F2643ED6D6C7D /* EEG */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1CC368E94E38E5F3A0595885E89703B1 /* Pods-CortexV2-Example-Swift.eeg.xcconfig */;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MACH_O_TYPE = staticlib;
+				MODULEMAP_FILE = "Target Support Files/Pods-CortexV2-Example-Swift/Pods-CortexV2-Example-Swift.modulemap";
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = EEG;
+		};
+		F85BC73D2B4CAA917816864F2D7B33C3 /* BandPower */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 64D5E391E11E3D9A03B0ACF80CFBA3B2 /* Starscream.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				"CODE_SIGN_IDENTITY[sdk=watchos*]" = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_PREFIX_HEADER = "Target Support Files/Starscream/Starscream-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/Starscream/Starscream-Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MODULEMAP_FILE = "Target Support Files/Starscream/Starscream.modulemap";
+				PRODUCT_MODULE_NAME = Starscream;
+				PRODUCT_NAME = Starscream;
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) ";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = BandPower;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		334406D087EAD2EBDCD4A4F6204741BE /* Build configuration list for PBXNativeTarget "Pods-CortexV2-Example-Swift" */ = {
+		3762DCDAA3060231CC6559E8CFAD275E /* Build configuration list for PBXNativeTarget "Pods-CortexV2-Example-Swift" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				0463720519241CE3217CB206B334C4DF /* BandPower */,
-				57230D7F0A3F8E5F3F99E640E72E0E5C /* Debug */,
-				0AB0E4D59C9B586DB345E57BC31CD892 /* EEG */,
-				D028C1E16327C581A4C61B8B3F6BC975 /* FacialExpression */,
-				D1190DDDC81B2D00AB3DF02248EB4FEE /* FacialExpressionTraining */,
-				08C93E9D815BB079A0F42CC0A65C222C /* Marker */,
-				241D6C85B59BF3936FA75F81BB2B8A87 /* MentalCommand */,
-				0E3E73943F7BB26242F6AE64B08D87F7 /* MentalCommandTraining */,
-				6767B3C16C1E1A961CF98B504A5DDAF5 /* Motion */,
-				31DF7F22739ED444E0ACA9F2A2C0C167 /* PerformanceMetric */,
-				C13A609A7BA08053312BC0AB366FE070 /* Release */,
+				6C6DBF53DAA549E95899538B1C3547ED /* Authorize */,
+				AC94DD791A00E1E24130D00E4774D89B /* BandPower */,
+				89EC0F5D480EF4C7817505BE413CC4A6 /* Debug */,
+				EF9BA2D778CE9989F18F2643ED6D6C7D /* EEG */,
+				AB34937518E99F7E0F6F469666135522 /* FacialExpression */,
+				BCE3FB8C69FF4763A118277D8EBA3729 /* FacialExpressionTraining */,
+				A52F3446C49834E362D16EE802BD8E2C /* Marker */,
+				0287F03F7E3FEF10C88EF185BB40138D /* MentalCommand */,
+				76EF694670AAFBCA1B86A8252C8CB095 /* MentalCommandTraining */,
+				934708501D745BD0753526EEFF79668D /* Motion */,
+				B947F6035286CEA90EB33D737A989A26 /* PerformanceMetric */,
+				36941534B1426287533BCB5B8883047F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -1836,6 +1975,7 @@
 		4821239608C13582E20E6DA73FD5F1F9 /* Build configuration list for PBXProject "Pods" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
+				BEB32B40787707A6BCC4A8C5E7D84548 /* Authorize */,
 				51ECB4FE99912DE792F89C0D1AE730CD /* BandPower */,
 				DD8F832993327D1DD8046C3CBCBD97CD /* Debug */,
 				9E0D2B6AD8B3EEF6EEE19066A4E11E90 /* EEG */,
@@ -1851,20 +1991,21 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		BE243754182FD66E05FDFC435CFCB495 /* Build configuration list for PBXNativeTarget "Starscream" */ = {
+		4E0250DB320D4E385BB8F633992EB703 /* Build configuration list for PBXNativeTarget "Starscream" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				35700B16FD75FE9B7141A12A882155AA /* BandPower */,
-				DE05B07AE6790B52392FE530514E8AFB /* Debug */,
-				6F868048E6AA47BC7359FF27A8B0A7C8 /* EEG */,
-				633321DDCE5A3BDC0BA51C5D1A239348 /* FacialExpression */,
-				383BCB5A41506D131EB9EFFEE1A20866 /* FacialExpressionTraining */,
-				AB1A76CB7DF667EA9B27CC34A7F2FB7C /* Marker */,
-				00810F2F17858941E9E4239858159060 /* MentalCommand */,
-				AC99A7E8CF04A4AFDAF9E142E2D444EF /* MentalCommandTraining */,
-				D9E742515D25D09706EAC4C4B9C9FEFA /* Motion */,
-				A75E8FE5F648BE546FE7845766271CF1 /* PerformanceMetric */,
-				F15376CBA0BAA7768D7DBEC0666D9559 /* Release */,
+				31E36CAD4AF26783BDD715E13B5AECE9 /* Authorize */,
+				F85BC73D2B4CAA917816864F2D7B33C3 /* BandPower */,
+				B85E9262068CDF8338B43C5D46D8D0C8 /* Debug */,
+				3E42C281CDDECF705B7EF0D865F37121 /* EEG */,
+				34422F905428043E671A9BFD9715A06E /* FacialExpression */,
+				0AE8F0893935D5AB4D3D43384B417C1C /* FacialExpressionTraining */,
+				430F41C492545FC395B9E9E3641EC531 /* Marker */,
+				B3714878FBBE34B7C4940A76F7C81C04 /* MentalCommand */,
+				E968A495E6A5BFA2BA70B6C0D1111DE2 /* MentalCommandTraining */,
+				48B105487E6596550B7FA67A31662F4A /* Motion */,
+				0AEBC2E971C7DC85039444715185301E /* PerformanceMetric */,
+				15FD53AD81BE2329E0AEBCE6FD78D4BA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

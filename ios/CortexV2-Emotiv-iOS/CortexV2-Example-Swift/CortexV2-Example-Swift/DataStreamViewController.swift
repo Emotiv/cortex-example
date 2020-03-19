@@ -294,6 +294,7 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
                     NSLog("Well done! You successfully trained")
                     weakSelf.enableButton(enable: true)
                 }
+                NSLog("\(stream) \(data)")
             }
         } else {
             client.onStreamDataReceived = { (sessionId, stream, time, data) in
