@@ -39,60 +39,6 @@
             <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2vu-7W-LXQ">
-                    <rect key="frame" x="0.0" y="44" width="414" height="818"/>
-                    <subviews>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please make sure you have already connected Emotiv headset from Emotiv app" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Df-C1-reM">
-                            <rect key="frame" x="8" y="50" width="398" height="41"/>
-                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uHr-fO-KOv">
-                            <rect key="frame" x="160.5" y="294" width="93" height="30"/>
-                            <state key="normal" title="getUserLogin"/>
-                            <connections>
-                                <action selector="getUserLogin:" destination="-1" eventType="touchUpInside" id="Jv5-B4-jSY"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mkM-oB-5KS">
-                            <rect key="frame" x="152" y="344" width="110" height="30"/>
-                            <state key="normal" title="hasAccessRight"/>
-                            <connections>
-                                <action selector="hasAccessRight:" destination="-1" eventType="touchUpInside" id="R4z-XC-Xnb"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qcD-Hc-eqM">
-                            <rect key="frame" x="156" y="394" width="102" height="30"/>
-                            <state key="normal" title="requestAccess"/>
-                            <connections>
-                                <action selector="requestAccess:" destination="-1" eventType="touchUpInside" id="RCF-wq-qO9"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WWR-1d-AKy">
-                            <rect key="frame" x="175" y="444" width="64" height="30"/>
-                            <state key="normal" title="authorize"/>
-                            <connections>
-                                <action selector="authorize:" destination="-1" eventType="touchUpInside" id="JcP-An-Kx1"/>
-                            </connections>
-                        </button>
-                    </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                    <constraints>
-                        <constraint firstItem="WWR-1d-AKy" firstAttribute="top" secondItem="qcD-Hc-eqM" secondAttribute="bottom" constant="20" id="0Tg-64-kKY"/>
-                        <constraint firstItem="qcD-Hc-eqM" firstAttribute="centerX" secondItem="2vu-7W-LXQ" secondAttribute="centerX" id="8D0-Pw-XoJ"/>
-                        <constraint firstItem="7Df-C1-reM" firstAttribute="top" secondItem="2vu-7W-LXQ" secondAttribute="top" constant="50" id="FdP-mC-UqX"/>
-                        <constraint firstItem="7Df-C1-reM" firstAttribute="leading" secondItem="2vu-7W-LXQ" secondAttribute="leading" constant="8" id="GIk-Qd-H22"/>
-                        <constraint firstItem="7Df-C1-reM" firstAttribute="centerX" secondItem="2vu-7W-LXQ" secondAttribute="centerX" id="Kkq-dH-87s"/>
-                        <constraint firstItem="WWR-1d-AKy" firstAttribute="centerX" secondItem="2vu-7W-LXQ" secondAttribute="centerX" id="L2z-Yh-ehj"/>
-                        <constraint firstAttribute="trailing" secondItem="7Df-C1-reM" secondAttribute="trailing" constant="8" id="R46-tl-adj"/>
-                        <constraint firstItem="qcD-Hc-eqM" firstAttribute="centerY" secondItem="2vu-7W-LXQ" secondAttribute="centerY" id="UAO-Ef-Srv"/>
-                        <constraint firstItem="qcD-Hc-eqM" firstAttribute="top" secondItem="mkM-oB-5KS" secondAttribute="bottom" constant="20" id="b7L-uk-G0a"/>
-                        <constraint firstItem="mkM-oB-5KS" firstAttribute="top" secondItem="uHr-fO-KOv" secondAttribute="bottom" constant="20" id="mYE-wG-TSe"/>
-                        <constraint firstItem="mkM-oB-5KS" firstAttribute="centerX" secondItem="2vu-7W-LXQ" secondAttribute="centerX" id="xpt-sN-z3K"/>
-                        <constraint firstItem="uHr-fO-KOv" firstAttribute="centerX" secondItem="2vu-7W-LXQ" secondAttribute="centerX" id="y29-uP-4mn"/>
-                    </constraints>
-                </view>
                 <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZuE-r8-YQZ">
                     <rect key="frame" x="0.0" y="44" width="414" height="818"/>
                     <subviews>
@@ -215,20 +161,6 @@
                                         <action selector="unsubscribe:" destination="-1" eventType="touchUpInside" id="zve-y6-sjP"/>
                                     </connections>
                                 </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qH5-EC-tQh">
-                                    <rect key="frame" x="148.5" y="108" width="101" height="30"/>
-                                    <state key="normal" title="getLicenseInfo"/>
-                                    <connections>
-                                        <action selector="getLicenseInfo:" destination="-1" eventType="touchUpInside" id="9qk-aB-YVO"/>
-                                    </connections>
-                                </button>
-                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ugW-49-ILL">
-                                    <rect key="frame" x="132.5" y="158" width="133" height="30"/>
-                                    <state key="normal" title="getUserInformation"/>
-                                    <connections>
-                                        <action selector="getUserInformation:" destination="-1" eventType="touchUpInside" id="UFQ-xp-uGP"/>
-                                    </connections>
-                                </button>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="MYS-Eh-Mun">
                                     <rect key="frame" x="169" y="8" width="60" height="30"/>
                                     <state key="normal" title="subcribe"/>
@@ -241,14 +173,10 @@
                             <constraints>
                                 <constraint firstAttribute="height" constant="200" id="6yp-HP-pTt"/>
                                 <constraint firstItem="MYS-Eh-Mun" firstAttribute="top" secondItem="Byr-CP-iuS" secondAttribute="top" constant="8" id="9W2-Rt-kHJ"/>
-                                <constraint firstItem="ugW-49-ILL" firstAttribute="centerX" secondItem="Byr-CP-iuS" secondAttribute="centerX" id="C9X-5J-0vo"/>
                                 <constraint firstItem="MYS-Eh-Mun" firstAttribute="centerX" secondItem="Byr-CP-iuS" secondAttribute="centerX" id="QGA-Ax-sNn"/>
                                 <constraint firstItem="YzG-dJ-Puu" firstAttribute="top" secondItem="MYS-Eh-Mun" secondAttribute="bottom" constant="20" id="QkR-We-D8Y"/>
                                 <constraint firstItem="YzG-dJ-Puu" firstAttribute="centerX" secondItem="Byr-CP-iuS" secondAttribute="centerX" id="SvO-WK-euJ"/>
-                                <constraint firstItem="ugW-49-ILL" firstAttribute="top" secondItem="qH5-EC-tQh" secondAttribute="bottom" constant="20" id="cAK-t2-GBh"/>
                                 <constraint firstItem="90P-uN-EAS" firstAttribute="centerX" secondItem="Byr-CP-iuS" secondAttribute="centerX" id="fwp-Yf-JPg"/>
-                                <constraint firstItem="qH5-EC-tQh" firstAttribute="centerX" secondItem="Byr-CP-iuS" secondAttribute="centerX" id="jPp-A9-uIf"/>
-                                <constraint firstItem="qH5-EC-tQh" firstAttribute="top" secondItem="YzG-dJ-Puu" secondAttribute="bottom" constant="20" id="jpc-uI-8Fd"/>
                                 <constraint firstItem="90P-uN-EAS" firstAttribute="top" secondItem="Byr-CP-iuS" secondAttribute="top" constant="20" id="vgl-N1-Rhm"/>
                             </constraints>
                         </view>
@@ -283,6 +211,74 @@
                         <constraint firstAttribute="trailing" secondItem="Byr-CP-iuS" secondAttribute="trailing" constant="8" id="sHi-Ce-Kzn"/>
                     </constraints>
                 </view>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2vu-7W-LXQ">
+                    <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                    <subviews>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uHr-fO-KOv">
+                            <rect key="frame" x="160.5" y="294" width="93" height="30"/>
+                            <state key="normal" title="getUserLogin"/>
+                            <connections>
+                                <action selector="getUserLogin:" destination="-1" eventType="touchUpInside" id="Jv5-B4-jSY"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mkM-oB-5KS">
+                            <rect key="frame" x="152" y="344" width="110" height="30"/>
+                            <state key="normal" title="hasAccessRight"/>
+                            <connections>
+                                <action selector="hasAccessRight:" destination="-1" eventType="touchUpInside" id="R4z-XC-Xnb"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qcD-Hc-eqM">
+                            <rect key="frame" x="156" y="394" width="102" height="30"/>
+                            <state key="normal" title="requestAccess"/>
+                            <connections>
+                                <action selector="requestAccess:" destination="-1" eventType="touchUpInside" id="RCF-wq-qO9"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WWR-1d-AKy">
+                            <rect key="frame" x="175" y="444" width="64" height="30"/>
+                            <state key="normal" title="authorize"/>
+                            <connections>
+                                <action selector="authorize:" destination="-1" eventType="touchUpInside" id="JcP-An-Kx1"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ugW-49-ILL">
+                            <rect key="frame" x="140.5" y="494" width="133" height="30"/>
+                            <state key="normal" title="getUserInformation"/>
+                            <connections>
+                                <action selector="getUserInformation:" destination="-1" eventType="touchUpInside" id="UFQ-xp-uGP"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qH5-EC-tQh">
+                            <rect key="frame" x="156.5" y="544" width="101" height="30"/>
+                            <state key="normal" title="getLicenseInfo"/>
+                            <connections>
+                                <action selector="getLicenseInfo:" destination="-1" eventType="touchUpInside" id="9qk-aB-YVO"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstItem="WWR-1d-AKy" firstAttribute="top" secondItem="qcD-Hc-eqM" secondAttribute="bottom" constant="20" id="0Tg-64-kKY"/>
+                        <constraint firstItem="ugW-49-ILL" firstAttribute="centerX" secondItem="2vu-7W-LXQ" secondAttribute="centerX" id="7MG-Em-2kr"/>
+                        <constraint firstItem="qcD-Hc-eqM" firstAttribute="centerX" secondItem="2vu-7W-LXQ" secondAttribute="centerX" id="8D0-Pw-XoJ"/>
+                        <constraint firstItem="qH5-EC-tQh" firstAttribute="top" secondItem="ugW-49-ILL" secondAttribute="bottom" constant="20" id="Hxw-lt-vtl"/>
+                        <constraint firstItem="WWR-1d-AKy" firstAttribute="centerX" secondItem="2vu-7W-LXQ" secondAttribute="centerX" id="L2z-Yh-ehj"/>
+                        <constraint firstItem="qH5-EC-tQh" firstAttribute="centerX" secondItem="2vu-7W-LXQ" secondAttribute="centerX" id="OEr-1T-xYp"/>
+                        <constraint firstItem="qcD-Hc-eqM" firstAttribute="centerY" secondItem="2vu-7W-LXQ" secondAttribute="centerY" id="UAO-Ef-Srv"/>
+                        <constraint firstItem="qcD-Hc-eqM" firstAttribute="top" secondItem="mkM-oB-5KS" secondAttribute="bottom" constant="20" id="b7L-uk-G0a"/>
+                        <constraint firstItem="ugW-49-ILL" firstAttribute="top" secondItem="WWR-1d-AKy" secondAttribute="bottom" constant="20" id="cx9-vL-2xU"/>
+                        <constraint firstItem="mkM-oB-5KS" firstAttribute="top" secondItem="uHr-fO-KOv" secondAttribute="bottom" constant="20" id="mYE-wG-TSe"/>
+                        <constraint firstItem="mkM-oB-5KS" firstAttribute="centerX" secondItem="2vu-7W-LXQ" secondAttribute="centerX" id="xpt-sN-z3K"/>
+                        <constraint firstItem="uHr-fO-KOv" firstAttribute="centerX" secondItem="2vu-7W-LXQ" secondAttribute="centerX" id="y29-uP-4mn"/>
+                    </constraints>
+                </view>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please make sure you have already connected Emotiv headset from Emotiv app" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7Df-C1-reM">
+                    <rect key="frame" x="8" y="811" width="398" height="41"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                    <color key="textColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <nil key="highlightedColor"/>
+                </label>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
@@ -291,6 +287,7 @@
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="2vu-7W-LXQ" secondAttribute="trailing" id="KAQ-OK-tTj"/>
                 <constraint firstItem="vts-vF-dpm" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="O4f-8c-VCw"/>
                 <constraint firstItem="ZuE-r8-YQZ" firstAttribute="bottom" secondItem="vUN-kp-3ea" secondAttribute="bottom" id="TTb-ly-pq3"/>
+                <constraint firstItem="7Df-C1-reM" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="8" id="TYR-Ck-tkI"/>
                 <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="2vu-7W-LXQ" secondAttribute="bottom" id="UDW-R3-iT0"/>
                 <constraint firstItem="ZuE-r8-YQZ" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="Uiv-kD-qN9"/>
                 <constraint firstItem="2vu-7W-LXQ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="Xsa-ZD-y13"/>
@@ -298,6 +295,8 @@
                 <constraint firstItem="2vu-7W-LXQ" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="nTe-42-0Oi"/>
                 <constraint firstItem="ZuE-r8-YQZ" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="oz8-WX-CbG"/>
                 <constraint firstItem="ZuE-r8-YQZ" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="p09-II-na7"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="bottom" secondItem="7Df-C1-reM" secondAttribute="bottom" constant="10" id="qDO-V5-Vg0"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="7Df-C1-reM" secondAttribute="trailing" constant="8" id="y7t-6o-j78"/>
             </constraints>
             <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
             <point key="canvasLocation" x="131.8840579710145" y="153.34821428571428"/>

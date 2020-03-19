@@ -38,7 +38,7 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
     var finder = HeadsetFinder()
     var headset = Headset()
     var headsetList: [Headset] = [Headset]()
-    var activateSession: Bool = true
+    var activateSession: Bool = false
     var license: String = ""
 
     var token: String = ""
@@ -53,7 +53,7 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        handleUI()
+        start()
 
         let headsetTableViewCell = UINib(nibName: cellReuseIdentifier, bundle: nil)
         self.headsetTableView.register(headsetTableViewCell, forCellReuseIdentifier: cellReuseIdentifier)
@@ -63,7 +63,7 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
         handleCortexEvent()
         handleHeadsetEvent()
         handleSessiontEvent()
-        start()
+        handleUI()
     }
     
     @IBAction func getUserLogin(_ sender: Any) {
@@ -188,13 +188,27 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
             markerView.isHidden = false
         }
         
+        if stream != "authorize" {
+            authorizeView.isHidden = true
+            dataView.isHidden = false
+            
+        }
+        
         self.subscribeBtn.setTitle("subcribe " + nameStream, for: UIControl.State.normal)
         self.unsubscribeBtn.setTitle("unsubcribe " + nameStream, for: UIControl.State.normal)
+        Timer.scheduledTimer(withTimeInterval: 60, repeats: false) { [weak self] (timer) in
+            guard let weakSelf = self else { return }
+            weakSelf.warning.isHidden = true
+        }
     }
     
     func handleCortexEvent() {
-        client.onConnected = {
+        client.onConnected = { [weak self] in
+        guard let weakSelf = self else { return }
             NSLog("Connected.")
+            if weakSelf.stream != "authorize" {
+                weakSelf.client.authorize(clientId: ClientId, clientSecret: ClientSecret, license: weakSelf.license, debit: weakSelf.activateSession ? 1 : 0)
+            }
         }
         
         client.onDisconnected = {
@@ -216,13 +230,7 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
         client.onSubscribeOk = { (streams) in
             NSLog("Subscription successful for data streams \(streams)")
         }
-        
-        client.onStreamDataReceived = { (sessionId, stream, time, data) in
-            // a data stream can publish data with a high frequency
-            // we display only a few samples per second
-            NSLog("\(stream) \(data)")
-        }
-        
+
         client.onUnsubscribeOk = { [weak self] (streams) in
             guard let weakSelf = self else { return }
             NSLog("Subscription cancelled for data streams \(streams)")
@@ -245,9 +253,9 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
             guard let weakSelf = self else { return }
             weakSelf.token = token
             NSLog("Authorize successful, token \(token)")
-            weakSelf.finder.findHeadsets()
-            weakSelf.authorizeView.isHidden = true
-            weakSelf.dataView.isHidden = false
+            if weakSelf.stream != "authorize" {
+                weakSelf.finder.findHeadsets()
+            }
         }
         
         client.onSubscribeOk = { [weak self] (streams) in
@@ -272,20 +280,32 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
             NSLog("Training profile created \(profileName)")
         }
         
-        client.onStreamDataReceived = { [weak self] (sessionId, stream, time, data) in
-            guard let weakSelf = self else { return }
-            if weakSelf.isEvent(data: data, event: "Started") {
-                NSLog("")
-                NSLog("Please, focus on the action for a few seconds")
-            } else if weakSelf.isEvent(data: data, event: "Succeeded") {
-                weakSelf.client.training(token: weakSelf.token, sessionId: weakSelf.sessionId, detection: weakSelf.stream, action: weakSelf.action, control: "accept")
-            } else if weakSelf.isEvent(data: data, event: "Failed") {
-                weakSelf.enableButton(enable: true)
-            } else if weakSelf.isEvent(data: data, event: "Completed") {
-                NSLog("Well done! You successfully trained")
-                weakSelf.enableButton(enable: true)
+        if stream == "facialExpression" || stream == "mentalCommand" {
+            client.onStreamDataReceived = { [weak self] (sessionId, stream, time, data) in
+                guard let weakSelf = self else { return }
+                if weakSelf.isEvent(data: data, event: "Started") {
+                    NSLog("")
+                    NSLog("Please, focus on the action for a few seconds")
+                } else if weakSelf.isEvent(data: data, event: "Succeeded") {
+                    weakSelf.client.training(token: weakSelf.token, sessionId: weakSelf.sessionId, detection: weakSelf.stream, action: weakSelf.action, control: "accept")
+                } else if weakSelf.isEvent(data: data, event: "Failed") {
+                    weakSelf.enableButton(enable: true)
+                } else if weakSelf.isEvent(data: data, event: "Completed") {
+                    NSLog("Well done! You successfully trained")
+                    weakSelf.enableButton(enable: true)
+                }
             }
-            
+        } else {
+            client.onStreamDataReceived = { (sessionId, stream, time, data) in
+                // a data stream can publish data with a high frequency
+                // we display only a few samples per second
+                NSLog("\(stream) \(data)")
+            }
+        }
+        
+        client.onTrainingOk = { (msg) in
+            // this signal is not important
+            // instead we need to watch the events from the sys stream
         }
         
         client.onCreateRecordOk = { [weak self] (recordId) in
