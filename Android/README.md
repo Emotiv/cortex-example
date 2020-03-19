@@ -53,11 +53,13 @@ record-marker | [Record](https://emotiv.gitbook.io/cortex-api/records) & [Marker
 eeg / motion / bandpower / facial-expression / mental-command / performance-metrics | [Data Subscription](https://emotiv.gitbook.io/cortex-api/data-subscription)
 facial-expression-training / mental-command-training | [BCI](https://emotiv.gitbook.io/cortex-api/bci) & [Advanced BCI](https://emotiv.gitbook.io/cortex-api/advanced-bci)
 
-- Before running example code, you need to replace values of `CLIENT_ID`, `CLIENT_SECRET` in `cortexclient/src/main/java/com/emotiv/cortexv2example/utils/Constant.java` file with your client id, client secret:
+- Before running example code, you need to replace values of `CLIENT_ID`, `CLIENT_SECRET` with your client id, client secret.
 
+In `cortexclient/src/main/java/com/emotiv/cortexv2example/utils/Constant.java`:
 
-    public final static String CLIENT_ID = "<put your client id here>";
-    public final static String CLIENT_SECRET = "<put your client secret here>";
+    public final static String CLIENT_ID = "your_client_id";
+    public final static String CLIENT_SECRET = "your_client_secret";
+
 
 - Choose the module you want to build and run on Android device. Make sure you accept all permission requests.
 - The module app has a list of buttons demonstrating API calls. Try click on each button, you can see a pair of request/response json strings printed out in Android Studio `logcat`.
