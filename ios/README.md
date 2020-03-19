@@ -46,13 +46,13 @@ authorize |[Authentication](https://emotiv.gitbook.io/cortex-api/authentication)
 headset-session | [Headsets](https://emotiv.gitbook.io/cortex-api/headset) & [Sessions](https://emotiv.gitbook.io/cortex-api/session)
 record-marker | [Record](https://emotiv.gitbook.io/cortex-api/records) & [Markers](https://emotiv.gitbook.io/cortex-api/markers)
 eeg / motion / bandpower / facial-expression mental-command / performance-metrics | [Data Subscription](https://emotiv.gitbook.io/cortex-api/data-subscription)
-facial-expression-training | [BCI](https://emotiv.gitbook.io/cortex-api/bci) & [Advanced BCI](https://emotiv.gitbook.io/cortex-api/advanced-bci)
+facial-expression-training / mental-command-training | [BCI](https://emotiv.gitbook.io/cortex-api/bci) & [Advanced BCI](https://emotiv.gitbook.io/cortex-api/advanced-bci)
 
-- Choose the module you want to build and run on Android device. Make sure you accept all permission requests.
-- The module app has a list of buttons demonstrating an API call. Try click on each button, you can see a pair of request/response json strings printed out in Android Studio `logcat`.
+- Choose the module you want to build and run on iOS device.
+- The module app has a list of buttons demonstrating an API call. Try click on each button, you can see a pair of request/response json strings printed out in console log
 
-## Cortex API for Android
-Although [Cortex API documentation](https://emotiv.gitbook.io/cortex-api/) is only for desktop, you can base on that to develop on Android since most of APIs are the same, except for these below APIs:
+## Cortex API for iOS
+Although [Cortex API documentation](https://emotiv.gitbook.io/cortex-api/) is only for desktop, you can base on that to develop on iOS since most of APIs are the same, except for these below APIs:
 
 APIs | Desktop version | Mobile version
 --------|--------|--------
@@ -62,21 +62,5 @@ APIs | Desktop version | Mobile version
 
 
 ## Cortex security certificates
-Your app must configure a custom Certificate Authorities (CA) to trust Cortex websocket connection. See [Network security configuration on Android](https://developer.android.com/training/articles/security-config). You can also look into `cortexclient` module for example:
-
-In `AndroidManifest.xml`:
-
-    <application
-        ...
-        android:networkSecurityConfig="@xml/network_security_config"
-        ...
-    </application>
-
-In `res/xml/network_security_config.xml`:
-
-    <trust-anchors>
-        <certificates src="@raw/emotivca"/>
-        <certificates src="system"/>
-    </trust-anchors>
-
-You should configure the same on your Android app.
+When open EMOTIV App, it will require you download and install Cortex's certificate. Please follow the instruction in the app and install the certificate correctly.
+If you ignore this step example code will not work with Cortex API.
