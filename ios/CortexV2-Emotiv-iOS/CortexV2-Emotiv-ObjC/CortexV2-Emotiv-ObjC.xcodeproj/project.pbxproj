@@ -7,14 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E957EEB22404C61300C43941 /* SessionCreator.m in Sources */ = {isa = PBXBuildFile; fileRef = E957EEB12404C61300C43941 /* SessionCreator.m */; };
+		569909D224220BFB004BF0FB /* HeadsetTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 569909D024220BFB004BF0FB /* HeadsetTableViewCell.m */; };
+		569909D324220BFB004BF0FB /* HeadsetTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 569909D124220BFB004BF0FB /* HeadsetTableViewCell.xib */; };
+		569909D724225E15004BF0FB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 569909D624225E15004BF0FB /* Main.storyboard */; };
 		E957EEB52404C84000C43941 /* Config.m in Sources */ = {isa = PBXBuildFile; fileRef = E957EEB42404C84000C43941 /* Config.m */; };
-		E957EECA2405079500C43941 /* MarkerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E957EEC92405079500C43941 /* MarkerViewController.m */; };
-		E957EECD24050B3800C43941 /* TrainingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E957EECC24050B3800C43941 /* TrainingViewController.m */; };
 		E99107BD2403AE8F004F3892 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E99107BC2403AE8F004F3892 /* AppDelegate.m */; };
 		E99107C02403AE8F004F3892 /* SceneDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E99107BF2403AE8F004F3892 /* SceneDelegate.m */; };
 		E99107C32403AE8F004F3892 /* DataStreamViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E99107C22403AE8F004F3892 /* DataStreamViewController.m */; };
-		E99107C62403AE8F004F3892 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E99107C42403AE8F004F3892 /* Main.storyboard */; };
 		E99107C82403AE94004F3892 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E99107C72403AE94004F3892 /* Assets.xcassets */; };
 		E99107CB2403AE94004F3892 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E99107C92403AE94004F3892 /* LaunchScreen.storyboard */; };
 		E99107CE2403AE94004F3892 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E99107CD2403AE94004F3892 /* main.m */; };
@@ -24,14 +23,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E957EEB02404C61300C43941 /* SessionCreator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SessionCreator.h; sourceTree = "<group>"; };
-		E957EEB12404C61300C43941 /* SessionCreator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SessionCreator.m; sourceTree = "<group>"; };
+		569909CF24220BFB004BF0FB /* HeadsetTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeadsetTableViewCell.h; sourceTree = "<group>"; };
+		569909D024220BFB004BF0FB /* HeadsetTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeadsetTableViewCell.m; sourceTree = "<group>"; };
+		569909D124220BFB004BF0FB /* HeadsetTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeadsetTableViewCell.xib; sourceTree = "<group>"; };
+		569909D624225E15004BF0FB /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		E957EEB32404C84000C43941 /* Config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Config.h; sourceTree = "<group>"; };
 		E957EEB42404C84000C43941 /* Config.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Config.m; sourceTree = "<group>"; };
-		E957EEC82405079500C43941 /* MarkerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MarkerViewController.h; sourceTree = "<group>"; };
-		E957EEC92405079500C43941 /* MarkerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MarkerViewController.m; sourceTree = "<group>"; };
-		E957EECB24050B3800C43941 /* TrainingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TrainingViewController.h; sourceTree = "<group>"; };
-		E957EECC24050B3800C43941 /* TrainingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TrainingViewController.m; sourceTree = "<group>"; };
 		E99107B82403AE8F004F3892 /* CortexV2-Emotiv-ObjC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "CortexV2-Emotiv-ObjC.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E99107BB2403AE8F004F3892 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E99107BC2403AE8F004F3892 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -39,7 +36,6 @@
 		E99107BF2403AE8F004F3892 /* SceneDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SceneDelegate.m; sourceTree = "<group>"; };
 		E99107C12403AE8F004F3892 /* DataStreamViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DataStreamViewController.h; sourceTree = "<group>"; };
 		E99107C22403AE8F004F3892 /* DataStreamViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DataStreamViewController.m; sourceTree = "<group>"; };
-		E99107C52403AE8F004F3892 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E99107C72403AE94004F3892 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E99107CA2403AE94004F3892 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E99107CC2403AE94004F3892 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -90,23 +86,20 @@
 				E99107BF2403AE8F004F3892 /* SceneDelegate.m */,
 				E99107C12403AE8F004F3892 /* DataStreamViewController.h */,
 				E99107C22403AE8F004F3892 /* DataStreamViewController.m */,
-				E957EECB24050B3800C43941 /* TrainingViewController.h */,
-				E957EECC24050B3800C43941 /* TrainingViewController.m */,
-				E957EEC82405079500C43941 /* MarkerViewController.h */,
-				E957EEC92405079500C43941 /* MarkerViewController.m */,
-				E957EEB02404C61300C43941 /* SessionCreator.h */,
-				E957EEB12404C61300C43941 /* SessionCreator.m */,
 				E99107DA2403B009004F3892 /* HeadsetFinder.h */,
 				E99107DB2403B009004F3892 /* HeadsetFinder.m */,
 				E99107D42403AF9C004F3892 /* CortexClient.h */,
 				E99107D52403AF9C004F3892 /* CortexClient.m */,
 				E99107D72403AFC2004F3892 /* Headset.h */,
 				E99107D82403AFC2004F3892 /* Headset.m */,
-				E99107C42403AE8F004F3892 /* Main.storyboard */,
+				569909D624225E15004BF0FB /* Main.storyboard */,
 				E99107C72403AE94004F3892 /* Assets.xcassets */,
 				E99107C92403AE94004F3892 /* LaunchScreen.storyboard */,
 				E99107CC2403AE94004F3892 /* Info.plist */,
 				E99107CD2403AE94004F3892 /* main.m */,
+				569909CF24220BFB004BF0FB /* HeadsetTableViewCell.h */,
+				569909D024220BFB004BF0FB /* HeadsetTableViewCell.m */,
+				569909D124220BFB004BF0FB /* HeadsetTableViewCell.xib */,
 			);
 			path = "CortexV2-Emotiv-ObjC";
 			sourceTree = "<group>";
@@ -142,6 +135,7 @@
 				TargetAttributes = {
 					E99107B72403AE8F004F3892 = {
 						CreatedOnToolsVersion = 11.3.1;
+						LastSwiftMigration = 1130;
 					};
 				};
 			};
@@ -169,8 +163,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				E99107CB2403AE94004F3892 /* LaunchScreen.storyboard in Resources */,
+				569909D724225E15004BF0FB /* Main.storyboard in Resources */,
+				569909D324220BFB004BF0FB /* HeadsetTableViewCell.xib in Resources */,
 				E99107C82403AE94004F3892 /* Assets.xcassets in Resources */,
-				E99107C62403AE8F004F3892 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -181,31 +176,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E957EECA2405079500C43941 /* MarkerViewController.m in Sources */,
 				E99107D92403AFC2004F3892 /* Headset.m in Sources */,
 				E99107C32403AE8F004F3892 /* DataStreamViewController.m in Sources */,
 				E99107BD2403AE8F004F3892 /* AppDelegate.m in Sources */,
 				E99107CE2403AE94004F3892 /* main.m in Sources */,
 				E99107DC2403B009004F3892 /* HeadsetFinder.m in Sources */,
+				569909D224220BFB004BF0FB /* HeadsetTableViewCell.m in Sources */,
 				E99107C02403AE8F004F3892 /* SceneDelegate.m in Sources */,
 				E99107D62403AF9C004F3892 /* CortexClient.m in Sources */,
 				E957EEB52404C84000C43941 /* Config.m in Sources */,
-				E957EEB22404C61300C43941 /* SessionCreator.m in Sources */,
-				E957EECD24050B3800C43941 /* TrainingViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		E99107C42403AE8F004F3892 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				E99107C52403AE8F004F3892 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		E99107C92403AE94004F3892 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -217,6 +202,168 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		56C97ACF242452E5009E3655 /* Authorize */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Authorize;
+		};
+		56C97AD0242452E5009E3655 /* Authorize */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X444Y2GQGP;
+				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STREAM_NAME = authorize;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Authorize;
+		};
+		56C97AD1242452FB009E3655 /* HeadsetSession */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = HeadsetSession;
+		};
+		56C97AD2242452FB009E3655 /* HeadsetSession */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = X444Y2GQGP;
+				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STREAM_NAME = session;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = HeadsetSession;
+		};
 		E957EEB62404FE8600C43941 /* Bandpower */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -279,6 +426,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X444Y2GQGP;
 				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
@@ -290,6 +438,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = pow;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Bandpower;
@@ -356,6 +507,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X444Y2GQGP;
 				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
@@ -367,6 +519,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = com;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = MentalCommand;
@@ -433,6 +588,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X444Y2GQGP;
 				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
@@ -444,6 +600,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = mentalCommand;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = MentalCommandTraining;
@@ -510,6 +669,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X444Y2GQGP;
 				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
@@ -521,6 +681,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = fac;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = FacialExpression;
@@ -587,6 +750,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X444Y2GQGP;
 				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
@@ -598,6 +762,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = facialExpression;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = FacialExpressionTraining;
@@ -664,6 +831,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X444Y2GQGP;
 				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
@@ -675,6 +843,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = mot;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Motion;
@@ -741,6 +912,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X444Y2GQGP;
 				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
@@ -752,6 +924,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = eeg;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = EEG;
@@ -818,6 +993,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X444Y2GQGP;
 				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
@@ -829,6 +1005,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = met;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = PerformanceMetric;
@@ -895,6 +1074,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X444Y2GQGP;
 				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
@@ -906,6 +1086,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = marker;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Marker;
@@ -1024,6 +1207,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X444Y2GQGP;
 				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
@@ -1035,6 +1219,9 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = mot;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -1043,6 +1230,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = X444Y2GQGP;
 				INFOPLIST_FILE = "CortexV2-Emotiv-ObjC/Info.plist";
@@ -1054,6 +1242,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.emotiv.cortexExample.CortexV2-Emotiv-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STREAM_NAME = mot;
+				SWIFT_OBJC_BRIDGING_HEADER = "CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -1067,6 +1257,8 @@
 				E99107CF2403AE94004F3892 /* Debug */,
 				E957EEB62404FE8600C43941 /* Bandpower */,
 				E957EEB82404FE9A00C43941 /* MentalCommand */,
+				56C97AD1242452FB009E3655 /* HeadsetSession */,
+				56C97ACF242452E5009E3655 /* Authorize */,
 				E957EEBA2404FEA000C43941 /* MentalCommandTraining */,
 				E957EEBC2404FEA500C43941 /* FacialExpression */,
 				E957EEC02404FECD00C43941 /* Motion */,
@@ -1085,6 +1277,8 @@
 				E99107D22403AE94004F3892 /* Debug */,
 				E957EEB72404FE8600C43941 /* Bandpower */,
 				E957EEB92404FE9A00C43941 /* MentalCommand */,
+				56C97AD2242452FB009E3655 /* HeadsetSession */,
+				56C97AD0242452E5009E3655 /* Authorize */,
 				E957EEBB2404FEA000C43941 /* MentalCommandTraining */,
 				E957EEBD2404FEA500C43941 /* FacialExpression */,
 				E957EEC12404FECD00C43941 /* Motion */,

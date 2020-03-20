@@ -12,12 +12,12 @@
 
 //"The client id of your Cortex app goes here"
 + (NSString *) getClientID {
-    return @"DAN3SDXZCtLny4ypSzchktKzJKIOqPu6gKUS3syd";
+    return @"";
 }
 
 //The client secret of your Cortex app goes here""
 + (NSString *) getClientSecret {
-    return @"FKE7SHyVCpuVFRrMvPeOq0uTqMlPLJWgySgUk9uDnu1pCeQFAsOgi4dQvrmRcidnNuw8Fc53XF5PwZZFst3VVB0UGbaeaV8gnZN75U3g8VEvFzIszlN10sApWwZbvaSg";
+    return @"";
 }
 
 + (NSString *) getTrainingProfileName {

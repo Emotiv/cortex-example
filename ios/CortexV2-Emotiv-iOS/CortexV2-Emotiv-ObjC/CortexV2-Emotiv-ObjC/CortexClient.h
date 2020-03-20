@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy) void (^onQueryHeadsetsOk)(NSArray*);
 @property (nonatomic, copy) void (^onGetUserLoginOk)(NSString*);
 @property (nonatomic, copy) void (^onRequestAccessOk)(BOOL, NSString*);
+@property (nonatomic, copy) void (^onHasAccessRightOk)(BOOL, NSString*);
 @property (nonatomic, copy) void (^onAuthorizeOk)(NSString*);
 @property (nonatomic, copy) void (^onCreateSessionOk)(NSString*);
 @property (nonatomic, copy) void (^onCloseSessionOk)(void);
@@ -51,12 +52,15 @@ NS_ASSUME_NONNULL_BEGIN
 -(void) queryHeadset: (NSString *) headsetId;
 -(void) getUserLogin;
 -(void) requestAccess: (NSString *) clientId secret: (NSString *) clientSecret;
+-(void) hasAccessRight: (NSString *) clientId secret: (NSString *) clientSecret;
 -(void) authorize: (NSString *) clientId secret: (NSString *) clientSecret license: (NSString *) license debit: (int) debit;
 -(void) createSession: (NSString *) token headsetId: (NSString *) headsetId activate: (BOOL) activate;
 -(void) closeSession: (NSString *) token sessionId: (NSString *) sessionId;
 -(void) subscribe: (NSString *) token sessionId: (NSString *) sessionId stream: (NSString *) stream;
 -(void) unsubscribe: (NSString *) token sessionId: (NSString *) sessionId stream: (NSString *) stream;
 -(void) queryProfile: (NSString *) token;
+-(void) getUserInformation: (NSString *) token;
+-(void) getLicenseInfos: (NSString *) token;
 -(void) createProfile: (NSString *) token profileName: (NSString *) profileName;
 -(void) loadProfile: (NSString *) token headsetId: (NSString *) headsetId profileName: (NSString *) profileName;
 -(void) saveProfile: (NSString *) token headsetId: (NSString *) headsetId profileName: (NSString *) profileName;

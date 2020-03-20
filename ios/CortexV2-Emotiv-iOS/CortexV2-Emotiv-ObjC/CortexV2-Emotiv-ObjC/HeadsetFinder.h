@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
     CortexClient *client;
     NSTimer *timer;
 }
-@property (nonatomic, copy) void (^onHeadsetFound)(Headset*);
+@property (nonatomic, copy) void (^onHeadsetFound)(Headset*,NSArray*);
 
 -(void) handleCortexEvent;
 -(void) findHeadsets;

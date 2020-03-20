@@ -70,6 +70,12 @@ CortexClient *cortexClient;
     params[@"clientSecret"] = clientSecret;
     [self sendRequest:@"requestAccess" params:params];
 }
+-(void) hasAccessRight: (NSString *) clientId secret: (NSString *) clientSecret {
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    params[@"clientId"] = clientId;
+    params[@"clientSecret"] = clientSecret;
+    [self sendRequest:@"hasAccessRight" params:params];
+}
 
 -(void) authorize: (NSString *) clientId secret: (NSString *) clientSecret license: (NSString *) license debit: (int) debit {
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
@@ -118,6 +124,18 @@ CortexClient *cortexClient;
     NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
     params[@"cortexToken"] = token;
     [self sendRequest:@"queryProfile" params:params];
+}
+
+-(void) getUserInformation: (NSString *) token {
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    params[@"cortexToken"] = token;
+    [self sendRequest:@"getUserInformation" params:params];
+}
+
+-(void) getLicenseInfos: (NSString *) token {
+    NSMutableDictionary *params = [[NSMutableDictionary alloc] init];
+    params[@"cortexToken"] = token;
+    [self sendRequest:@"getLicenseInfo" params:params];
 }
 
 -(void) createProfile: (NSString *) token profileName: (NSString *) profileName {
@@ -309,6 +327,15 @@ CortexClient *cortexClient;
             NSString *message = res[@"message"];
             if (self.onRequestAccessOk != nil) {
                 self.onRequestAccessOk(accessGranted,message);
+            }
+        }
+    } else if ([method isEqual: @"hasAccessRight"]) {
+        if ([result isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *res = (NSDictionary *) result;
+            BOOL accessGranted = res[@"accessGranted"];
+            NSString *message = res[@"message"];
+            if (self.onHasAccessRightOk != nil) {
+                self.onHasAccessRightOk(accessGranted,message);
             }
         }
     } else if ([method isEqual: @"authorize"]) {

@@ -236,10 +236,6 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
            }
            NSLog("You are logged in with the EmotivId \(emotivId)")
         }
-        
-        client.onSubscribeOk = { (streams) in
-            NSLog("Subscription successful for data streams \(streams)")
-        }
 
         client.onUnsubscribeOk = { [weak self] (streams) in
             guard let weakSelf = self else { return }
@@ -290,9 +286,10 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
             NSLog("Training profile created \(profileName)")
         }
         
-        if stream == "facialExpression" || stream == "mentalCommand" {
-            client.onStreamDataReceived = { [weak self] (sessionId, stream, time, data) in
-                guard let weakSelf = self else { return }
+        
+        client.onStreamDataReceived = { [weak self] (sessionId, stream, time, data) in
+            guard let weakSelf = self else { return }
+            if weakSelf.stream == "facialExpression" || weakSelf.stream == "mentalCommand" {
                 if weakSelf.isEvent(data: data, event: "Started") {
                     NSLog("")
                     NSLog("Please, focus on the action for a few seconds")
@@ -304,14 +301,8 @@ class DataStreamViewController: UIViewController, UITableViewDelegate, UITableVi
                     NSLog("Well done! You successfully trained")
                     weakSelf.enableButton(enable: true)
                 }
-                NSLog("\(stream) \(data)")
             }
-        } else {
-            client.onStreamDataReceived = { (sessionId, stream, time, data) in
-                // a data stream can publish data with a high frequency
-                // we display only a few samples per second
-                NSLog("\(stream) \(data)")
-            }
+            NSLog("\(stream) \(data)")
         }
         
         client.onTrainingOk = { (msg) in

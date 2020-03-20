@@ -31,7 +31,7 @@
         if ([headset->status isEqual: @"connected"]) {
             if (weakSelf.onHeadsetFound != nil) {
                 [weakSelf->timer invalidate];
-                weakSelf.onHeadsetFound(headset);
+                weakSelf.onHeadsetFound(headset, headsets);
             }
         }
     };

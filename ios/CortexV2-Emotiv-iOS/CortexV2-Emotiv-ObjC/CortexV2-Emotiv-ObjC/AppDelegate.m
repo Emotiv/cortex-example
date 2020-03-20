@@ -7,8 +7,6 @@
 //
 
 #import "AppDelegate.h"
-#import "MarkerViewController.h"
-#import "TrainingViewController.h"
 
 @interface AppDelegate ()
 
@@ -19,41 +17,6 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
-    
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"Info" ofType:@"plist"];
-    if (path != nil) {
-        NSDictionary * nsDictionary = [[NSDictionary alloc] initWithContentsOfFile:path];
-        NSString *stream = nsDictionary[@"STREAM_NAME"];
-        
-        if (stream != nil) {
-            self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-            BOOL activateSession = false;
-            NSString *license = @"";
-            if ([stream  isEqual: @"eeg"] || [stream  isEqual: @"marker"]) {
-                NSLog(@"#");
-                NSLog(@"#####");
-                NSLog(@"Reminder: to subscribe to the EEG data stream, you must get an appropriate licence from Emotiv.");
-                NSLog(@"#####");
-                NSLog(@"#");
-                license = @""; // you can put your license id here
-                activateSession = true;
-            }
-            DataStreamViewController *dataVC;
-            if ([stream isEqual: @"marker"]) {
-                dataVC = [[MarkerViewController alloc] initActivateSession:activateSession license:license stream:@"eeg"];
-            } else if ([stream isEqual: @"facialExpression"] || [stream isEqual: @"mentalCommand"]) {
-                dataVC = [[TrainingViewController alloc] initActivateSession:activateSession license:license stream:stream];
-            }
-            else {
-                dataVC = [[DataStreamViewController alloc] initActivateSession:activateSession license:license stream:stream];
-            }
-            [self.window setRootViewController:dataVC];
-            [dataVC.view setFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height)];
-            [self.window addSubview:dataVC.view];
-            [self.window makeKeyAndVisible];
-        }
-    }
-
     return YES;
 }
 
