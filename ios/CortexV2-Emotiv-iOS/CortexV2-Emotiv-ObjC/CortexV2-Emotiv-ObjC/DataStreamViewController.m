@@ -230,10 +230,6 @@
     };
     
     client.onErrorReceived = ^(NSString *method, int code, NSString *message) {
-        if ([method  isEqual: @"setupProfile"]) {
-             // it's fine, we can subscribe to a data stream even without a profile
-             NSLog(@"Failed to load the training profile.");
-         }
     };
     
     client.onGetUserLoginOk = ^(NSString * emotivId) {
