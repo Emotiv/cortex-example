@@ -1,0 +1,6 @@
+framework module Pods_CortexV2_Example_Swift {
+  umbrella header "Pods-CortexV2-Example-Swift-umbrella.h"
+
+  export *
+  module * { export * }
+}
