@@ -76,6 +76,11 @@ If you want to run with a specific license. You also can change config in this f
 - Choose the module you want to build and run on mobile device. Make sure you accept all permission requests.
 - The module app has a list of buttons demonstrating API calls. Try click on each button, you can see a pair of request/response json strings printed out in `Android Studio logcat` or `Xcode console`.
 
+### Attention
+
+When run project Swift with iOS. You should have [cocoapod](https://cocoapods.org/) installed already
+and run command `pod install` in folder of project.
+
 ## Cortex API for Mobile
 Although [Cortex API documentation](https://emotiv.gitbook.io/cortex-api/) is only for desktop, you can base on that to develop on Android since most of APIs are the same, except for these below APIs:
 
