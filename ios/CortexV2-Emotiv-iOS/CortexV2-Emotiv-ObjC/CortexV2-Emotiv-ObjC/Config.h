@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSString *) getClientID;
 + (NSString *) getClientSecret;
 + (NSString *) getTrainingProfileName;
++ (NSString *) getLicense;
 @end
 
 NS_ASSUME_NONNULL_END

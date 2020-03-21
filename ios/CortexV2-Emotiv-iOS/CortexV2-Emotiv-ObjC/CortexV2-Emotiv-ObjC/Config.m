@@ -20,6 +20,10 @@
     return @"";
 }
 
++ (NSString *) getLicense {
+    return @"";
+}
+
 + (NSString *) getTrainingProfileName {
     return @"cortex-v2-example";
 }

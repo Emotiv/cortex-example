@@ -29,9 +29,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 NSLog("Reminder: to subscribe to the EEG data stream, you must get an appropriate licence from Emotiv.")
                 NSLog("#####")
                 NSLog("#")
-                view.license = "" // you can put your license id here
                 view.activateSession = true
             }
+            view.license = License
             self.window?.rootViewController = view
             self.window!.backgroundColor = UIColor.white
 
