@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface Config : NSObject
 + (NSString *) getClientID;
 + (NSString *) getClientSecret;
++ (NSString *) getLicense;
 + (NSString *) getTrainingProfileName;
 @end
 

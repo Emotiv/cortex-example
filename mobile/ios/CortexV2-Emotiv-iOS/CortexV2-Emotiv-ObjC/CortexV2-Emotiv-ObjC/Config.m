@@ -20,6 +20,11 @@
     return @"";
 }
 
+//The license of your Cortex app goes here""
++ (NSString *) getLicense {
+    return @"";
+}
+
 + (NSString *) getTrainingProfileName {
     return @"cortex-v2-example";
 }
