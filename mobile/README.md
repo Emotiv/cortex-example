@@ -11,6 +11,8 @@
 #### iOS
 - iOS device (iOS version 11.0 or higher)
 - EMOTIV App for iOS
+- When run project Swift with iOS. You should have [cocoapod](https://cocoapods.org/) installed already
+and run command `pod install` in folder of project.
 
 ## EMOTIV App mobile
 [What is EMOTIV App (for desktop)?](https://emotiv.gitbook.io/cortex-manual/)
@@ -24,7 +26,7 @@ EMOTIV App for mobile is required for any other apps which want to access EEG ra
 ### Installing
 ##### Unreleased version (only for Emotiv-partner developers)
 
-- For iOS You need to install [Testflight](https://apps.apple.com/us/app/testflight/id899247664) to able download EMOTIV App to your device.
+- For iOS You need to install [Testflight](https://apps.apple.com/us/app/testflight/id899247664) to be able download EMOTIV App to your device.
 - You will receive an invitation email to a testing program for an unreleased version of the EMOTIV App.
 	- *Note: this is only available for our partner developers, not for everyone.*
 - You can click on the link provided in the email, follow the guide to install EMOTIV App on your Android device.
@@ -75,11 +77,6 @@ If you want to run with a specific license. You also can change config in this f
 
 - Choose the module you want to build and run on mobile device. Make sure you accept all permission requests.
 - The module app has a list of buttons demonstrating API calls. Try click on each button, you can see a pair of request/response json strings printed out in `Android Studio logcat` or `Xcode console`.
-
-### Attention
-
-When run project Swift with iOS. You should have [cocoapod](https://cocoapods.org/) installed already
-and run command `pod install` in folder of project.
 
 ## Cortex API for Mobile
 Although [Cortex API documentation](https://emotiv.gitbook.io/cortex-api/) is only for desktop, you can base on that to develop on Android since most of APIs are the same, except for these below APIs:
