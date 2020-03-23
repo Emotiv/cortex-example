@@ -150,18 +150,16 @@
         
         if (stream != nil) {
             BOOL activateSession = false;
-            NSString *license = @"";
             if ([stream  isEqual: @"eeg"] || [stream  isEqual: @"marker"]) {
                 NSLog(@"#");
                 NSLog(@"#####");
                 NSLog(@"Reminder: to subscribe to the EEG data stream, you must get an appropriate licence from Emotiv.");
                 NSLog(@"#####");
                 NSLog(@"#");
-                license = @""; // you can put your license id here
                 activateSession = true;
             }
             self->stream = stream;
-            self->license = license;
+            self->license = [Config getLicense];
             self->activateSession = activateSession;
         }
         
