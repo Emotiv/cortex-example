@@ -1,15 +1,23 @@
 
 ## Prerequisites
-- Android device with Android 7.0 (API level 24) or higher
-- EMOTIV App for Android
 - Emotiv headset (if you don't have, you can purchase one [here](https://www.emotiv.com))
 - Emotiv account (if you don't have, you can register [here](https://www.emotiv.com))
 - A pair of client id, client secret of your Cortex app (if you don't have, you can register [here](https://www.emotiv.com/my-account/cortex-apps/))
+#### Android
 
-## EMOTIV App for Android
+- Android device with Android 7.0 (API level 24) or higher
+- EMOTIV App for Android
+
+#### iOS
+- iOS device (iOS version 11.0 or higher)
+- EMOTIV App for iOS
+- When run project Swift with iOS. You should have [cocoapod](https://cocoapods.org/) installed already
+and run command `pod install` in folder of project.
+
+## EMOTIV App mobile
 [What is EMOTIV App (for desktop)?](https://emotiv.gitbook.io/cortex-manual/)
 
-EMOTIV App for Android is required for any other apps which want to access EEG raw data and/or processed data from Emotiv headsets. You will need it to:
+EMOTIV App for mobile is required for any other apps which want to access EEG raw data and/or processed data from Emotiv headsets. You will need it to:
 * log in Emotiv system
 * manage headset connections
 * manage 3rd app permissions
@@ -18,6 +26,7 @@ EMOTIV App for Android is required for any other apps which want to access EEG r
 ### Installing
 ##### Unreleased version (only for Emotiv-partner developers)
 
+- For iOS You need to install [Testflight](https://apps.apple.com/us/app/testflight/id899247664) to be able download EMOTIV App to your device.
 - You will receive an invitation email to a testing program for an unreleased version of the EMOTIV App.
 	- *Note: this is only available for our partner developers, not for everyone.*
 - You can click on the link provided in the email, follow the guide to install EMOTIV App on your Android device.
@@ -41,8 +50,8 @@ Not available yet.
 
 ## Try Cortex V2 Example
 - Cortex V2 Example demonstrates how to work with Cortex API. To get started, you may want to look at the API documentation: https://emotiv.gitbook.io/cortex-api/.
-	- *Note: API documentation is only for desktop version but should be almost the same on mobile. Exceptions will be noted below.*
-- Open project under `Android/CortexV2Example` by Android Studio. You can see CortexV2Example is a set of modules, each module contains example code for a specific feature:
+    - *Note: API documentation is only for desktop version but should be almost the same on mobile. Exceptions will be noted below.*
+- Open project under `Android/CortexV2Example` by Android Studio or `iOS/CortexV2-Emotiv-iOS` by Xcode. You can see CortexV2Example is a set of modules, each module contains example code for a specific feature:
 
 Module| Related Cortex APIs
 ----------------|----------------
@@ -55,16 +64,21 @@ facial-expression-training / mental-command-training | [BCI](https://emotiv.gitb
 
 - Before running example code, you need to replace values of `CLIENT_ID`, `CLIENT_SECRET` with your client id, client secret.
 
-In `cortexclient/src/main/java/com/emotiv/cortexv2example/utils/Constant.java`:
+In `cortexclient/src/main/java/com/emotiv/cortexv2example/utils/Constant.java` with Android project
 
     public final static String CLIENT_ID = "your_client_id";
     public final static String CLIENT_SECRET = "your_client_secret";
 
+And `CortexV2-Emotiv-iOS/CortexV2-Emotiv-ObjC/CortexV2-Emotiv-ObjC/Config.m` with Objective C project
 
-- Choose the module you want to build and run on Android device. Make sure you accept all permission requests.
-- The module app has a list of buttons demonstrating API calls. Try click on each button, you can see a pair of request/response json strings printed out in Android Studio `logcat`.
+Or `CortexV2-Emotiv-iOS/CortexV2-Example-Swift/CortexV2-Example-Swift/Config.swift` with Swift project
 
-## Cortex API for Android
+If you want to run with a specific license. You also can change config in this file as well.
+
+- Choose the module you want to build and run on mobile device. Make sure you accept all permission requests.
+- The module app has a list of buttons demonstrating API calls. Try click on each button, you can see a pair of request/response json strings printed out in `Android Studio logcat` or `Xcode console`.
+
+## Cortex API for Mobile
 Although [Cortex API documentation](https://emotiv.gitbook.io/cortex-api/) is only for desktop, you can base on that to develop on Android since most of APIs are the same, except for these below APIs:
 
 APIs | Desktop version | Mobile version
@@ -75,6 +89,8 @@ APIs | Desktop version | Mobile version
 
 
 ## Cortex security certificates
+
+### Android
 Your app must configure a custom Certificate Authorities (CA) to trust Cortex websocket connection. See [Network security configuration on Android](https://developer.android.com/training/articles/security-config). You can also look into `cortexclient` module for example:
 
 In `AndroidManifest.xml`:
@@ -93,3 +109,8 @@ In `res/xml/network_security_config.xml`:
     </trust-anchors>
 
 You should configure the same on your Android app.
+
+### iOS
+
+When open EMOTIV App, it will require you download and install Cortex's certificate. Please follow the instruction in the app and install the certificate correctly.
+If you ignore this step example code will not work with Cortex API.
