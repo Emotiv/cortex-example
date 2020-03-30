@@ -1,5 +1,5 @@
 PODS:
-  - Starscream (3.1.1)
+  - Starscream (3.1.0)
 
 DEPENDENCIES:
   - Starscream
@@ -9,8 +9,8 @@ SPEC REPOS:
     - Starscream
 
 SPEC CHECKSUMS:
-  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
+  Starscream: 08172b481e145289c4930cb567230fb55897cfa4
 
 PODFILE CHECKSUM: 43b4b295038cd7c7258021b9894d7ee3bf6ff288
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.1
