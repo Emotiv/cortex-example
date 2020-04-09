@@ -29,7 +29,7 @@ EMOTIV App for mobile is required for any other apps which want to access EEG ra
 - For iOS You need to install [Testflight](https://apps.apple.com/us/app/testflight/id899247664) to be able download EMOTIV App to your device.
 - You will receive an invitation email to a testing program for an unreleased version of the EMOTIV App.
 	- *Note: this is only available for our partner developers, not for everyone.*
-- You can click on the link provided in the email, follow the guide to install EMOTIV App on your Android device.
+- You can click on the link provided in the email, follow the guide to install EMOTIV App on your mobile device.
 	- You cannot install if you have any version of EMOTIV App installed on your device, so make sure you uninstall it (for all users) before installing a new version.
 	- If you send the link to others, they may not access to our unreleased version as long as they are not in our list.
 
@@ -38,7 +38,7 @@ EMOTIV App for mobile is required for any other apps which want to access EEG ra
 Not available yet.
 
 ## Try EMOTIV App
-- Open EMOTIV App, accept all permission requests. Make sure Bluetooth service & Location service are turned on, EMOTIV App needs these services to work with headsets.
+- Open EMOTIV App, accept all permission requests. Make sure Bluetooth service & Location service on Android or Bluetooth service on iOS are turned, EMOTIV App needs these services to work with headsets.
 - Log in using your Emotiv account. You are on the page of "Available Devices".
 - Turn on your Emotiv headset, wait for the headset to show up.
 	- *Note: If you don't see the headset after 30s, you can try to turn it off then on again.*
