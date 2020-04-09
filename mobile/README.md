@@ -79,7 +79,7 @@ If you want to run with a specific license. You also can change config in this f
 - The module app has a list of buttons demonstrating API calls. Try click on each button, you can see a pair of request/response json strings printed out in `Android Studio logcat` or `Xcode console`.
 
 ## Cortex API for Mobile
-Although [Cortex API documentation](https://emotiv.gitbook.io/cortex-api/) is only for desktop, you can base on that to develop on Android since most of APIs are the same, except for these below APIs:
+Although [Cortex API documentation](https://emotiv.gitbook.io/cortex-api/) is only for desktop, you can base on that to develop on mobile since most of APIs are the same, except for these below APIs:
 
 APIs | Desktop version | Mobile version
 --------|--------|--------
