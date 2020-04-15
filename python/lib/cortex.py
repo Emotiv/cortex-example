@@ -12,11 +12,12 @@
 #############
 
 from datetime import datetime
-import os.path
+import os
 import websockets
 import ssl
 import json
 import logging
+import pandas as pd
 
 # Set up logging for websockets library
 wslogger = logging.getLogger('websockets')
@@ -41,6 +42,7 @@ class Cortex(object):
         self.auth_token = None
         self.packet_count = 0
         self.id_sequence = 0
+        self.df_dic = None
 
     def parse_client_id_file(self, client_id_file_path):
         '''
@@ -153,11 +155,13 @@ class Cortex(object):
             logger.warn(f"Got error in {method} with params {kwargs}:\n{resp}")
             raise CortexApiException(resp)
         resp = json.loads(resp)
+        if method == 'subscribe' and not self.df_dic:
+            self.df_dic = {stream['streamName']: pd.DataFrame(columns = list(pd.core.common.flatten(stream['cols']))) for stream in resp['result']['success']}
         if callback:
             callback(resp)
         return resp
 
-    async def get_data(self):
+    async def get_data(self, save=True):
         '''
         Get data from cortex.  Useful after calling the 'subscribe' method.
         The self.packet_count attribute can be used to limit data collection.
@@ -165,12 +169,28 @@ class Cortex(object):
         '''
         resp = await self.websocket.recv()
         logger.debug(f"get_data got {resp}")
+        respd = json.loads(resp)
+        if save:
+            stream = list(respd.keys())[0]
+            self.df_dic[stream].loc[len(self.df_dic[stream])] = list(pd.core.common.flatten(respd[stream]))
         self.packet_count += 1
         return resp
+
+    async def save_csv(self, loc='', suffix='', index=False, label=None):
+        '''
+        Save the dataframes to csv.
+
+        '''
+        for stream, df in self.df_dic.items():
+            if label:
+                df['event_label']=label
+            df.to_csv(os.path.join(loc,'emotivdata_'+stream+suffix+datetime.now().strftime("_%d-%m-%Y_%I-%M-%S")+'.csv'),index=index)
+        logger.debug("--- *** CSVs saved *** ---")
 
     def close(self):
         ''' Close the cortex connection '''
         self.websocket.close()
+
 
     ##
     # Here down are cortex specific commands
@@ -182,7 +202,7 @@ class Cortex(object):
         resp = await self.send_command('inspectApi', auth=False)
         logger.debug(f"InspectApi resp:\n{resp}")
 
-    async def authorize(self, license_id=None, debit=None):
+    async def authorize(self, license_id=None, debit=1000):
         '''
         Generate an authorization token, required for most actions.
         Requires a valid license file, that the user be logged in via
