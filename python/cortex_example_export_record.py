@@ -473,7 +473,7 @@ record_length_s = 60 * 1
 record_marker_numbers = record_length_s
 
 # export parameter
-record_export_folder = 'C:\\export'
+record_export_folder = r'C:\Users'
 record_export_data_types = ['EEG', 'MOTION', 'PM', 'BP']
 record_export_format = 'CSV'
 record_export_version = 'V2'
