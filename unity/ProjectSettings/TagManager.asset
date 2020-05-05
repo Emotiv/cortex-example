@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - AF3
+  - AF4
+  - CMS
+  - DRL
+  - F3
+  - F4
+  - F7
+  - F8
+  - FC5
+  - FC6
+  - O1
+  - O2
+  - P7
+  - P8
+  - T7
+  - T8
+  - Epoc
+  - Theta
+  - Alpha
+  - Delta
+  - Beta
+  - WaveSlider
+  - Insight
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0

@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 0
+    path: Assets/detectScreen.unity
+    guid: 4f539a39f115d49ff925eae0a5707c57
+  - enabled: 1
+    path: Assets/EmotivUnityPlugin.unity
+    guid: ee5bec8a3b94441e1a701424d4cfc49c
+  - enabled: 0
+    path: Assets/phone.unity
+    guid: 0bd0ad3adfa0e414abb11fac4b10417e
+  m_configObjects: {}
