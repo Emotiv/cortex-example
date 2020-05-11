@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity implements CortexClientInter
         setContentView(R.layout.activity_main);
         initView();
         connectToServer();
-        Toast.makeText(MainActivity.this, "Please make sure you have already connected Emotiv headset from Emotiv App", Toast.LENGTH_LONG).show();
     }
 
     private void initView() {

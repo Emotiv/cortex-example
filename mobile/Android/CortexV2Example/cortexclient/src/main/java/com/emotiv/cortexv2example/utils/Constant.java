@@ -57,4 +57,6 @@ public class Constant {
 
     /* Warning code */
     public final static int APP_ACCESS_APPROVED = 9;
+    public final static int HEADSET_IS_CONNECTED = 104;
+    public final static int HEADSET_CONNECTION_TIME_OUT = 102;
 }

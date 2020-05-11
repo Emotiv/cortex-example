@@ -1,4 +1,4 @@
-package com.com.emotiv.cortexv2example.eeg;
+package com.emotiv.cortexv2example.motion;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements CortexClientInter
     ProgressBar progressBar;
     ListView headsetListView;
     private HeadsetListAdapter headsetListAdapter;
-    Button btnQueryHeadsets, btnCreateSession, btnSubscribeEeg, btnUnSubscribeEeg;
+    Button btnQueryHeadsets, btnCreateSession, btnSubscribeMotion, btnUnSubscribeMotion;
     WebSocketManager webSocketManager;
     List<String> streamArray = new ArrayList<String>();
 
@@ -36,20 +36,19 @@ public class MainActivity extends AppCompatActivity implements CortexClientInter
         setContentView(R.layout.activity_main);
         initView();
         connectToServer();
-        Toast.makeText(MainActivity.this, "Please make sure you have already connected Emotiv headset from Emotiv App", Toast.LENGTH_LONG).show();
     }
 
     private void initView() {
-        streamArray.add("eeg");
+        streamArray.add("mot");
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         btnQueryHeadsets = (Button) findViewById(R.id.btnQueryHeadsets);
         btnQueryHeadsets.setOnClickListener(this);
         btnCreateSession = (Button) findViewById(R.id.btnCreateSession);
         btnCreateSession.setOnClickListener(this);
-        btnSubscribeEeg = (Button) findViewById(R.id.btnSubscribeEeg);
-        btnSubscribeEeg.setOnClickListener(this);
-        btnUnSubscribeEeg = (Button) findViewById(R.id.btnUnSubscribeEeg);
-        btnUnSubscribeEeg.setOnClickListener(this);
+        btnSubscribeMotion = (Button) findViewById(R.id.btnSubscribeMotion);
+        btnSubscribeMotion.setOnClickListener(this);
+        btnUnSubscribeMotion = (Button) findViewById(R.id.btnUnSubscribeMotion);
+        btnUnSubscribeMotion.setOnClickListener(this);
 
         headsetListView = (ListView) findViewById(R.id.headsetListView);
         headsetListAdapter = new HeadsetListAdapter(MainActivity.this, new ArrayList<HeadsetObject>());
@@ -73,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements CortexClientInter
         super.onResume();
         CortexClientController.getInstance().setCortexClientInterface(this);
     }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -83,10 +81,10 @@ public class MainActivity extends AppCompatActivity implements CortexClientInter
             case R.id.btnCreateSession:
                 CortexClient.getInstance().createSession(cortexToken, "active", HeadsetObject.getInstance().getHeadsetName());
                 break;
-            case R.id.btnSubscribeEeg:
+            case R.id.btnSubscribeMotion:
                 CortexClient.getInstance().subscribeData(cortexToken, SessionObject.getInstance().getCurrentActivedSession(), streamArray);
                 break;
-            case R.id.btnUnSubscribeEeg:
+            case R.id.btnUnSubscribeMotion:
                 CortexClient.getInstance().unSubscribeData(cortexToken, SessionObject.getInstance().getCurrentActivedSession(), streamArray);
                 break;
         }
@@ -132,8 +130,8 @@ public class MainActivity extends AppCompatActivity implements CortexClientInter
                 progressBar.setVisibility(View.GONE);
                 btnQueryHeadsets.setEnabled(true);
                 btnCreateSession.setEnabled(true);
-                btnSubscribeEeg.setEnabled(true);
-                btnUnSubscribeEeg.setEnabled(true);
+                btnSubscribeMotion.setEnabled(true);
+                btnUnSubscribeMotion.setEnabled(true);
             }
         });
     }
