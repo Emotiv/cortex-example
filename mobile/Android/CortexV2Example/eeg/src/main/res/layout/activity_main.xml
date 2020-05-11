@@ -117,6 +117,15 @@
             />
 
         <Button
+            android:id="@+id/btnDisconnectHeadset"
+            android:layout_width="200dp"
+            android:layout_height="60dp"
+            android:textAllCaps="false"
+            android:text="Disconect Headset"
+            android:enabled="false"
+            />
+
+        <Button
             android:id="@+id/btnCreateSession"
             android:layout_width="200dp"
             android:layout_height="60dp"
