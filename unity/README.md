@@ -57,6 +57,7 @@ After authorizing successfully, the example will find headsets and list all to s
 
 The example support the following features:
 - Subscribe data streams: EEG, Motion, Performance metric, Device information
+- Support for EPOC, EPOC+, EPOCX, INSIGHT headset only. The others will be supported later.
 
 ## Authors
 
