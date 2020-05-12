@@ -1,6 +1,6 @@
 # Emotiv Unity Example
 
-These examples demontrate an UnityApp work with Emotiv CortexService whose APIs are described at [Cortex Document](https://app.gitbook.com/@emotiv/s/cortex-api/)
+These examples demontrate an UnityApp work with Emotiv CortexService(shortly called Cortex) whose APIs are described at [Cortex Document](https://app.gitbook.com/@emotiv/s/cortex-api/)
 
 ## Prerequisites
 
@@ -21,11 +21,11 @@ These examples demontrate an UnityApp work with Emotiv CortexService whose APIs 
 
 
 ## Code structure
-The Example will use emotiv unity plugin to work with Emotiv CortexService.
+The example will use emotiv unity plugin to work with Cortex.
 
 There are some main controller scripts and group of scripts are:
 
-**ConnectToCortex.cs**: To configure App and connect to Emotiv CortexService.
+**ConnectToCortex.cs**: To configure App and start connecting to Cortex.
 
 **1_Cortex**: Contain commponent scripts to control from Cortex connecting to authorizing procedure.
 
@@ -37,22 +37,25 @@ There are some main controller scripts and group of scripts are:
 
 **DataSubscriber.cs**: The script to show subscribe and unsubscribe data. The header and data of corresponding streams will be displayed and updated. Note that the MARKERS channel of EEG data will not been displayed.
 
+**Emotiv-Unity-Plugin**: The plugin help the application to work with Cortex. Please refer to [emotiv-unity-plugin](https://github.com/Emotiv/unity-plugin)
+
 ## How to use
 Please follow the below steps:
 1. Put clientId, clientSecret of your App to AppConfig.cs. You also can configure application name, application version and TmpAppDataDir to create logs folder.
 2. You make sure have logined via EmotivApp.
-3. Click run the Example from editor. Firstly, the Example will connect to Cortex then process authorizing procedure. 
-You might need to grant access right for the Example via EmotivApp at the first time. Afterthat, the Example will authorize to get the cortex token to work with Cortex. The token will be saved for next using.
-After authorizing successfully, the Example will find headsets and list all to screen. 
+3. Click run the Example from editor. Firstly, the example will connect to Cortex then process authorizing procedure. 
+You might need to grant access right for the example via EmotivApp at the first time. Afterthat, the example will authorize to get the cortex token to work with Cortex. The token will be saved for next using.
+After authorizing successfully, the example will find headsets and list all to screen. 
 4. Click on a headet button to create a working session with the given headset and subscribe device information . It is default data stream types.
 5. You will move to sceen show your contact quality. Please make sure the headset is at good contact quality. Click Done button when you finish
 6. Now, you can subscribe or unsubscribe more data such as : EEG, Motion and Performance metrics.
+7. When you run the application at standalone mode, the log files will be located at "%LocalAppData%/${TmpAppDataDir}/logs/" on Windows and "~/Library/Application Support/${TmpAppDataDir}/logs"
 
 ## Change logs
 
 [May 8, 2020]
 
-The Example support the following features:
+The example support the following features:
 - Subscribe data streams: EEG, Motion, Performance metric, Device information
 
 ## Authors
@@ -63,6 +66,4 @@ See also the list of [contributors](https://github.com/Emotiv/unity-plugin/contr
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/Emotiv/cortex-v2-example/blob/master/LICENSE) file for details

@@ -4,6 +4,7 @@ Example code for Cortex V2. So far we have the following languages:
 * C#
 * NodeJS
 * Python
+* Unity
 
 # API Documentation
 For Cortex V2 API documentations please check out: https://emotiv.gitbook.io/cortex-api/

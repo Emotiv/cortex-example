@@ -24,13 +24,13 @@ namespace dirox.emotiv.controller
 
         public override void Activate()
         {
-#if UNITY_STANDALONE_OSX
-            image_mac.gameObject.SetActive (true);
-            image_win.gameObject.SetActive (false);
-#elif UNITY_STANDALONE_WIN
-            image_mac.gameObject.SetActive (false);
-            image_win.gameObject.SetActive (true);
-#endif
+// #if UNITY_STANDALONE_OSX
+//             image_mac.gameObject.SetActive (true);
+//             image_win.gameObject.SetActive (false);
+// #elif UNITY_STANDALONE_WIN
+//             image_mac.gameObject.SetActive (false);
+//             image_win.gameObject.SetActive (true);
+// #endif
             _isLogined = false;
             base.Activate ();
         }
