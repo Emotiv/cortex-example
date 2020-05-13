@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements CortexClientInter
                 String headsetStatus = headsetListAdapter.getItem(position).getHeadsetStatus();
                 if (!headsetStatus.equals("connected") && !headsetStatus.equals("connecting")) {
                     showLoading(true);
-                    CortexClient.getInstance().controlDevice("connect", headsetListAdapter.getItem(position).getHeadsetName());
+                    CortexClient.getInstance().controlDevice("connect", workingHeadsetName);
                 }
             }
         });

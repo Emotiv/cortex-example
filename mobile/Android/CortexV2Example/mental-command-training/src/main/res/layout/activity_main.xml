@@ -121,7 +121,7 @@
             android:layout_width="200dp"
             android:layout_height="60dp"
             android:textAllCaps="false"
-            android:text="Disconect Headset"
+            android:text="Disconnect Headset"
             android:enabled="false"
             />
 
