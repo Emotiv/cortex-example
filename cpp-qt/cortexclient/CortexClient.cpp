@@ -259,6 +259,49 @@ void CortexClient::updateMarker(QString token, QString sessionId, QString marker
     sendRequest("updateMarker", params);
 }
 
+void CortexClient::getTrainedSignatureActions(QString token, QString detection, QString profileName)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["detection"] = detection;
+    params["profile"] = profileName;
+    sendRequest("getTrainedSignatureActions", params);
+}
+
+void CortexClient::mentalCommandActiveAction(QString token, QString profileName)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["status"] = "get";
+    params["profile"] = profileName;
+    sendRequest("mentalCommandActiveAction", params);
+}
+
+void CortexClient::mentalCommandBrainMap(QString token, QString profileName)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["profile"] = profileName;
+    sendRequest("mentalCommandBrainMap", params);
+}
+
+void CortexClient::mentalCommandTrainingThreshold(QString token, QString profileName)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["profile"] = profileName;
+    sendRequest("mentalCommandTrainingThreshold", params);
+}
+
+void CortexClient::mentalCommandActionSensitivity(QString token, QString profileName)
+{
+    QJsonObject params;
+    params["cortexToken"] = token;
+    params["status"] = "get";
+    params["profile"] = profileName;
+    sendRequest("mentalCommandActionSensitivity", params);
+}
+
 void CortexClient::sendRequest(QString method, QJsonObject params) {
     QJsonObject request;
 
@@ -446,6 +489,48 @@ void CortexClient::handleResponse(QString method, const QJsonValue &result) {
     }
     else if (method == "updateMarker") {
         emit updateMarkerOk();
+    }
+    else if (method == "getTrainedSignatureActions") {
+        QList<TrainedAction> actions;
+        int totalTimesTraining = result.toObject().value("totalTimesTraining").toInt();
+        QJsonArray trainedActions = result.toObject().value("trainedActions").toArray();
+        for (QJsonValue value : trainedActions) {
+            QJsonObject obj = value.toObject();
+            TrainedAction action;
+            action.name = obj.value("action").toString();
+            action.times = obj.value("times").toInt();
+            actions.append(action);
+        }
+        emit getTrainedSignatureActionsOk(actions, totalTimesTraining);
+    }
+    else if (method == "mentalCommandActiveAction") {
+        QStringList actions;
+        for (QJsonValue value : result.toArray()) {
+            actions.append(value.toString());
+        }
+        emit mentalCommandActiveActionOk(actions);
+    }
+    else if (method == "mentalCommandBrainMap") {
+        QMap<QString, QJsonArray> coord;
+        for (QJsonValue value : result.toArray()) {
+            QJsonObject obj = value.toObject();
+            QString action = obj.value("action").toString();
+            QJsonArray coordinates = obj.value("coordinates").toArray();
+            coord.insert(action, coordinates);
+        }
+        emit mentalCommandBrainMapOk(coord);
+    }
+    else if (method == "mentalCommandTrainingThreshold") {
+        double currentThreshold = result.toObject().value("currentThreshold").toDouble();
+        double lastTrainingScore = result.toObject().value("lastTrainingScore").toDouble();
+        emit mentalCommandTrainingThresholdOk(currentThreshold, lastTrainingScore);
+    }
+    else if (method == "mentalCommandActionSensitivity") {
+        QList<int> values;
+        for (QJsonValue value : result.toArray()) {
+            values.append(value.toInt());
+        }
+        emit mentalCommandActionSensitivityOk(values);
     }
     else {
         // unknown method, so we don't know how to interpret the result

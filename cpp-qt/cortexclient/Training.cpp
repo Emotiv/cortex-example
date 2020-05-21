@@ -33,6 +33,7 @@ Training::Training(QObject *parent) : QObject(parent) {
     connect(&client, &CortexClient::saveProfileOk, this, &Training::onSaveProfileOk);
     connect(&finder, &HeadsetFinder::headsetFound, this, &Training::onHeadsetFound);
     connect(&creator, &SessionCreator::sessionCreated, this, &Training::onSessionCreated);
+    connect(&profileInfo, &ProfileInfo::done, this, &Training::onProfileInfoDone);
 }
 
 void Training::start(QString detection) {
@@ -111,6 +112,12 @@ void Training::onLoadProfileOk(QString profileName)
 void Training::onSaveProfileOk(QString profileName)
 {
     qInfo() << "Training profile saved" << profileName;
+    profileInfo.readInfo(&client, token, profileName);
+}
+
+void Training::onProfileInfoDone()
+{
+    profileInfo.print();
     QCoreApplication::quit();
 }
 
