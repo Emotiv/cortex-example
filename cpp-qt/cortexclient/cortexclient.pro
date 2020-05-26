@@ -24,6 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     Headset.cpp \
+    ProfileInfo.cpp \
     SessionCreator.cpp \
     HeadsetFinder.cpp \
     DataStreamExample.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     Config.h \
     CortexClient.h \
     Headset.h \
+    ProfileInfo.h \
     SessionCreator.h \
     HeadsetFinder.h \
     DataStreamExample.h \

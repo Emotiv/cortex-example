@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include "CortexClient.h"
 #include "HeadsetFinder.h"
 #include "SessionCreator.h"
+#include "ProfileInfo.h"
 
 /*
  * Training for the mental command or the facial expressions.
@@ -50,6 +51,7 @@ private slots:
     void onCreateProfileOk(QString profileName);
     void onLoadProfileOk(QString profileName);
     void onSaveProfileOk(QString profileName);
+    void onProfileInfoDone();
     void onSubscribeOk(QStringList streams);
     void onTrainingOk(QString msg);
     void onStreamDataReceived(QString sessionId, QString stream,
@@ -57,7 +59,12 @@ private slots:
 
 private:
     QString action() {
-        return actions.at(actionIndex);
+        if (actionIndex < actions.size()) {
+            return actions.at(actionIndex);
+        }
+        else {
+            return "";
+        }
     }
     void nextAction();
     void retryAction();
@@ -67,6 +74,7 @@ private:
     CortexClient client;
     HeadsetFinder finder;
     SessionCreator creator;
+    ProfileInfo profileInfo;
 
     Headset headset;
     QString detection;

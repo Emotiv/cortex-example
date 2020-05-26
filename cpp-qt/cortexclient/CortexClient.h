@@ -22,8 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <QStringList>
 #include <QMap>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QSslError>
 #include "Headset.h"
+
+struct TrainedAction
+{
+    QString name;
+    int times;
+};
 
 /*
  * A simple client for the Cortex service.
@@ -85,6 +92,13 @@ public slots:
     void updateMarker(QString token, QString sessionId,
                       QString markerId, qint64 time);
 
+    // advanced BCI methods
+    void getTrainedSignatureActions(QString token, QString detection, QString profileName);
+    void mentalCommandActiveAction(QString token, QString profileName);
+    void mentalCommandBrainMap(QString token, QString profileName);
+    void mentalCommandTrainingThreshold(QString token, QString profileName);
+    void mentalCommandActionSensitivity(QString token, QString profileName);
+
 signals:
     void connected();
     void disconnected();
@@ -111,6 +125,11 @@ signals:
     void exportRecordOk(QString recordId);
     void injectMarkerOk(QString markerId);
     void updateMarkerOk();
+    void getTrainedSignatureActionsOk(QList<TrainedAction> actions, int totalTimesTraining);
+    void mentalCommandActiveActionOk(QStringList activeActions);
+    void mentalCommandBrainMapOk(QMap<QString, QJsonArray> coordinates);
+    void mentalCommandTrainingThresholdOk(double currentThreshold, double lastTrainingScore);
+    void mentalCommandActionSensitivityOk(QList<int> values);
 
     // we received an error message in response to a RPC request
     void errorReceived(QString method, int code, QString error);

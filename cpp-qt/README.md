@@ -54,6 +54,8 @@ The **DataStreamExample** class contains the logic to subscribe to any data stre
 
 The **Training** class contains the logic to train the facial expression or mental command.
 
+The **ProfileInfo** class read a training profile and display information about the trained actions.
+
 ### motion
 
 This example opens a session with the first Emotiv headset it can find, and displays its motion data stream for 30 seconds.
