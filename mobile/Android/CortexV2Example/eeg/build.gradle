@@ -6,7 +6,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.com.emotiv.cortexv2example.eeg"
+        applicationId "com.emotiv.cortexv2example.eeg"
         minSdkVersion 24
         targetSdkVersion 28
         versionCode 1
