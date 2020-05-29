@@ -1,9 +1,9 @@
-- this example code work with python 3
+# Python Example
 
-- for install socket client use command 'pip install websocket-client'
+- This example works with Python 3
 
-- cortex.py 
-	is lib wrap around emotiv cortex api
+- Install websocket client via  `pip install websocket-client`
 
-- training.py
-	use function inside cortex.py for training mental command and show up live mode
+- `cortex.py` - the wrapper lib around Emotiv Cortex API
+
+- `training.py` - demostrate Mental Command training and actions in live with the Python wrapper
