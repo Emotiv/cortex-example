@@ -226,20 +226,14 @@ class Cortex():
         }
 
         self.ws.send(json.dumps(sub_request_json))
-
-        data = ""
-        print('\n')
-        print('subscribe result:')
+        
         if 'sys' in stream:
             new_data = self.ws.recv()
             print(json.dumps(new_data, indent=4))
             print('\n')
-        
-        if 'com' in stream:
-            # data at live mode
+        else:
             while True:
-                new_data = self.ws.recv()
-                data += new_data
+                new_data = self.ws.recv()        
                 print(new_data)
 
 
