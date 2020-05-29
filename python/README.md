@@ -7,7 +7,9 @@
 - `cortex.py` - the wrapper lib around Emotiv Cortex API
 
 - `training.py` - demostrate Mental Command training and actions in live with the Python wrapper
-
-- `sub_data.py` - demostrate subcribe data output from cortex : eeg, motion, band power and performance metric
-
 For more details on the API please check out https://emotiv.gitbook.io/cortex-api/bci
+
+- `sub_data.py` - demostrate subcribe data output from cortex : eeg, motion, band power and performance metric.
+For more details, please check https://emotiv.gitbook.io/cortex-api/data-subscription
+
+
