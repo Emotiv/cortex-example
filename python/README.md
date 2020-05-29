@@ -1,6 +1,6 @@
 # Python Example
 
-- This example works with Python 3
+- This example works with Python >= 3.7
 
 - Install websocket client via  `pip install websocket-client`
 
