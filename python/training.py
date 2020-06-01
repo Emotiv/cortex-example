@@ -71,14 +71,16 @@ class Train():
 #
 # 
 # RESULT
-# if every thing working fine, 
-# 'push' will show up after a while when you think similar thinking when training for 'push' action
+#	- "cols" in first row is order and name of output data
+#	- 'push' action will show up after a while when you think 
+#	similar thinking when training for 'push' action
 # 
-# {"com":["neutral",0.0],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736942.8479}
-# {"com":["neutral",0.0],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736942.9729}
-# {"com":["push",0.345774],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736943.0979}
-# {"com":["push",0.294056],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736943.2229}
-# {"com":["push",0.112473],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736943.3479}
+# 	{"id":6,"jsonrpc":"2.0","result":{"failure":[],"success":[{"cols":["act","pow"],"sid":"0b563e1e-9403-4f6a-b084-4e92713afe70","streamName":"com"}]}}
+# 	{"com":["neutral",0.0],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736942.8479}
+# 	{"com":["neutral",0.0],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736942.9729}
+# 	{"com":["push",0.345774],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736943.0979}
+# 	{"com":["push",0.294056],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736943.2229}
+# 	{"com":["push",0.112473],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736943.3479}
 # -----------------------------------------------------------
 user = {
 	"license" : "your emotivpro license, which could use for third party app",
