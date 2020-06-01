@@ -33,8 +33,8 @@ user = {
 
 s = Subcribe()
 
-# sub all streams
-streams = ['eeg','mot','met','pow']
+# sub multiple streams
+# streams = ['eeg','mot','met','pow']
 
 # or only sub for eeg
 streams = ['eeg']

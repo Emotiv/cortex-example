@@ -54,10 +54,10 @@ class Record():
 # -----------------------------------------------------------
 
 user = {
-	"license" : "bd93e479-11f0-4877-a23a-465bebbf5a3a",
-	"client_id" : "Y0qVUztkSus9BL0Me3CKY7prsky5vb2hESzqoTPq",
-	"client_secret" : "lHgJXLQI9HVxsR5ngmxDrkTe6H6Bf3IuUzu0jKsEUS6Xfm5LSomzqUPqM00j0WuLdkWOSUsMKLOvxJOMxvmeN7SMrATVc616xFC8wSXzX3I1zgBvyBCh0XiXky4R3FLu",
-	"debit" : 100,
+	"license" : "your emotivpro license, which could use for third party app",
+	"client_id" : "your client id",
+	"client_secret" : "your client secret",
+	"debit" : 100
 }
 
 r = Record()

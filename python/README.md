@@ -12,4 +12,10 @@ For more details on the API please check out https://emotiv.gitbook.io/cortex-ap
 - `sub_data.py` - demostrate subcribe data output from cortex : eeg, motion, band power and performance metric.
 For more details, please check https://emotiv.gitbook.io/cortex-api/data-subscription
 
+- `record.py` - demostrate create record and export data to csv or edf file.
+For more details, please check https://emotiv.gitbook.io/cortex-api/records
+
+- `marker` - demostrate add marker while do recording.
+For more details, please check https://emotiv.gitbook.io/cortex-api/markers
+
 

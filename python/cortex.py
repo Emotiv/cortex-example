@@ -22,8 +22,7 @@ STOP_RECORD_REQUEST_ID      = 12
 EXPORT_RECORD_ID            = 13
 INJECT_MARKER_REQUEST_ID    = 14
 
-
-# 
+ 
 class Cortex():
     def __init__(self, user, debug_mode=False):
         url = "wss://localhost:6868"
@@ -448,7 +447,7 @@ class Cortex():
             if self.debug:            
                 print('export record result \n',
                     json.dumps(result_dic, indent=4))
-                
+
             if 'result' in result_dic:
                 if len(result_dic['result']['success']) > 0:
                     break
