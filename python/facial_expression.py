@@ -30,14 +30,14 @@ class Train():
 			print('start training {0} time {1} ---------------'.format(training_action, num_train))
 			print('\n')
 			status='start'			
-			self.c.train_request(detection='mentalCommand',
+			self.c.train_request(detection='facialExpression',
 								action=training_action,
 								status=status)
 
 			print('accept {0} time {1} ---------------'.format(training_action, num_train))
 			print('\n')
 			status='accept'
-			self.c.train_request(detection='mentalCommand',
+			self.c.train_request(detection='facialExpression',
 								action=training_action, 
 								status=status)
 		
@@ -76,15 +76,8 @@ class Train():
 # 
 # RESULT
 #	- "cols" in first row is order and name of output data
-#	- 'push' action will show up after a while when you think 
-#	similar thinking when training for 'push' action
-# 
-# 	{"id":6,"jsonrpc":"2.0","result":{"failure":[],"success":[{"cols":["act","pow"],"sid":"0b563e1e-9403-4f6a-b084-4e92713afe70","streamName":"com"}]}}
-# 	{"com":["neutral",0.0],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736942.8479}
-# 	{"com":["neutral",0.0],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736942.9729}
-# 	{"com":["push",0.345774],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736943.0979}
-# 	{"com":["push",0.294056],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736943.2229}
-# 	{"com":["push",0.112473],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736943.3479}
+#	- 'surprise' action will show up after a while when you think 
+#	similar thinking when training for 'surprise' action
 # -----------------------------------------------------------
 user = {
 	"license" : "your emotivpro license, which could use for third party app",
@@ -92,7 +85,6 @@ user = {
 	"client_secret" : "your client secret",
 	"debit" : 100
 }
-
 
 t=Train()
 profile_name = 'your profile name'
@@ -105,7 +97,7 @@ t.train(profile_name,
 		number_of_train)
 
 
-training_action = 'push'
+training_action = 'surprise'
 t.train(profile_name,
 		training_action,
 		number_of_train)

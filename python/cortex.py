@@ -302,14 +302,14 @@ class Cortex():
             print('\n')
 
 
-    def train_request(self,action, status):
-        print('train request --------------------------------')
+    def train_request(self, detection, action, status):
+        # print('train request --------------------------------')
         train_request_json = {
             "jsonrpc": "2.0", 
             "method": "training", 
             "params": {
               "cortexToken": self.auth,
-              "detection": "mentalCommand",
+              "detection": detection,
               "session": self.session_id,
               "action": action,
               "status": status
@@ -321,35 +321,32 @@ class Cortex():
         # print('\n')
 
         self.ws.send(json.dumps(train_request_json))
-        result = self.ws.recv()
-        result_dic = json.loads(result)
+        
+        if detection == 'mentalCommand':
+            start_wanted_result = 'MC_Succeeded'
+            accept_wanted_result = 'MC_Completed'
 
-        if result_dic['id']==TRAINING_ID:
-            print(json.dumps(result_dic, indent=4))
-            print('\n YOU HAVE 8 SECONDS FOR TRAIN ACTION {} \n'.format(action.upper()))
-            
+        if detection == 'facialExpression':
+            start_wanted_result = 'FE_Succeeded'
+            accept_wanted_result = 'FE_Completed'
 
         if status == 'start':
-            while True:
-                result = self.ws.recv()
-                result_dic = json.loads(result)
-                print(json.dumps(result_dic))
-                if result_dic['sys'][1]=='MC_Succeeded':
-                    print('training result')
-                    print(json.dumps(result_dic, indent=4))
-                    print('\n')
-                    return(result_dic)
-                    break
+            wanted_result = start_wanted_result
+            print('\n YOU HAVE 8 SECONDS FOR TRAIN ACTION {} \n'.format(action.upper()))
 
         if status == 'accept':
-            while True:
-                result = self.ws.recv()
-                result_dic = json.loads(result)
-                if result_dic['sys'][1]=='MC_Completed':
-                    print('accept training result')
-                    print(json.dumps(result_dic, indent=4))
-                    print('\n')
-                    return(result_dic)
+            wanted_result = accept_wanted_result
+
+        # wait until success
+        while True:
+            result = self.ws.recv()
+            result_dic = json.loads(result)
+
+            print(json.dumps(result_dic, indent=4))
+
+            if 'sys' in result_dic:
+                # success or complete, break the wait
+                if result_dic['sys'][1]==wanted_result:
                     break
 
 
