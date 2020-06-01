@@ -80,7 +80,6 @@ class Train():
 # {"com":["push",0.294056],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736943.2229}
 # {"com":["push",0.112473],"sid":"abde5274-e33d-4373-b897-06778fccd619","time":1590736943.3479}
 # -----------------------------------------------------------
-
 user = {
 	"license" : "your emotivpro license, which could use for third party app",
 	"client_id" : "your client id",

@@ -9,8 +9,21 @@ class Subcribe():
 		self.c.sub_request(streams)
 
 
+# -----------------------------------------------------------
+# 
+# SETTING
+# 	- replace your license, client_id, client_secret to user dic
+# 	- specify infor for record and export
+# 	- connect your headset with dongle or bluetooth, you should saw headset on EmotivApp
+#
+# RESULT
+# 	- subcribed data type should print out to console log
+# 	{"eeg":[4,0,4222.476,4202.952,0.0,0,[]],"sid":"866e47d8-d7e6-4cfa-87b7-c4f956d6c429","time":1590984953.6683}
+# 	{"eeg":[5,0,4220.571,4204.857,0.0,0,[]],"sid":"866e47d8-d7e6-4cfa-87b7-c4f956d6c429","time":1590984953.6761}
+# 	{"eeg":[6,0,4219.143,4207.238,0.0,0,[]],"sid":"866e47d8-d7e6-4cfa-87b7-c4f956d6c429","time":1590984953.6839}
+# 	{"eeg":[7,0,4218.667,4198.667,0.0,0,[]],"sid":"866e47d8-d7e6-4cfa-87b7-c4f956d6c429","time":1590984953.6917}
+# -----------------------------------------------------------
 
-# -----------------------------------
 user = {
 	"license" : "your emotivpro license, which could use for third party app",
 	"client_id" : "your client id",
@@ -27,4 +40,4 @@ streams = ['eeg','mot','met','pow']
 streams = ['eeg']
 
 s.sub(streams)
-# -----------------------------------
+# -----------------------------------------------------------
