@@ -15,7 +15,7 @@
 - `record.py` - demostrate create record and export data to csv or edf file.
 For more details, please check https://emotiv.gitbook.io/cortex-api/records
 
-- `marker` - demostrate add marker while do recording.
+- `marker.py` - demostrate add marker while do recording.
 For more details, please check https://emotiv.gitbook.io/cortex-api/markers
 
 
