@@ -50,7 +50,6 @@ Not available yet.
 
 ## Try Cortex V2 Example
 - Cortex V2 Example demonstrates how to work with Cortex API. To get started, you may want to look at the API documentation: https://emotiv.gitbook.io/cortex-api/.
-    - *Note: API documentation is only for desktop version but should be almost the same on mobile. Exceptions will be noted below.*
 - Open project under `Android/CortexV2Example` by Android Studio or `iOS/CortexV2-Emotiv-iOS` by Xcode. You can see CortexV2Example is a set of modules, each module contains example code for a specific feature:
 
 Module| Related Cortex APIs
@@ -77,16 +76,6 @@ If you want to run with a specific license. You also can change config in this f
 
 - Choose the module you want to build and run on mobile device. Make sure you accept all permission requests.
 - The module app has a list of buttons demonstrating API calls. Try click on each button, you can see a pair of request/response json strings printed out in `Android Studio logcat` or `Xcode console`.
-
-## Cortex API for Mobile
-Although [Cortex API documentation](https://emotiv.gitbook.io/cortex-api/) is only for desktop, you can base on that to develop on mobile since most of APIs are the same, except for these below APIs:
-
-APIs | Desktop version | Mobile version
---------|--------|--------
-[controlDevice](https://emotiv.gitbook.io/cortex-api/headset/controldevice)|available values for `command` parameter: "connect", "disconnect", "refresh".|available values for `command` parameter: "refresh". <br>*You can only connect or disconnect headsets via EMOTIV App*.
-[queryHeadsets](https://emotiv.gitbook.io/cortex-api/headset/queryheadsets)|return all discovered headsets.|return one and only connected headset.
-[exportRecords](https://emotiv.gitbook.io/cortex-api/records/exportrecord)|Supported.|Not supported.
-
 
 ## Cortex security certificates
 
