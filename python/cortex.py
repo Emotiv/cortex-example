@@ -26,7 +26,7 @@ INJECT_MARKER_REQUEST_ID    = 14
 class Cortex():
     def __init__(self, user, debug_mode=False):
         url = "wss://localhost:6868"
-        self.ws = websocket.create_connection(url, 
+        self.ws = websocket.create_connection(url,
                                             sslopt={"cert_reqs": ssl.CERT_NONE})
         self.user = user
         self.debug = debug_mode
