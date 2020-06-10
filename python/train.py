@@ -93,10 +93,9 @@ user = {
 	"debit" : 100
 }
 
-
 t=Train()
 profile_name = 'your profile name'
-number_of_train = 5
+number_of_train = 1
 
 
 training_action = 'neutral'

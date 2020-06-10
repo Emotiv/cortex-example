@@ -7,22 +7,26 @@ import sys
 
 
 # define request id
-QUERY_HEADSET_ID            = 1
-CONNECT_HEADSET_ID          = 2
-REQUEST_ACCESS_ID           = 3
-AUTHORIZE_ID                = 4
-CREATE_SESSION_ID           = 5
-SUB_REQUEST_ID              = 6
-SETUP_PROFILE_ID            = 7
-QUERY_PROFILE_ID            = 8
-TRAINING_ID                 = 9
-DISCONNECT_HEADSET_ID       = 10
-CREATE_RECORD_REQUEST_ID    = 11
-STOP_RECORD_REQUEST_ID      = 12
-EXPORT_RECORD_ID            = 13
-INJECT_MARKER_REQUEST_ID    = 14
+QUERY_HEADSET_ID                    =   1
+CONNECT_HEADSET_ID                  =   2
+REQUEST_ACCESS_ID                   =   3
+AUTHORIZE_ID                        =   4
+CREATE_SESSION_ID                   =   5
+SUB_REQUEST_ID                      =   6
+SETUP_PROFILE_ID                    =   7
+QUERY_PROFILE_ID                    =   8
+TRAINING_ID                         =   9
+DISCONNECT_HEADSET_ID               =   10
+CREATE_RECORD_REQUEST_ID            =   11
+STOP_RECORD_REQUEST_ID              =   12
+EXPORT_RECORD_ID                    =   13
+INJECT_MARKER_REQUEST_ID            =   14
+SENSITIVITY_REQUEST_ID              =   15
+MENTAL_COMMAND_ACTIVE_ACTION_ID     =   16
+MENTAL_COMMAND_BRAIN_MAP_ID         =   17
+MENTAL_COMMAND_TRAINING_THRESHOLD   =   18
 
- 
+
 class Cortex():
     def __init__(self, user, debug_mode=False):
         url = "wss://localhost:6868"
@@ -473,6 +477,120 @@ class Cortex():
             print('inject marker request \n', json.dumps(inject_marker_request, indent=4))
             print('inject marker result \n',
                 json.dumps(result_dic, indent=4))
+
+    def get_mental_command_action_sensitivity(self, profile_name):
+        print('get mental command sensitivity ------------------')
+        sensitivity_request = {
+            "id": SENSITIVITY_REQUEST_ID,
+            "jsonrpc": "2.0",
+            "method": "mentalCommandActionSensitivity",
+            "params": {
+                "cortexToken": self.auth,
+                "profile": profile_name,
+                "status": "get"
+            }
+        }
+
+        self.ws.send(json.dumps(sensitivity_request))
+        result = self.ws.recv()
+        result_dic = json.loads(result)
+
+        if self.debug:
+            print(json.dumps(result_dic, indent=4))
+
+        return result_dic
+
+
+    def set_mental_command_action_sensitivity(self, 
+                                            profile_name, 
+                                            values):
+        print('set mental command sensitivity ------------------')
+        sensitivity_request = {
+                                "id": SENSITIVITY_REQUEST_ID,
+                                "jsonrpc": "2.0",
+                                "method": "mentalCommandActionSensitivity",
+                                "params": {
+                                    "cortexToken": self.auth,
+                                    "profile": profile_name,
+                                    "session": self.session_id,
+                                    "status": "set",
+                                    "values": values
+                                }
+                            }
+
+        self.ws.send(json.dumps(sensitivity_request))
+        result = self.ws.recv()
+        result_dic = json.loads(result)
+
+        if self.debug:
+            print(json.dumps(result_dic, indent=4))
+
+        return result_dic
+
+    def get_mental_command_active_action(self, profile_name):
+        print('get mental command active action ------------------')
+        command_active_request = {
+            "id": MENTAL_COMMAND_ACTIVE_ACTION_ID,
+            "jsonrpc": "2.0",
+            "method": "mentalCommandActiveAction",
+            "params": {
+                "cortexToken": self.auth,
+                "profile": profile_name,
+                "status": "get"
+            }
+        }
+
+        self.ws.send(json.dumps(command_active_request))
+        result = self.ws.recv()
+        result_dic = json.loads(result)
+
+        if self.debug:
+            print(json.dumps(result_dic, indent=4))
+
+        return result_dic
+
+    def get_mental_command_brain_map(self, profile_name):
+        print('get mental command brain map ------------------')
+        brain_map_request = {
+            "id": MENTAL_COMMAND_BRAIN_MAP_ID,
+            "jsonrpc": "2.0",
+            "method": "mentalCommandBrainMap",
+            "params": {
+                "cortexToken": self.auth,
+                "profile": profile_name,
+                "session": self.session_id
+            }
+        }
+
+        self.ws.send(json.dumps(brain_map_request))
+        result = self.ws.recv()
+        result_dic = json.loads(result)
+
+        if self.debug:
+            print(json.dumps(result_dic, indent=4))
+
+        return result_dic
+
+    def get_mental_command_training_threshold(self, profile_name):
+        print('get mental command training threshold -------------')
+        training_threshold_request = {
+            "id": MENTAL_COMMAND_TRAINING_THRESHOLD,
+            "jsonrpc": "2.0",
+            "method": "mentalCommandTrainingThreshold",
+            "params": {
+                "cortexToken": self.auth,
+                "session": self.session_id
+            }
+        }
+
+        self.ws.send(json.dumps(training_threshold_request))
+        result = self.ws.recv()
+        result_dic = json.loads(result)
+
+        if self.debug:
+            print(json.dumps(result_dic, indent=4))
+
+        return result_dic
 
 # -------------------------------------------------------------------
 # -------------------------------------------------------------------
