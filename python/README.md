@@ -15,6 +15,7 @@
 ## BCI advance
 - `train_advance.py` demo ability to get active action, brain map, and training threshold
 - `live_advance.py` demo ability to get and set action sensitivity in live mode
+- For more details https://emotiv.gitbook.io/cortex-api/advanced-bci
 
 ## Susbcribe data
 - `sub_data.py` demo data streaming from Cortex: EEG, motion, band power and Performance Metrics.
