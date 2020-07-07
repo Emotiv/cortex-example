@@ -29,4 +29,6 @@
 - [`marker.py`](./marker.py) shows how to inject marker during a recording.
 - For more details https://emotiv.gitbook.io/cortex-api/markers
 
+For async code example, please access folder async [`async`](./async)
+
 
