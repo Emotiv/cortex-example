@@ -12,7 +12,7 @@ static class AppConfig
     public static string TmpAppDataDir       = "UnityApp";
     public static string ClientId            = "put_your_clientId";
     public static string ClientSecret        = "put_your_clientSecret";
-    public static string AppVersion          = "1.0.1 Dev";
+    public static string AppVersion          = "2.7.0 Dev";
     
     /// <summary>
     /// License Id is used for App
