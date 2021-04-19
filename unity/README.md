@@ -50,6 +50,10 @@ After authorizing successfully, the example will list available headsets.
 
 ## Change log
 
+[19 Apr 2021]
+- Support new channel BateryPercent of "dev" stream which introduced from 2.7.0
+- Fix some bugs related to data buffer and cortexclient at unity-plugin
+
 [12 May 2020]
 - Subscribe data streams: EEG, Motion, Performance Metric, Device information
 - Supports EPOC, EPOC+, EPOC X and Insight.
