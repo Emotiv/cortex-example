@@ -96,7 +96,13 @@ namespace dirox.emotiv.controller
         public override void Activate()
         {
             Debug.Log("DataSubscriber: Activate");
-            base.Activate ();
+            base.Activate();
+        }
+
+        public override void Deactivate()
+        {
+            Debug.Log("DataSubscriber: Deactivate");
+            base.Deactivate();
         }
 
         /// <summary>
