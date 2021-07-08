@@ -13,7 +13,7 @@ namespace dirox.emotiv.controller
         RecordManager _recordManager = RecordManager.Instance;
 
         float _timerDataUpdate = 0;
-        const float TIME_UPDATE_DATA = 3f;
+        const float TIME_UPDATE_DATA = 1f;
 
         private string _recordResult = "";
         private string _markerResult = "";
@@ -62,13 +62,11 @@ namespace dirox.emotiv.controller
 
         private void OnInformRecordResult(object sender, string recordResult)
         {
-            Debug.Log("qqqqq OnInformRecord " + recordResult);
             _recordResult = recordResult;
         }
 
         private void OnInformMarkerResult(object sender, string markerResult)
         {
-            Debug.Log("qqqqq OnInformMarkerResult " + markerResult);
             _markerResult = markerResult;
         }
         

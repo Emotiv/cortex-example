@@ -12,8 +12,7 @@ namespace dirox.emotiv.controller
         // data subscribers
         DataSubscriber dataSubscriber;
 
-
-        // TODO: injectmarkers
+        // injectmarkers
         MarkersDemo markersDemo;
         
         [Inject]
@@ -25,13 +24,11 @@ namespace dirox.emotiv.controller
         public override void Activate()
         {
             Debug.Log("ExamplesBoard: Activate");
+            if (markersDemo.IsActive)
+                markersDemo.Deactivate();
+            if (dataSubscriber.IsActive)
+                dataSubscriber.Deactivate();
             base.Activate();
-        }
-
-        public override void Deactivate()
-        {
-            Debug.Log("ExamplesBoard: Deactivate");
-            base.Deactivate();
         }
 
         /// <summary>

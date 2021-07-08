@@ -189,6 +189,91 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 43325515}
   m_CullTransparentMesh: 0
+--- !u!1 &66762758
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 66762759}
+  - component: {fileID: 66762761}
+  - component: {fileID: 66762760}
+  m_Layer: 5
+  m_Name: guideline
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &66762759
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66762758}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 160942888}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -8.1, y: 99.9}
+  m_SizeDelta: {x: 751.8, y: 112.2}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &66762760
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66762758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 16
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 1
+    m_MaxSize: 40
+    m_Alignment: 3
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 'There are some unity examples as below:
+
+    1) Data Subscribers Example: demo EEG, Motion or Performance Metrics data subscribing.
+
+    2) Markers Example: show how to inject markers and update markers
+
+
+    Notes: You need a PRO license to subscribe EEG data and inject marker to the data
+    stream.'
+--- !u!222 &66762761
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66762758}
+  m_CullTransparentMesh: 0
 --- !u!1 &130645075
 GameObject:
   m_ObjectHideFlags: 0
@@ -549,8 +634,10 @@ RectTransform:
   m_Children:
   - {fileID: 1787369072}
   - {fileID: 242105242}
+  - {fileID: 970576115}
+  - {fileID: 66762759}
   m_Father: {fileID: 1019427099}
-  m_RootOrder: 6
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -756,10 +843,10 @@ MonoBehaviour:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
+    m_FontSize: 16
     m_FontStyle: 1
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -767,7 +854,11 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Markers
+  m_Text: '
+
+    Markers Example
+
+'
 --- !u!222 &191606627
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -890,8 +981,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -331, y: 41}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: 238, y: -27.3}
+  m_SizeDelta: {x: 163.3, y: 54.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &242105243
 MonoBehaviour:
@@ -1396,17 +1487,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0.05660379, g: 0.05660379, b: 0.05660379, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 14
-    m_FontStyle: 0
+    m_FontSize: 16
+    m_FontStyle: 1
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 4
     m_AlignByGeometry: 0
@@ -1414,7 +1505,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Data subscriber
+  m_Text: Data Subscribers Example
 --- !u!222 &322502773
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2964,7 +3055,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Record Logger
+  m_Text: Record Log
 --- !u!222 &937027105
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3186,6 +3277,85 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 952871399}
+  m_CullTransparentMesh: 0
+--- !u!1 &970576114
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 970576115}
+  - component: {fileID: 970576117}
+  - component: {fileID: 970576116}
+  m_Layer: 5
+  m_Name: title
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &970576115
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970576114}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 160942888}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0.000012398, y: 209.4}
+  m_SizeDelta: {x: 243.8, y: 51.3}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &970576116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970576114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 708705254, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.9811321, g: 0.9579922, b: 0.9579922, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 25
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 2
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: 'Examples Board
+
+'
+--- !u!222 &970576117
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 970576114}
   m_CullTransparentMesh: 0
 --- !u!1 &971309763
 GameObject:
@@ -3666,13 +3836,13 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 853839618}
-  - {fileID: 1771448226}
-  - {fileID: 2075425164}
-  - {fileID: 1857978926}
-  - {fileID: 283856683}
-  - {fileID: 1981825067}
-  - {fileID: 160942888}
   - {fileID: 1039626251}
+  - {fileID: 160942888}
+  - {fileID: 1771448226}
+  - {fileID: 1981825067}
+  - {fileID: 2075425164}
+  - {fileID: 283856683}
+  - {fileID: 1857978926}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3811,7 +3981,7 @@ RectTransform:
   - {fileID: 937027103}
   - {fileID: 1130745105}
   m_Father: {fileID: 1019427099}
-  m_RootOrder: 7
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -4077,7 +4247,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Marker Logger
+  m_Text: 'Marker Log
 
 '
 --- !u!222 &1130745107
@@ -4239,7 +4409,7 @@ PrefabInstance:
     - target: {fileID: 224622274285421206, guid: 567db0a64bb7e464b98d84e95b2966b0,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 224622274285421206, guid: 567db0a64bb7e464b98d84e95b2966b0,
         type: 3}
@@ -6498,7 +6668,7 @@ RectTransform:
   - {fileID: 1576812307}
   - {fileID: 1060405862}
   m_Father: {fileID: 1019427099}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -6603,8 +6773,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -331, y: 156}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -264, y: -27.3}
+  m_SizeDelta: {x: 161.6, y: 54.6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1787369073
 MonoBehaviour:
@@ -7050,7 +7220,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1019427099}
-  m_RootOrder: 3
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -7362,7 +7532,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1019427099}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -7691,10 +7861,11 @@ MonoBehaviour:
 
     1) You need to enter record title and create a record before injecting marker.
 
-    2) Enter marker label and marker value then click to "Inject Marker" button to
-    create an "instance" marker to the current record of a session.
+    2) Enter marker label and marker value then hit "Inject Marker" button to create
+    an "instance" marker to the current record of a session. A new "instance" marker
+    is injected each time you hit the button.
 
-    3) Click "Update Marker" to turn the current "instance" marker into an "interval"
+    3) Hit "Update Marker" to turn the current "instance" marker into an "interval"
     marker (not update for marker value or label).'
 --- !u!222 &2009304420
 CanvasRenderer:
@@ -7737,7 +7908,7 @@ RectTransform:
   - {fileID: 2142998250}
   - {fileID: 411942271}
   m_Father: {fileID: 1019427099}
-  m_RootOrder: 2
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
