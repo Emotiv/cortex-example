@@ -30,13 +30,21 @@ namespace dirox.emotiv
         [Header ("Data Subscriber")]
         [SerializeField] DataSubscriber dataSubscriber;
 
+        [Header ("Examples Board")]
+        [SerializeField] ExamplesBoard examplesBoard;
+
+        [Header ("Markers Demo")]
+        [SerializeField] MarkersDemo markersDemo;
+
         public override void InstallBindings ()
         {
             bindConnectHeadset ();
             bindContactQuality ();
             bindIndicators ();
             bindCortexGroup();
+            bindExamplesBoard();
             bindDataSubscriber();
+            bindMarkersDemo();
         }
 
         private void bindConnectHeadset ()
@@ -96,9 +104,19 @@ namespace dirox.emotiv
             Container.BindInstance (offlineUseLimit);
         }
 
-        private void bindDataSubscriber ()
+        private void bindDataSubscriber()
         {
-            Container.BindInstance (dataSubscriber);
+            Container.BindInstance(dataSubscriber);
+        }
+
+        private void bindExamplesBoard()
+        {
+            Container.BindInstance(examplesBoard);
+        }
+
+        private void bindMarkersDemo()
+        {
+            Container.BindInstance(markersDemo);
         }
     }
 }

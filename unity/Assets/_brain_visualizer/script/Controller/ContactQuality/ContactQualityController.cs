@@ -16,23 +16,30 @@ namespace dirox.emotiv.controller
         HeadsetGroup headsetGroup;
         ContactQualityBaseManager  activeDevice;
         ConnectionIndicatorGroup   connectionIndicatorGroup;
-        DataSubscriber dataSubscriber;
+        //DataSubscriber dataSubscriber;
+        ExamplesBoard examplesBoard;
+
                 
         public Text displayText;
 
         [Inject]
         public void SetDependencies (ConnectedDevice device, HeadsetGroup headsetGroup,
                                      ConnectionIndicatorGroup connectionIndicatorGroup,
-                                     DataSubscriber subscriber)
+                                     ExamplesBoard board)
         {
             this.connectedDevice  = device;
             this.headsetGroup     = headsetGroup;
             this.connectionIndicatorGroup = connectionIndicatorGroup;
-            dataSubscriber = subscriber;
+            // dataSubscriber = subscriber;
+            examplesBoard = board;
         }
 
         public override void Activate ()
         {
+            Debug.Log("ContactQualityController Active");
+            // deactive other screen if have
+            //examplesBoard.Deactivate();
+
             headsetGroup.Activate();
             connectionIndicatorGroup.Activate ();
 
@@ -46,7 +53,7 @@ namespace dirox.emotiv.controller
         public override void Deactivate ()
         {
             headsetGroup.Deactivate ();
-            base.Deactivate ();            
+            base.Deactivate ();
             StopAllCoroutines();
 
             if (activeDevice != null)
@@ -56,7 +63,9 @@ namespace dirox.emotiv.controller
         public void onButtonDone()
         {
             Deactivate();
-            dataSubscriber.Activate();
+            examplesBoard.Activate();
+
+            // dataSubscriber.Activate();
             // connectionIndicatorGroup.Activate ();
         }
             
