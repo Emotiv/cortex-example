@@ -3,6 +3,7 @@
 ## Requirement
 - This example works with Python >= 3.7
 - Install websocket client via  `pip install websocket-client`
+- Install python-dispatch via `pip install python-dispatch`
 
 ## Cortex Library
 - [`cortex.py`](./cortex.py) - the wrapper lib around EMOTIV Cortex API.

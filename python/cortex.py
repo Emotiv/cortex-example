@@ -4,6 +4,7 @@ import json
 import ssl
 import time
 import sys
+from pydispatch import Dispatcher
 
 
 # define request id
@@ -25,9 +26,10 @@ SENSITIVITY_REQUEST_ID              =   15
 MENTAL_COMMAND_ACTIVE_ACTION_ID     =   16
 MENTAL_COMMAND_BRAIN_MAP_ID         =   17
 MENTAL_COMMAND_TRAINING_THRESHOLD   =   18
+SET_MENTAL_COMMAND_ACTIVE_ACTION_ID =   19
 
 
-class Cortex():
+class Cortex(Dispatcher):
     def __init__(self, user, debug_mode=False):
         url = "wss://localhost:6868"
         self.ws = websocket.create_connection(url,
@@ -36,7 +38,7 @@ class Cortex():
         self.debug = debug_mode
 
     def query_headset(self):
-        print('query headset --------------------------------')        
+        print('query headset --------------------------------')
         query_headset_request = {
             "jsonrpc": "2.0", 
             "id": QUERY_HEADSET_ID,
@@ -48,30 +50,37 @@ class Cortex():
         result = self.ws.recv()
         result_dic = json.loads(result)
 
-        self.headset_id = result_dic['result'][0]['id']
-        if self.debug:
-            # print('query headset result', json.dumps(result_dic, indent=4))            
-            print(self.headset_id)
+        return result_dic['result']
 
-    def connect_headset(self):
-        print('connect headset --------------------------------')        
+    def connect_headset(self, headset_id):
+        print('connect headset --------------------------------')
         connect_headset_request = {
             "jsonrpc": "2.0", 
             "id": CONNECT_HEADSET_ID,
             "method": "controlDevice",
             "params": {
                 "command": "connect",
-                "headset": self.headset_id
+                "headset": headset_id
             }
         }
-
         self.ws.send(json.dumps(connect_headset_request, indent=4))
-        result = self.ws.recv()
-        result_dic = json.loads(result)
 
-        if self.debug:
-            print('connect headset result', json.dumps(result_dic, indent=4))
+        # wait until connect completed
+        while True:
+            time.sleep(1)
+            result = self.ws.recv()
+            result_dic = json.loads(result)
+            
+            if self.debug:
+                print('connect headset result', json.dumps(result_dic, indent=4))
 
+            if 'warning' in result_dic:
+                if result_dic['warning']['code'] == 104:
+                    self.headset_id = headset_id
+                    print("Connect headset " + self.headset_id + " successfully.")
+                    break
+                else:
+                    print(result_dic['warning']['code'])
 
     def request_access(self):
         print('request access --------------------------------')
@@ -92,6 +101,12 @@ class Cortex():
         if self.debug:
             print(json.dumps(result_dic, indent=4))
 
+        if result_dic.get('result') != None:
+            access_granted =  result_dic['result']['accessGranted']
+            return access_granted
+        elif result_dic.get('error') != None:
+            print("Request Access get error: " + result_dic['error']['message'])
+        return False
 
     def authorize(self):
         print('authorize --------------------------------')
@@ -184,11 +199,28 @@ class Cortex():
             print(json.dumps(json.loads(result), indent=4))
 
     def do_prepare_steps(self):
-        self.query_headset()
-        self.connect_headset()
-        self.request_access()
-        self.authorize()
-        self.create_session(self.auth, self.headset_id)
+        headsets = self.query_headset()
+
+        if len(headsets) > 0:
+            # get first element
+            headset_id = headsets[0]['id']
+            headset_status = headsets[0]['status']
+            
+            if headset_status != "connected":
+                # connect headset
+                self.connect_headset(headset_id)
+            else:
+                print("The headset " + headset_id + " has been connected.")
+                self.headset_id = headset_id
+
+            result = self.request_access()
+            if result == True:
+                self.authorize()
+                self.create_session(self.auth, self.headset_id)
+            else:
+                print("The user has not granted access right to this application. Please use EMOTIV App to proceed. Then try again.")
+        else:
+            print("No headset available. Please turn on a headset to proceed.")
 
 
     def disconnect_headset(self):
@@ -218,7 +250,7 @@ class Cortex():
                 if result_dic['warning']['code'] == 1:
                     break
 
-
+    _events_ = ['new_com_data', 'new_fe_data']
     def sub_request(self, stream):
         print('subscribe request --------------------------------')
         sub_request_json = {
@@ -240,8 +272,26 @@ class Cortex():
             print('\n')
         else:
             while True:
-                new_data = self.ws.recv()        
-                print(new_data)
+                new_data = self.ws.recv()
+                # Then emit the change with optional positional and keyword arguments
+                result_dic = json.loads(new_data)
+                if result_dic.get('com') != None:
+                    com_data = {}
+                    com_data['action'] = result_dic['com'][0]
+                    com_data['power'] = result_dic['com'][1]
+                    com_data['time'] = result_dic['time']
+                    self.emit('new_com_data', data=com_data)
+                elif result_dic.get('fac') != None:
+                    fe_data = {}
+                    fe_data['eyeAct'] = result_dic['fac'][0]    #eye action
+                    fe_data['uAct'] = result_dic['fac'][1]      #upper action
+                    fe_data['uPow'] = result_dic['fac'][2]      #upper action power
+                    fe_data['lAct'] = result_dic['fac'][3]      #lower action
+                    fe_data['lPow'] = result_dic['fac'][4]      #lower action power
+                    fe_data['time'] = result_dic['time']
+                    self.emit('new_fe_data', data=fe_data)
+                else:
+                    print(new_data)
 
 
     def query_profile(self):
@@ -271,7 +321,7 @@ class Cortex():
         for p in result_dic['result']:
             profiles.append(p['name'])
 
-        print('extract profiles name only')        
+        print('extract profiles name only')
         print(profiles)
         print('\n')
 
@@ -279,7 +329,7 @@ class Cortex():
 
 
     def setup_profile(self, profile_name, status):
-        print('setup profile --------------------------------')
+        print('setup profile: ' + status + ' -------------------------------- ')
         setup_profile_json = {
             "jsonrpc": "2.0",
             "method": "setupProfile",
@@ -490,16 +540,15 @@ class Cortex():
                 "status": "get"
             }
         }
+        if self.debug:
+            print('get mental command sensitivity \n', json.dumps(sensitivity_request, indent=4))
 
         self.ws.send(json.dumps(sensitivity_request))
         result = self.ws.recv()
         result_dic = json.loads(result)
 
-        if self.debug:
-            print(json.dumps(result_dic, indent=4))
-
+        print(json.dumps(result_dic, indent=4))
         return result_dic
-
 
     def set_mental_command_action_sensitivity(self, 
                                             profile_name, 
@@ -517,7 +566,9 @@ class Cortex():
                                     "values": values
                                 }
                             }
-
+        if self.debug:
+            print('set mental command sensitivity \n', json.dumps(sensitivity_request, indent=4))
+            
         self.ws.send(json.dumps(sensitivity_request))
         result = self.ws.recv()
         result_dic = json.loads(result)
@@ -539,6 +590,29 @@ class Cortex():
                 "status": "get"
             }
         }
+
+        self.ws.send(json.dumps(command_active_request))
+        result = self.ws.recv()
+        result_dic = json.loads(result)
+
+        print(json.dumps(result_dic, indent=4))
+
+    def set_mental_command_active_action(self, actions):
+        print('set mental command active action ------------------')
+        command_active_request = {
+            "id": SET_MENTAL_COMMAND_ACTIVE_ACTION_ID,
+            "jsonrpc": "2.0",
+            "method": "mentalCommandActiveAction",
+            "params": {
+                "cortexToken": self.auth,
+                "session": self.session_id,
+                "status": "set",
+                "actions": actions
+            }
+        }
+
+        if self.debug:
+            print('set mental command active action \n', json.dumps(command_active_request, indent=4))
 
         self.ws.send(json.dumps(command_active_request))
         result = self.ws.recv()
