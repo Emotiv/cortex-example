@@ -40,12 +40,12 @@ class LiveAdvance():
 	def do_prepare_steps(self):
 		"""
         Do prepare steps before training.
-        Step 1: requestAccess: Request user approval for the current application for first time.
+        Step 1: Connect a headset. For simplicity, the first headset in the list will be connected in the example.
+                If you use EPOC Flex headset, you should connect the headset with a proper mappings via EMOTIV App first 
+        Step 2: requestAccess: Request user approval for the current application for first time.
                        You need to open EMOTIV App to approve the access
-        Step 2: authorize: to generate a Cortex access token which is required parameter of many apis
-        Step 3: Connect a headset. For simplicity, the first headset in the list will be connected in the example.
-        		If you use EPOC Flex headset, you should connect the headset with a proper mappings via EMOTIV App first 
-        Step 4: Create a working session with the headset
+        Step 3: authorize: to generate a Cortex access token which is required parameter of many APIs
+        Step 4: Create a working session with the connected headset
         Returns
         -------
         None
