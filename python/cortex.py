@@ -250,7 +250,7 @@ class Cortex(Dispatcher):
                 if result_dic['warning']['code'] == 1:
                     break
 
-    _events_ = ['new_com_data', 'new_fe_data']
+    _events_ = ['new_data_labels','new_com_data', 'new_fe_data', 'new_eeg_data', 'new_mot_data', 'new_dev_data', 'new_met_data', 'new_pow_data']
     def sub_request(self, stream):
         print('subscribe request --------------------------------')
         sub_request_json = {
@@ -265,33 +265,98 @@ class Cortex(Dispatcher):
         }
 
         self.ws.send(json.dumps(sub_request_json))
-        
+
+        # handle subscribe response
+        new_data = self.ws.recv()
+        result_dic = json.loads(new_data)
+
+        if self.debug:
+            print(json.dumps(result_dic, indent=4))
+
         if 'sys' in stream:
-            new_data = self.ws.recv()
-            print(json.dumps(new_data, indent=4))
-            print('\n')
+            # ignored sys data
+            return
+
+        if result_dic.get('error') != None:
+            print("subscribe get error: " + result_dic['error']['message'])
+            return
         else:
-            while True:
-                new_data = self.ws.recv()
-                # Then emit the change with optional positional and keyword arguments
-                result_dic = json.loads(new_data)
-                if result_dic.get('com') != None:
-                    com_data = {}
-                    com_data['action'] = result_dic['com'][0]
-                    com_data['power'] = result_dic['com'][1]
-                    com_data['time'] = result_dic['time']
-                    self.emit('new_com_data', data=com_data)
-                elif result_dic.get('fac') != None:
-                    fe_data = {}
-                    fe_data['eyeAct'] = result_dic['fac'][0]    #eye action
-                    fe_data['uAct'] = result_dic['fac'][1]      #upper action
-                    fe_data['uPow'] = result_dic['fac'][2]      #upper action power
-                    fe_data['lAct'] = result_dic['fac'][3]      #lower action
-                    fe_data['lPow'] = result_dic['fac'][4]      #lower action power
-                    fe_data['time'] = result_dic['time']
-                    self.emit('new_fe_data', data=fe_data)
-                else:
-                    print(new_data)
+            # handle data lable
+            for stream in result_dic['result']['success']:
+                stream_name = stream['streamName']
+                stream_labels = stream['cols']
+                # ignore com and fac data label because they are handled in on_new_data
+                if stream_name != 'com' and stream_name != 'fac':
+                    self.extract_data_labels(stream_name, stream_labels)
+
+        # Handle data event
+        while True:
+            new_data = self.ws.recv()
+            # Then emit the change with optional positional and keyword arguments
+            result_dic = json.loads(new_data)
+            if result_dic.get('com') != None:
+                com_data = {}
+                com_data['action'] = result_dic['com'][0]
+                com_data['power'] = result_dic['com'][1]
+                com_data['time'] = result_dic['time']
+                self.emit('new_com_data', data=com_data)
+            elif result_dic.get('fac') != None:
+                fe_data = {}
+                fe_data['eyeAct'] = result_dic['fac'][0]    #eye action
+                fe_data['uAct'] = result_dic['fac'][1]      #upper action
+                fe_data['uPow'] = result_dic['fac'][2]      #upper action power
+                fe_data['lAct'] = result_dic['fac'][3]      #lower action
+                fe_data['lPow'] = result_dic['fac'][4]      #lower action power
+                fe_data['time'] = result_dic['time']
+                self.emit('new_fe_data', data=fe_data)
+            elif result_dic.get('eeg') != None:
+                eeg_data = {}
+                eeg_data['eeg'] = result_dic['eeg']
+                eeg_data['eeg'].pop() # remove markers
+                eeg_data['time'] = result_dic['time']
+                self.emit('new_eeg_data', data=eeg_data)
+            elif result_dic.get('mot') != None:
+                mot_data = {}
+                mot_data['mot'] = result_dic['mot']
+                mot_data['time'] = result_dic['time']
+                self.emit('new_mot_data', data=mot_data)
+
+            elif result_dic.get('dev') != None:
+                dev_data = {}
+                dev_data['signal'] = result_dic['dev'][1]
+                dev_data['dev'] = result_dic['dev'][2]
+                dev_data['batteryPercent'] = result_dic['dev'][3]
+                dev_data['time'] = result_dic['time']
+                self.emit('new_dev_data', data=dev_data)
+            elif result_dic.get('met') != None:
+                met_data = {}
+                met_data['met'] = result_dic['met']
+                met_data['time'] = result_dic['time']
+                self.emit('new_met_data', data=met_data)
+            elif result_dic.get('pow') != None:
+                pow_data = {}
+                pow_data['pow'] = result_dic['pow']
+                pow_data['time'] = result_dic['time']
+                self.emit('new_pow_data', data=pow_data)
+            else :
+                print(new_data)
+
+    def extract_data_labels(self, stream_name, stream_cols):
+        data = {}
+        data['streamName'] = stream_name
+
+        data_labels = []
+        if stream_name == 'eeg':
+            # remove MARKERS
+            data_labels = stream_cols[:-1]
+        elif stream_name == 'dev':
+            # get cq header column except battery, signal and battery percent
+            data_labels = stream_cols[2]
+        else:
+            data_labels = stream_cols
+
+        data['labels'] = data_labels
+        self.emit('new_data_labels', data=data)
 
 
     def query_profile(self):

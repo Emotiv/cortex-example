@@ -1,9 +1,7 @@
-#from cortex import Cortex
-
 from cortex import Cortex
 
 class Train():
-	"""
+    """
     A class to use BCI API to control the training of the mental command detections.
 
     Attributes
@@ -29,16 +27,16 @@ class Train():
         To handle mental command data emitted from Cortex
     """
 
-	def __init__(self):
-		"""
-        Constructs cortex client and bind a function to handle subscribed data streams for the Train object
-		If you do not want to log request and response message , set debug_mode = False. The default is True
+    def __init__(self):
         """
-		self.c = Cortex(user, debug_mode=True)
-		self.c.bind(new_com_data=self.on_new_data)
+        Constructs cortex client and bind a function to handle subscribed data streams for the Train object
+        If you do not want to log request and response message , set debug_mode = False. The default is True
+        """
+        self.c = Cortex(user, debug_mode=True)
+        self.c.bind(new_com_data=self.on_new_data)
 
-	def do_prepare_steps(self):
-		"""
+    def do_prepare_steps(self):
+        """
         Do prepare steps before training.
         Step 1: Connect a headset. For simplicity, the first headset in the list will be connected in the example.
                 If you use EPOC Flex headset, you should connect the headset with a proper mappings via EMOTIV App first 
@@ -50,10 +48,10 @@ class Train():
         -------
         None
         """
-		self.c.do_prepare_steps()
+        self.c.do_prepare_steps()
 
-	def subscribe_data(self, streams):
-		"""
+    def subscribe_data(self, streams):
+        """
         To subscribe to one or more data streams
         'com': Mental command
         'fac' : Facial expression
@@ -67,10 +65,10 @@ class Train():
         -------
         None
         """
-		self.c.sub_request(streams)
+        self.c.sub_request(streams)
 
-	def load_profile(self, profile_name):
-		"""
+    def load_profile(self, profile_name):
+        """
         To load an existed profile or create new profile for training
 
         Parameters
@@ -82,17 +80,17 @@ class Train():
         -------
         None
         """
-		profiles = self.c.query_profile()
+        profiles = self.c.query_profile()
 
-		if profile_name not in profiles:
-			status = 'create'
-			self.c.setup_profile(profile_name, status)
+        if profile_name not in profiles:
+            status = 'create'
+            self.c.setup_profile(profile_name, status)
 
-		status = 'load'
-		self.c.setup_profile(profile_name, status)
+        status = 'load'
+        self.c.setup_profile(profile_name, status)
 
-	def unload_profile(self, profile_name):
-		"""
+    def unload_profile(self, profile_name):
+        """
         To unload an existed profile or create new profile for training
 
         Parameters
@@ -104,16 +102,16 @@ class Train():
         -------
         None
         """
-		profiles = self.c.query_profile()
+        profiles = self.c.query_profile()
 
-		if profile_name in profiles:
-			status = 'unload'
-			self.c.setup_profile(profile_name, status)
-		else:
-			print("The profile " + profile_name + " is not existed.")
+        if profile_name in profiles:
+            status = 'unload'
+            self.c.setup_profile(profile_name, status)
+        else:
+            print("The profile " + profile_name + " is not existed.")
 
-	def train_mc(self, profile_name, training_action, number_of_train):
-		"""
+    def train_mc(self, profile_name, training_action, number_of_train):
+        """
         To control the training of the mental command action.
         Make sure the headset is at good contact quality. You need to focus during 8 seconds for training an action.
         For simplicity, the training will be called to accepted automatically and then the training will be saved.
@@ -124,56 +122,56 @@ class Train():
             name of training profile
         training_action : string, required
             mental command action, for example: neutral, push, pull, lift...
-		number_of_train : int, required
+        number_of_train : int, required
             number of training for the action
         Returns
         -------
         None
         """
 
-		print('begin train -----------------------------------')
-		num_train = 0
-		while num_train < number_of_train:
-			num_train = num_train + 1
+        print('begin train -----------------------------------')
+        num_train = 0
+        while num_train < number_of_train:
+            num_train = num_train + 1
 
-			print('start training {0} time {1} ---------------'.format(training_action, num_train))
-			print('\n')
-			status='start'			
-			self.c.train_request(detection='mentalCommand',
-								action=training_action,
-								status=status)
+            print('start training {0} time {1} ---------------'.format(training_action, num_train))
+            print('\n')
+            status='start'          
+            self.c.train_request(detection='mentalCommand',
+                                action=training_action,
+                                status=status)
 
-			print('accept {0} time {1} ---------------'.format(training_action, num_train))
-			print('\n')
-			status='accept'
-			self.c.train_request(detection='mentalCommand',
-								action=training_action, 
-								status=status)
-		
-		print('save trained action')
-		status = "save"
-		self.c.setup_profile(profile_name, status)
+            print('accept {0} time {1} ---------------'.format(training_action, num_train))
+            print('\n')
+            status='accept'
+            self.c.train_request(detection='mentalCommand',
+                                action=training_action, 
+                                status=status)
+        
+        print('save trained action')
+        status = "save"
+        self.c.setup_profile(profile_name, status)
 
 
-	def live(self, profile_name):
-		"""
+    def live(self, profile_name):
+        """
         Load a trained profiles then subscribe mental command data to enter live mode
 
         Returns
         -------
         None
         """
-		print('begin live mode ----------------------------------')
-		# load profile
-		status = 'load'
-		self.c.setup_profile(profile_name, status)
+        print('begin live mode ----------------------------------')
+        # load profile
+        status = 'load'
+        self.c.setup_profile(profile_name, status)
 
-		# sub 'com' stream and view live mode
-		stream = ['com']
-		self.c.sub_request(stream)
+        # sub 'com' stream and view live mode
+        stream = ['com']
+        self.c.sub_request(stream)
 
-	def on_new_data(self, *args, **kwargs):
-		"""
+    def on_new_data(self, *args, **kwargs):
+        """
         To handle mental command data emitted from Cortex
 
         Returns
@@ -181,40 +179,40 @@ class Train():
         data: dictionary
              the format such as {'action': 'neutral', 'power': 0.0, 'time': 1590736942.8479}
         """
-		data = kwargs.get('data')
-		print('mc data: {}'.format(data))
+        data = kwargs.get('data')
+        print('mc data: {}'.format(data))
 
 
 # -----------------------------------------------------------
 
 '''
 SETTING
-	- replace your license, client_id, client_secret to user dic
-	- naming your profile
-	- connect your headset with dongle or bluetooth, you should saw headset on EmotivApp.
-	  make sure the headset at good contact quality.
+    - replace your license, client_id, client_secret to user dic
+    - naming your profile
+    - connect your headset with dongle or bluetooth, you should saw headset on EmotivApp.
+      make sure the headset at good contact quality.
 
 TRAIN
-	you need to folow steps:
-		1) do_prepare_steps: for authorization, connect headset and create working session.
-		2) subscribe 'sys' data for Training Event
-		3) load a profile with the connected headset
-		4) do training actions one by one. Begin with neutral action
+    you need to folow steps:
+        1) do_prepare_steps: for authorization, connect headset and create working session.
+        2) subscribe 'sys' data for Training Event
+        3) load a profile with the connected headset
+        4) do training actions one by one. Begin with neutral action
 
 LIVE
-	you can run live mode with the trained profile. the data as below:
+    you can run live mode with the trained profile. the data as below:
 
-	{'action': 'neutral', 'power': 0.0, 'time': 1590736942.8479}
-	{'action': 'neutral', 'power': 0.0, 'time': 1590736942.9729}
-	{'action': 'push', 'power': 0.345774, 'time': 1590736943.0979}
-	{'action': 'push', 'power': 0.294056, 'time': 1590736943.2229}
-	{'action': 'push', 'power': 0.112473, 'time': 1590736943.3479}
+    {'action': 'neutral', 'power': 0.0, 'time': 1590736942.8479}
+    {'action': 'neutral', 'power': 0.0, 'time': 1590736942.9729}
+    {'action': 'push', 'power': 0.345774, 'time': 1590736943.0979}
+    {'action': 'push', 'power': 0.294056, 'time': 1590736943.2229}
+    {'action': 'push', 'power': 0.112473, 'time': 1590736943.3479}
 '''
 
 """
-	client_id, client_secret:
-	To get a client id and a client secret, you must connect to your Emotiv account on emotiv.com and create a Cortex app
-	For training purpose, you should set empty string for license
+    client_id, client_secret:
+    To get a client id and a client secret, you must connect to your Emotiv account on emotiv.com and create a Cortex app
+    For training purpose, you should set empty string for license
 """
 user = {
     "license" : "your emotivpro license, which could use for third party app",
