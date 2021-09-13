@@ -9,9 +9,9 @@ This example demonstrates how to work with Emotiv Cortex Service (aka Cortex) in
 ```
        git submodule update --init
 ```
-* Install and run the EMOTIV App with Cortex from (https://www.emotiv.com/developer/).
+* Install and run the EMOTIV Launcher with Cortex from (https://www.emotiv.com/developer/).
 * Login to the Emotiv website with a valid EmotivID, register an application at https://www.emotiv.com/my-account/cortex-apps/ to a pair of client id and client secret. If you don't have a EmotivID, you can [register here](https://id.emotivcloud.com/eoidc/account/registration/).
-* We have updated our Terms of Use, Privacy Policy and EULA to comply with GDPR. Please login via EMOTIV App to read and accept our latest policies in order to proceed with the following examples.
+* We have updated our Terms of Use, Privacy Policy and EULA to comply with GDPR. Please login via EMOTIV Launcher to read and accept our latest policies in order to proceed with the following examples.
 
 ## How to compile
 <!-- how to compile  -->
@@ -42,8 +42,8 @@ There are some main controller scripts:
 
 ## How to use
 1. Put clientId, clientSecret of your application in AppConfig.cs. To subscribe EEG data or inject markers to EEG data stream you need to put a PRO license at "AppLicenseId" in AppConfig.cs. In addition, You also can customize application name, version and TmpAppDataDir to create log directory.
-1. Make sure you have logged in via EMOTIV App, and the headset has been turned on.
-1. Run the example from editor. The example will connect to Cortex for authorization. You might need to grant access right for the example via EMOTIV App at the first time. After that, the example will get the token to work with Cortex. The token will be saved for subsequent use.
+1. Make sure you have logged in via EMOTIV Launcher, and the headset has been turned on.
+1. Run the example from editor. The example will connect to Cortex for authorization. You might need to grant access right for the example via EMOTIV Launcher at the first time. After that, the example will get the token to work with Cortex. The token will be saved for subsequent use.
 After authorizing successfully, the example will list available headsets. 
 1. At headset list screen, hit "Connect" button to connect, create a working session with that headset, and subscribe device information (Contact Quality).
 1. Please make sure the headset is at good contact quality and hit "Done" button to enter "Examples Board".

@@ -58,7 +58,7 @@ namespace CortexAccess
             }
             else
             {
-                Console.WriteLine("User has not accepted eula. Please accept EULA on EMOTIV App to proceed");
+                Console.WriteLine("User has not accepted eula. Please accept EULA on EMOTIV Launcher to proceed");
             }
         }
 
@@ -74,7 +74,7 @@ namespace CortexAccess
             else
             {
                 _isEulaAccepted = false;
-                Console.WriteLine("User has not accepted eula. Please accept EULA on EMOTIV App to proceed");
+                Console.WriteLine("User has not accepted eula. Please accept EULA on EMOTIV Launcher to proceed");
             }
         }
 
@@ -101,7 +101,7 @@ namespace CortexAccess
             }
             else
             {
-                Console.WriteLine("The User has not granted access right to this application. Please use EMOTIV App to proceed.");
+                Console.WriteLine("The User has not granted access right to this application. Please use EMOTIV Launcher to proceed.");
             }
         }
 
@@ -146,7 +146,7 @@ namespace CortexAccess
             }
             else
             {
-                Console.WriteLine("You must login via EMOTIV App before working with Cortex");
+                Console.WriteLine("You must login via EMOTIV Launcher before working with Cortex");
             }
             
         }

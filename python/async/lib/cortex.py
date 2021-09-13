@@ -186,7 +186,7 @@ class Cortex(object):
         '''
         Generate an authorization token, required for most actions.
         Requires a valid license file, that the user be logged in via
-        the Emotiv App, and that the user has granted access to this app.
+        the EMOTIV Launcher, and that the user has granted access to this app.
 
         Optionally, a license_id can be specified to allow sharing a
         device-locked license across multiple users.
@@ -231,7 +231,7 @@ class Cortex(object):
         if 'loggedInOSUId' not in resp:
             logger.debug(resp)
             raise CortexApiException(
-                f"No user logged in! Please log in with the Emotiv App")
+                f"No user logged in! Please log in with the EMOTIV Launcher")
         if (resp['currentOSUId'] != resp['loggedInOSUId']):
             logger.debug(resp)
             raise CortexApiException(
