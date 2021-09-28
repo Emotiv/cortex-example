@@ -34,7 +34,7 @@ To run the existing example you will need to do a few things.
    service.  Please note that currently, the Cortex service is only available
    for Windows and macOS.
 3. We have updated our Terms of Use, Privacy Policy and EULA to comply with
-   GDPR. Please login via the EMOTIV App to read and accept our latest policies
+   GDPR. Please login via the EMOTIV Launcher to read and accept our latest policies
    in order to proceed using the following examples.
 4. Next, to get a client id and a client secret, you must connect to your
    Emotiv account on
@@ -42,9 +42,9 @@ To run the existing example you will need to do a few things.
    Cortex app. If you don't have a EmotivID, you can [register
    here](https://id.emotivcloud.com/eoidc/account/registration/).
 5. Then, if you have not already, you will need to login with your Emotiv id in
-   the EMOTIV App.
+   the EMOTIV Launcher.
 6. Finally, the first time you run these examples, you also need to authorize
-   them in the EMOTIV App.
+   them in the EMOTIV Launcher.
 
 This code is purely an example of how to work with Cortex.  We strongly
 recommend adjusting the code to your purposes.

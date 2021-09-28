@@ -218,7 +218,7 @@ class Cortex(Dispatcher):
                 self.authorize()
                 self.create_session(self.auth, self.headset_id)
             else:
-                print("The user has not granted access right to this application. Please use EMOTIV App to proceed. Then try again.")
+                print("The user has not granted access right to this application. Please use EMOTIV Launcher to proceed. Then try again.")
         else:
             print("No headset available. Please turn on a headset to proceed.")
 
