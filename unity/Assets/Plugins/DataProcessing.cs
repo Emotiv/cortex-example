@@ -178,7 +178,7 @@ public class DataProcessing
             int cqSize = DataStreamManager.Instance.GetNumberCQSamples();
 
             // Currently , we only support insight, epoc, epoc+, epocX . Other headsets will be supported in next version
-            if (_curHeadsetObjectConnected.HeadsetType != HeadsetTypes.HEADSET_TYPE_INSIGHT)
+            if (!Utils.IsInsightType(_curHeadsetObjectConnected.HeadsetType))
             {
                 _contactQualityData[(int)Channels.AF3] = (ContactQualityValue)(int)DataStreamManager.Instance.GetContactQuality(Channel_t.CHAN_AF3);
                 _contactQualityData[(int)Channels.AF4] = (ContactQualityValue)(int)DataStreamManager.Instance.GetContactQuality(Channel_t.CHAN_AF4);
@@ -253,7 +253,7 @@ public class DataProcessing
             buf[(int)Channels.T8]  = DataStreamManager.Instance.GetEEGData(Channel_t.CHAN_T8);
             buf[(int)Channels.AF4] = DataStreamManager.Instance.GetEEGData(Channel_t.CHAN_AF4);
 
-            if (_curHeadsetObjectConnected.HeadsetType != HeadsetTypes.HEADSET_TYPE_INSIGHT)
+            if (!Utils.IsInsightType(_curHeadsetObjectConnected.HeadsetType))
             {
                 buf[(int)Channels.O1]  = DataStreamManager.Instance.GetEEGData(Channel_t.CHAN_O1);
                 buf[(int)Channels.F7]  = DataStreamManager.Instance.GetEEGData(Channel_t.CHAN_F7);

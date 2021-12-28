@@ -54,6 +54,9 @@ After authorizing successfully, the example will list available headsets.
 
 ## Change log
 
+[15 Jan 2022]
+- Support insight 2 for unity examples.
+
 [10 July 2021]
 - Support inject marker and update marker to the EEG data stream.
 

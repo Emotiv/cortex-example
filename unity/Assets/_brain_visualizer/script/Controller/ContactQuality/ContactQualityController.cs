@@ -43,7 +43,7 @@ namespace dirox.emotiv.controller
             headsetGroup.Activate();
             connectionIndicatorGroup.Activate ();
 
-            activeDevice = connectedDevice.Information.HeadsetType == HeadsetTypes.HEADSET_TYPE_INSIGHT ? insight : epoc;
+            activeDevice = Utils.IsInsightType(connectedDevice.Information.HeadsetType) ? insight : epoc;
             activeDevice.gameObject.SetActive(true);
             base.Activate ();
 
