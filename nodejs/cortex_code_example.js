@@ -86,7 +86,7 @@ class Cortex {
                 "params": { 
                     "clientId": user.clientId, 
                     "clientSecret": user.clientSecret, 
-                    "license": user.license, 
+                    "license": user.license,
                     "debit": user.debit
                 },
                 "id": AUTHORIZE_ID
@@ -160,14 +160,12 @@ class Cortex {
 
         let createRecordRequest = {
             "jsonrpc": "2.0", 
-            "method": "updateSession", 
+            "method": "createRecord",
             "params": {
                 "cortexToken": authToken,
                 "session": sessionId,
-                "status": "startRecord",
                 "title": recordName,
-                "description":"test_marker",
-                "groupName": "QA"
+                "description":"test_marker"
             }, 
             "id": CREATE_RECORD_REQUEST_ID
         }
@@ -179,13 +177,14 @@ class Cortex {
                     if(JSON.parse(data)['id']==CREATE_RECORD_REQUEST_ID){
                         console.log('CREATE RECORD RESULT --------------------------------')
                         console.log(data)
-                        resolve(data)
+                        let recordId = JSON.parse(data)['result']['record']['uuid']
+                        console.log("=======> recordId:", recordId)
+                        resolve(recordId)
                     }
                 } catch (error) {}
             })
         })
     }
-
 
 
     injectMarkerRequest(authToken, sessionId, label, value, port, time){
@@ -226,14 +225,10 @@ class Cortex {
         const STOP_RECORD_REQUEST_ID = 12
         let stopRecordRequest = {
             "jsonrpc": "2.0", 
-            "method": "updateSession", 
+            "method": "stopRecord",
             "params": {
                 "cortexToken": authToken,
-                "session": sessionId,
-                "status": "stopRecord",
-                "title": recordName,
-                "description":"test_marker",
-                "groupName": "QA"
+                "session": sessionId
             }, 
             "id": STOP_RECORD_REQUEST_ID
         }
@@ -283,7 +278,7 @@ class Cortex {
                 }, 3000)
             }
 
-            await thisStopRecord.stopRecord(thisStopRecord.authToken, thisStopRecord.sessionId, recordName)
+            await this.stopRecord(this.authToken, this.sessionId, recordName)
         })
     }
 
@@ -666,6 +661,7 @@ class Cortex {
             })
         })
     }
+
 }
 
 // ---------------------------------------------------------
