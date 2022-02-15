@@ -1,0 +1,20 @@
+{
+  "name": "emotiv-nodejs-example",
+  "version": "1.0.0",
+  "description": "Example of Cortex V2 APIs in nodejs",
+  "main": "cortex_code_example.js",
+  "dependencies": {
+    "async-limiter": "^2.0.0",
+    "ws": "^6.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Emotiv",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Emotiv/cortex-v2-example/tree/master/nodejs"
+  }
+}
