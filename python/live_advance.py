@@ -203,7 +203,7 @@ class LiveAdvance():
             # get active action
             self.get_active_action(self.profile_name)
         else:
-            print('The profile ' + self.profile_name + 'is unloaded')
+            print('The profile ' + self.profile_name + ' is unloaded')
             self.profile_name = ''
 
     def on_save_profile_done (self, *args, **kwargs):

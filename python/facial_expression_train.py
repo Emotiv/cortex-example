@@ -191,7 +191,7 @@ class Train():
             # subscribe sys stream to receive Training Event
             self.subscribe_data(['sys'])
         else:
-            print('The profile ' + self.profile_name + 'is unloaded')
+            print('The profile ' + self.profile_name + ' is unloaded')
             self.profile_name = ''
 
     def on_save_profile_done (self, *args, **kwargs):

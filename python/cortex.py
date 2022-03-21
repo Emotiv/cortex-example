@@ -93,7 +93,7 @@ class Cortex(Dispatcher):
         
 
     def open(self):
-        url = "wss://localhost:7070"
+        url = "wss://localhost:6868"
         # websocket.enableTrace(True)
         self.ws = websocket.WebSocketApp(url, 
                                         on_message=self.on_message,
@@ -124,6 +124,9 @@ class Cortex(Dispatcher):
         print(args[1])
 
     def handle_result(self, recv_dic):
+        if self.debug:
+            print(recv_dic)
+
         req_id = recv_dic['id']
         result_dic = recv_dic['result']
 
@@ -146,12 +149,12 @@ class Cortex(Dispatcher):
                 msg = result_dic['message']
                 warnings.warn(msg)
         elif req_id == AUTHORIZE_ID:
+            print("Authorize successfully.")
             self.auth = result_dic['cortexToken']
             # query headsets
             self.query_headset()
         elif req_id == QUERY_HEADSET_ID:
             self.headset_list = result_dic
-
             found_headset = False
             headset_status = ''
             for ele in self.headset_list:
@@ -164,7 +167,7 @@ class Cortex(Dispatcher):
                     headset_status = status
 
             if len(self.headset_list) == 0:
-                warning.warn("No headset available. Please turn on a headset.")
+                warnings.warn("No headset available. Please turn on a headset.")
             elif self.headset_id == '':
                 # set first headset is default headset
                 self.headset_id = self.headset_list[0]['id']
@@ -186,14 +189,14 @@ class Cortex(Dispatcher):
                     warnings.warn('query_headset resp: Invalid connection status ' + headset_status)
         elif req_id == CREATE_SESSION_ID:
             self.session_id = result_dic['id']
+            print("The session " + self.session_id + " is created successfully.")
             self.emit('create_session_done', data=self.session_id)
-            print("create_session resp: " + self.session_id)
         elif req_id == SUB_REQUEST_ID:
-            # handle data lable
+            # handle data label
             for stream in result_dic['success']:
                 stream_name = stream['streamName']
                 stream_labels = stream['cols']
-                print('subscribe resp success cases: '+ stream_name)
+                print('The data stream '+ stream_name + ' is subscribed successfully.')
                 # ignore com, fac and sys data label because they are handled in on_new_data
                 if stream_name != 'com' and stream_name != 'fac':
                     self.extract_data_labels(stream_name, stream_labels)
@@ -201,7 +204,7 @@ class Cortex(Dispatcher):
             for stream in result_dic['failure']:
                 stream_name = stream['streamName']
                 stream_msg = stream['message']
-                print('subscribe resp failure cases: '+ stream_name + ":" + stream_msg)
+                print('The data stream '+ stream_name + ' is subscribed unsuccessfully. Because: ' + stream_msg)
         elif req_id == QUERY_PROFILE_ID:
             profile_list = []
             for ele in result_dic:
@@ -273,7 +276,7 @@ class Cortex(Dispatcher):
         elif req_id == INJECT_MARKER_REQUEST_ID:
             self.emit('update_marker_done', data=result_dic['marker'])
         else:
-            print(recv_dic)
+            print('No handling for response of request ' + req_id)
 
     def handle_error(self, recv_dic):
         req_id = recv_dic['id']
@@ -283,11 +286,11 @@ class Cortex(Dispatcher):
         if error_code == ERR_PROFILE_ACCESS_DENIED:
             #disconnect headset
             error_message = error_dic['message']
-            print(error_message +". We will disconnect the headset to fix this issue.")
+            warnings.warn(error_message)
+
             self.disconnect_headset()
         else:
-            if self.debug == True:
-                print(recv_dic)
+            print(recv_dic)
     
     def handle_warning(self, warning_dic):
         if self.debug:
@@ -381,6 +384,8 @@ class Cortex(Dispatcher):
             "method": "queryHeadsets",
             "params": {}
         }
+        if self.debug:
+            print('queryHeadsets request \n', json.dumps(query_headset_request, indent=4))
 
         self.ws.send(json.dumps(query_headset_request, indent=4))
 
@@ -395,6 +400,9 @@ class Cortex(Dispatcher):
                 "headset": headset_id
             }
         }
+        if self.debug:
+            print('controlDevice request \n', json.dumps(connect_headset_request, indent=4))
+
         self.ws.send(json.dumps(connect_headset_request, indent=4))
 
     def request_access(self):
@@ -533,11 +541,12 @@ class Cortex(Dispatcher):
             }, 
             "id": SUB_REQUEST_ID
         }
+        if self.debug:
+            print('subscribe request \n', json.dumps(sub_request_json, indent=4))
 
         self.ws.send(json.dumps(sub_request_json))
 
     def extract_data_labels(self, stream_name, stream_cols):
-        print('extract_data_labels')
         labels = {}
         labels['streamName'] = stream_name
 
@@ -611,7 +620,7 @@ class Cortex(Dispatcher):
         self.ws.send(json.dumps(setup_profile_json))
 
     def train_request(self, detection, action, status):
-        # print('train request --------------------------------')
+        print('train request --------------------------------')
         train_request_json = {
             "jsonrpc": "2.0", 
             "method": "training", 
@@ -644,6 +653,8 @@ class Cortex(Dispatcher):
 
             "id": CREATE_RECORD_REQUEST_ID
         }
+        if self.debug:
+            print('create record request:\n', json.dumps(create_record_request, indent=4))
 
         self.ws.send(json.dumps(create_record_request))
 
@@ -659,7 +670,8 @@ class Cortex(Dispatcher):
 
             "id": STOP_RECORD_REQUEST_ID
         }
-        
+        if self.debug:
+            print('stop record request:\n', json.dumps(stop_record_request, indent=4))
         self.ws.send(json.dumps(stop_record_request))
 
     def export_record(self, 
