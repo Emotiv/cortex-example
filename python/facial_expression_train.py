@@ -39,18 +39,15 @@ class Train():
         to handle new_sys_data which inform when sys event is streamed
     """
 
-    def __init__(self):
-        """
-        Constructs cortex client and bind a function to handle subscribed data streams for the Train object
-        If you do not want to log request and response message , set debug_mode = False. The default is True
-        """
-        self.c = Cortex(user, debug_mode=True)
+    def __init__(self, app_client_id, app_client_secret, **kwargs):
+        self.c = Cortex(app_client_id, app_client_secret, debug_mode=True, **kwargs)
         self.c.bind(create_session_done=self.on_create_session_done)
         self.c.bind(query_profile_done=self.on_query_profile_done)
         self.c.bind(load_unload_profile_done=self.on_load_unload_profile_done)
         self.c.bind(save_profile_done=self.on_save_profile_done)
         self.c.bind(new_data_labels=self.on_new_data_labels)
         self.c.bind(new_sys_data=self.on_new_sys_data)
+        self.c.bind(inform_error=self.on_inform_error)
 
     def start(self, profile_name, actions, headsetId=''):
         """
@@ -68,6 +65,9 @@ class Train():
         -------
         None
         """
+        if profile_name == '':
+            raise ValueError(' Empty profile_name. The profile_name cannot be empty.')
+
         self.profile_name = profile_name
         self.actions = actions
         self.action_idx = 0
@@ -221,48 +221,53 @@ class Train():
             print('on_new_data_labels: start training ')
             self.train_fe_action('start')
 
+    def on_inform_error(self, *args, **kwargs):
+        error_data = kwargs.get('error_data')
+        error_code = error_data['code']
+        error_message = error_data['message']
+
+        print(error_data)
+
+        if error_code == ERR_PROFILE_ACCESS_DENIED:
+            # disconnect headset for next use
+            print('Get error ' + error_message + ". Disconnect headset to fix this issue for next use.")
+            self.c.disconnect_headset()
 
 # -----------------------------------------------------------
+# 
+# GETTING STARTED
+#   - Please reference to https://emotiv.gitbook.io/cortex-api/ first.
+#   - Connect your headset with dongle or bluetooth. You can see the headset via Emotiv Launcher
+#   - Please make sure the your_app_client_id and your_app_client_secret are set before starting running.
+#   - The function on_create_session_done,  on_query_profile_done, on_load_unload_profile_done will help 
+#          handle create and load an profile automatically . So you should not modify them
+#   - The functions on_new_data_labels(), on_new_sys_data() will help to control  action by action training.
+#          You can modify these functions to control the training such as: reject an training, use advanced bci api.
+# RESULT
+#   - train facial expression action
+# 
+# -----------------------------------------------------------
 
-'''
-SETTING
-    - replace your , client_id, client_secret to user dic
-    - naming your profile
-    - connect your headset with dongle or bluetooth, you should saw headset on Emotiv Launcher.
-      make sure the headset at good contact quality.
+def main():
+    your_app_client_id = ''
+    your_app_client_secret = ''
 
-HOW TO TRAIN AN ACTION
-    - The functions: on_create_session_done,  on_query_profile_done, on_load_unload_profile_done will help 
-          handle create and load an profile automatically . So you should not modify them
-    - The functions on_new_data_labels(), on_new_sys_data() will help to control  action by action training.
-          You can modify these functions to control the training such as: reject an training, use advanced bci api.
-'''
+    # Init Train
+    t=Train(your_app_client_id, your_app_client_secret)
 
-"""
-    client_id, client_secret: required params
-        - To get a client id and a client secret, you must connect to your Emotiv account on emotiv.com and create a Cortex app
-    license: optional param
-        -You do not need a PRO license to train data
-"""
-user = {
-    "client_id" : "put application clientId",
-    "client_secret" : "put application clientSecret"
-}
+    # name of training profile
+    profile_name = '' # set your profile name. If the profile is not exited it will be created.
 
+    # list actions which you want to train
+    actions = ['neutral', 'surprise', 'smile']
 
-# Init Train
-t=Train()
+    # (1) check access right -> authorize -> connect headset->create session
+    # (2) query profile -> get current profile -> load/create profile -> subscribe sys
+    # (3) start and accept FE action training in the action list one by one
+    t.start(profile_name, actions)
 
-# name of training profile
-profile_name = 'your trained profile name'
-
-# list actions which you want to train
-actions = ['neutral', 'surprise', 'smile']
-
-# (1) check access right -> authorize -> connect headset->create session
-# (2) query profile -> get current profile -> load/create profile -> subscribe sys
-# (3) start and accept FE action training in the action list one by one
-t.start(profile_name, actions)
+if __name__ =='__main__':
+    main()
 
 # -----------------------------------------------------------
 

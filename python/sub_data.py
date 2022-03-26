@@ -28,13 +28,13 @@ class Subcribe():
     on_new_pow_data(*args, **kwargs):
         To handle band power data emitted from Cortex
     """
-    def __init__(self):
+    def __init__(self, app_client_id, app_client_secret, **kwargs):
         """
         Constructs cortex client and bind a function to handle subscribed data streams
         If you do not want to log request and response message , set debug_mode = False. The default is True
         """
         print("Subscribe __init__")
-        self.c = Cortex(user, debug_mode=True)
+        self.c = Cortex(app_client_id, app_client_secret, debug_mode=True, **kwargs)
         self.c.bind(create_session_done=self.on_create_session_done)
         self.c.bind(new_data_labels=self.on_new_data_labels)
         self.c.bind(new_eeg_data=self.on_new_eeg_data)
@@ -42,6 +42,7 @@ class Subcribe():
         self.c.bind(new_dev_data=self.on_new_dev_data)
         self.c.bind(new_met_data=self.on_new_met_data)
         self.c.bind(new_pow_data=self.on_new_pow_data)
+        self.c.bind(inform_error=self.on_inform_error)
 
     def start(self, streams, headsetId=''):
         """
@@ -184,37 +185,37 @@ class Subcribe():
         # subribe data 
         self.sub(self.streams)
 
+    def on_inform_error(self, *args, **kwargs):
+        error_data = kwargs.get('error_data')
+        print(error_data)
+
 # -----------------------------------------------------------
 # 
-# SETTING
-#   - replace your  client_id, client_secret to user dic
-#   - connect your headset with dongle or bluetooth, you should saw headset on Emotiv Launcher
+# GETTING STARTED
+#   - Please reference to https://emotiv.gitbook.io/cortex-api/ first.
+#   - Connect your headset with dongle or bluetooth. You can see the headset via Emotiv Launcher
+#   - Please make sure the your_app_client_id and your_app_client_secret are set before starting running.
+#   - In the case you borrow license from others, you need to add license = "xxx-yyy-zzz" as init parameter
 # RESULT
 #   - the data labels will be retrieved at on_new_data_labels
 #   - the data will be retreived at on_new_[dataStream]_data
 # 
 # -----------------------------------------------------------
 
-"""
-    client_id, client_secret: required params
-        - To get a client id and a client secret, you must connect to your Emotiv account on emotiv.com and create a Cortex app
-        - If your application require EEG access , you might register API access at https://www.emotiv.com/cortex-sdk-application-form
-    license: optional param
-        -You need a PRO license to subscribe EEG data
-        -In the case you borrow license from others, you need to add the license to the user dictionary such as "license" = "xxx-yyy-zzz"
-"""
-user = {
-    "client_id" : "put application clientId",
-    "client_secret" : "put application clientSecret"
-}
+def main():
+    your_app_client_id = ''
+    your_app_client_secret = ''
 
-s = Subcribe()
+    s = Subcribe(your_app_client_id, your_app_client_secret)
 
-# list data streams
-streams = ['eeg','mot','met','pow']
+    # list data streams
+    streams = ['eeg','mot','met','pow']
 
-# (1)check access right -> authorize -> connect headset->create session
-# (2) subscribe streams data
-s.start(streams)
+    # (1)check access right -> authorize -> connect headset->create session
+    # (2) subscribe streams data
+    s.start(streams)
+
+if __name__ =='__main__':
+    main()
 
 # -----------------------------------------------------------

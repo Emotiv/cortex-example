@@ -1,25 +1,23 @@
 from cortex import Cortex
 import time
+import threading
 
 class Marker():
-    def __init__(self):
-        self.c = Cortex(user, debug_mode=True)
+    def __init__(self, app_client_id, app_client_secret, **kwargs):
+        self.c = Cortex(app_client_id, app_client_secret, debug_mode=True, **kwargs)
         self.c.bind(create_session_done=self.on_create_session_done)
         self.c.bind(create_record_done=self.on_create_record_done)
         self.c.bind(stop_record_done=self.on_stop_record_done)
-        self.c.bind(warn_cortex_close_session=self.on_warn_cortex_close_session)
+        self.c.bind(warn_cortex_stop_all_sub=self.on_warn_cortex_stop_all_sub)
         self.c.bind(inject_marker_done=self.on_inject_marker_done)
         self.c.bind(export_record_done=self.on_export_record_done)
+        self.c.bind(inform_error=self.on_inform_error)
 
-    def start(self, record_name, record_description, number_markers, headsetId=''):
+    def start(self, number_markers=10, headsetId=''):
         """
         To start data recording and inject marker process
         Parameters
         ----------
-        record_name : string, required
-             name of record
-        record_description : string, optional
-             description of record
         number_markers: int, required
             number of markers
 
@@ -30,8 +28,6 @@ class Marker():
         -------
         None
         """
-        self.record_name = record_name
-        self.record_description = record_description
         self.number_markers = number_markers
         self.marker_idx = 0
 
@@ -40,30 +36,84 @@ class Marker():
 
         self.c.open()
 
-    def add_markers(self, number_markers):
-        print('add_markers')
-        for m in range(number_markers):
+    def create_record(self, record_title, **kwargs):
+        """
+        To create a record
+        Parameters
+        ----------
+        record_title : string, required
+             title  of record
+        other optional params: Please reference to https://emotiv.gitbook.io/cortex-api/records/createrecord
+        Returns
+        -------
+        None
+        """
+        self.c.create_record(record_title, **kwargs)
+
+    def stop_record(self):
+        self.c.stop_record()
+
+
+    def export_record(self, folder, stream_types, export_format, record_ids,
+                      version, **kwargs):
+        """
+        To export records
+        Parameters
+        ----------
+        More detail at https://emotiv.gitbook.io/cortex-api/records/exportrecord
+        Returns
+        -------
+        None
+        """
+        self.c.export_record(folder, stream_types, export_format, record_ids, version, **kwargs)
+
+
+    def add_markers(self):
+        print('add_markers: ' + str(self.number_markers) + ' markers will be injected each second automatically.')
+        for m in range(self.number_markers):
             marker_time = time.time()*1000
             print('add marker at : ', marker_time)
             
-            marker = {
-                "label":str(m),
-                "value":"test_marker",
-                "port":"python-app",
-                "time":marker_time
-            }
+            marker_value = "test marker value"
+            marker_label = str(m)
 
-            self.c.inject_marker_request(marker)
+            self.inject_marker(marker_time, marker_value, marker_label, port='python_app')
 
-            # add marker each seconds
+            # add marker each 3 seconds
             time.sleep(3)
+
+    def inject_marker(self, time, value, label, **kwargs):
+        """
+        To create an "instance" marker to the current record of a session
+        Parameters
+        ----------
+        Please reference to https://emotiv.gitbook.io/cortex-api/markers/injectmarker
+        Returns
+        -------
+        None
+        """
+        self.c.inject_marker_request(time, value, label, **kwargs)
+
+    def update_marker(self, markerId, time, **kwargs):
+        """
+        To update a marker that was previously created by inject_marker
+        Parameters
+        ----------
+        Please reference to https://emotiv.gitbook.io/cortex-api/markers/updatemarker
+        Returns
+        -------
+        None
+        """
+        self.c.update_marker_request(markerId, time, **kwargs)
 
     # callbacks functions
     def on_create_session_done(self, *args, **kwargs):
         print('on_create_session_done')
 
-        # create a record 
-        self.c.create_record(self.record_name, self.record_description)
+        # create a record
+        record_title = 'record title example'
+        record_description = 'record description example'
+        self.create_record(record_title, description=record_description)
 
     def on_create_record_done(self, *args, **kwargs):
         
@@ -74,7 +124,8 @@ class Marker():
         print('on_create_record_done: recordId: {0}, title: {1}, startTime: {2}'.format(self.record_id, title, start_time))
 
         # inject markers
-        self.add_markers(self.number_markers)
+        th = threading.Thread(target=self.add_markers)
+        th.start()
 
     def on_stop_record_done(self, *args, **kwargs):
         
@@ -86,6 +137,7 @@ class Marker():
         print('on_stop_record_done: recordId: {0}, title: {1}, startTime: {2}, endTime: {3}'.format(record_id, title, start_time, end_time))
 
         # disconnect headset to export record
+        print('on_stop_record_done: Disconnect the headset to export record')
         self.c.disconnect_headset()
 
     def on_inject_marker_done(self, *args, **kwargs):
@@ -99,63 +151,59 @@ class Marker():
         self.marker_idx = self.marker_idx + 1
         if self.marker_idx == self.number_markers:
             # stop record
-            self.c.stop_record()
+            self.stop_record()
 
-    def on_warn_cortex_close_session(self, *args, **kwargs):
-
+    def on_warn_cortex_stop_all_sub(self, *args, **kwargs):
+        print('on_warn_cortex_stop_all_sub')
         # cortex has closed session. Wait some seconds before exporting record
         time.sleep(3)
 
-        # record_export_folder = 'your place to export, you should have write permission, example on desktop'
-        record_export_folder = 'G:/Emotiv'
-        record_export_data_types = ['EEG', 'MOTION', 'PM', 'BP']
+        record_export_folder = '' # your place to export, you should have write permission, example on desktop
+        record_export_data_types = ['EEG']
         record_export_format = 'CSV'
         record_export_version = 'V2'
 
-        self.c.export_record(record_export_folder,
-                             record_export_data_types,
-                             record_export_format,
-                             record_export_version,
-                             [self.record_id])
+        self.export_record(record_export_folder, record_export_data_types,
+                           record_export_format, [self.record_id], record_export_version)
 
     def on_export_record_done(self, *args, **kwargs):
         print('on_export_record_done')
         data = kwargs.get('data')
         print(data)
+
+    def on_inform_error(self, *args, **kwargs):
+        error_data = kwargs.get('error_data')
+        print(error_data)
+
+        
+
 # -----------------------------------------------------------
 # 
-# SETTING
-#   - replace client_id, client_secret to user dic
-#   - specify infor for record and inject marker
-#   - connect your headset with dongle or bluetooth, you should saw headset on Emotiv Launcher
-#
+# GETTING STARTED
+#   - Please reference to https://emotiv.gitbook.io/cortex-api/ first.
+#   - Connect your headset with dongle or bluetooth. You can see the headset via Emotiv Launcher
+#   - Please make sure the your_app_client_id and your_app_client_secret are set before starting running.
+#   - In the case you borrow license from others, you need to add license = "xxx-yyy-zzz" as init parameter
+#   - Check the on_create_session_done() to see a record is created.
 # RESULT
-#   - this demo add marker each 3 seconds
+#   - record data then inject marker each 3 seconds
 #   - export data file should contain marker added
-#
+# 
 # -----------------------------------------------------------
 
-"""
-    client_id, client_secret: required params
-        - To get a client id and a client secret, you must connect to your Emotiv account on emotiv.com and create a Cortex app
-        - If your application require EEG access , you might register API access at https://www.emotiv.com/cortex-sdk-application-form
-    license: optional param
-        -In the case you borrow license from others, you need to add the license to the user dictionary such as "license" = "xxx-yyy-zzz"
-"""
-user = {
-    "client_id" : "put application clientId",
-    "client_secret" : "put application clientSecret"
-}
+def main():
+    your_app_client_id = ''
+    your_app_client_secret = ''
 
-m = Marker()
+    m = Marker(your_app_client_id, your_app_client_secret)
 
-# record parameters
-record_name = 'your record name'
-record_description = 'your description for record'
-marker_numbers = 10
+    marker_numbers = 10
 
-# (1) check access right -> authorize -> connect headset->create session
-# (2) start record --> inject marker --> stop record --> disconnect headset --> export record
-m.start(record_name, record_description, marker_numbers)
+    # (1) check access right -> authorize -> connect headset->create session
+    # (2) start record --> inject marker --> stop record --> disconnect headset --> export record
+    m.start(marker_numbers)
+
+if __name__ =='__main__':
+    main()
 
 # ----------------------------------------------

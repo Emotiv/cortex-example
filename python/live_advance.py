@@ -25,12 +25,8 @@ class LiveAdvance():
     set_sensitivity(profile_name):
         To set the sensitivity of the 4 active mental command actions.
     """
-    def __init__(self):
-        """
-        Constructs cortex client and bind a function to handle subscribed data streams for the Train object
-        If you do not want to log request and response message , set debug_mode = False. The default is True
-        """
-        self.c = Cortex(user, debug_mode=True)
+    def __init__(self, app_client_id, app_client_secret, **kwargs):
+        self.c = Cortex(app_client_id, app_client_secret, debug_mode=True, **kwargs)
         self.c.bind(create_session_done=self.on_create_session_done)
         self.c.bind(query_profile_done=self.on_query_profile_done)
         self.c.bind(load_unload_profile_done=self.on_load_unload_profile_done)
@@ -38,6 +34,7 @@ class LiveAdvance():
         self.c.bind(new_com_data=self.on_new_com_data)
         self.c.bind(get_mc_active_action_done=self.on_get_mc_active_action_done)
         self.c.bind(mc_action_sensitivity_done=self.on_mc_action_sensitivity_done)
+        self.c.bind(inform_error=self.on_inform_error)
 
     def start(self, profile_name, headsetId=''):
         """
@@ -53,6 +50,9 @@ class LiveAdvance():
         -------
         None
         """
+        if profile_name == '':
+            raise ValueError('Empty profile_name. The profile_name cannot be empty.')
+
         self.profile_name = profile_name
         self.c.set_wanted_profile(profile_name)
 
@@ -240,51 +240,52 @@ class LiveAdvance():
             # set sensitivity done -> save profile
             self.save_profile(self.profile_name)
 
+    def on_inform_error(self, *args, **kwargs):
+        error_data = kwargs.get('error_data')
+        error_code = error_data['code']
+        error_message = error_data['message']
+
+        print(error_data)
+
+        if error_code == ERR_PROFILE_ACCESS_DENIED:
+            # disconnect headset for next use
+            print('Get error ' + error_message + ". Disconnect headset to fix this issue for next use.")
+            self.c.disconnect_headset()
+
 
 # -----------------------------------------------------------
-'''
-SETTING
-    - replace your client_id, client_secret to user dic
-    - naming your profile
-    - connect your headset with dongle or bluetooth, you should saw headset on Emotiv Launcher.
-      make sure the headset at good contact quality.
-
-HOW TO RUN METAL COMMAND LIVE MODE WITH  A PROFILE
-    - The functions: on_create_session_done,  on_query_profile_done, on_load_unload_profile_done will help 
-          handle create and load an profile automatically . So you should not modify them
-    - After the profile is loaded. We test with some advanced BCI api such as: mentalCommandActiveAction, mentalCommandActionSensitivity..
-      But you can subscribe 'com' data to get live mental command data after the profile is loaded
-
-LIVE
-    you can run live mode with the trained profile. the data as below:
-
-    {'action': 'push', 'power': 0.85, 'time': 1647525819.0223}
-    {'action': 'pull', 'power': 0.55, 'time': 1647525819.1473}
-'''
+# 
+# GETTING STARTED
+#   - Please reference to https://emotiv.gitbook.io/cortex-api/ first.
+#   - Connect your headset with dongle or bluetooth. You can see the headset via Emotiv Launcher
+#   - Please make sure the your_app_client_id and your_app_client_secret are set before starting running.
+#   - The function on_create_session_done,  on_query_profile_done, on_load_unload_profile_done will help 
+#          handle create and load an profile automatically . So you should not modify them
+#   - After the profile is loaded. We test with some advanced BCI api such as: mentalCommandActiveAction, mentalCommandActionSensitivity..
+#      But you can subscribe 'com' data to get live mental command data after the profile is loaded
+# RESULT
+#    you can run live mode with the trained profile. the data as below:
+#    {'action': 'push', 'power': 0.85, 'time': 1647525819.0223}
+#    {'action': 'pull', 'power': 0.55, 'time': 1647525819.1473}
+# 
 # -----------------------------------------------------------
 
-"""
-    client_id, client_secret: required params
-        - To get a client id and a client secret, you must connect to your Emotiv account on emotiv.com and create a Cortex app
-        - If your application require EEG access , you might register API access at https://www.emotiv.com/cortex-sdk-application-form
-    license: optional param
-        -You do not need a PRO license to train data
-"""
-user = {
-    "client_id" : "put application clientId",
-    "client_secret" : "put application clientSecret"
-}
+def main():
+    your_app_client_id = ''
+    your_app_client_secret = ''
 
-# name of training profile
-profile_name = 'your trained profile name'
+    # Init live advance
+    l = LiveAdvance(your_app_client_id, your_app_client_secret)
 
-# Init live advance
-l = LiveAdvance()
+    trained_profile_name = '' # Please set a trained profile name here
 
-# (1) check access right -> authorize -> connect headset->create session
-# (2) query profile -> get current profile -> load/create profile
-# (3) get MC active action -> get MC sensitivity -> set new MC sensitivity -> save profile
-# (4) subscribe 'com' data to show live MC data
-l.start(profile_name)
+    # (1) check access right -> authorize -> connect headset->create session
+    # (2) query profile -> get current profile -> load/create profile
+    # (3) get MC active action -> get MC sensitivity -> set new MC sensitivity -> save profile
+    # (4) subscribe 'com' data to show live MC data
+    l.start(trained_profile_name)
+
+if __name__ =='__main__':
+    main()
 
 # -----------------------------------------------------------

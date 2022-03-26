@@ -59,38 +59,38 @@ HEADSET_CANNOT_CONNECT_DISABLE_MOTION = 113
 
 class Cortex(Dispatcher):
 
-    _events_ = ['socket_disconnected','create_session_done', 'query_profile_done', 'load_unload_profile_done', 
+    _events_ = ['inform_error','create_session_done', 'query_profile_done', 'load_unload_profile_done', 
                 'save_profile_done', 'get_mc_active_action_done','mc_brainmap_done', 'mc_action_sensitivity_done', 
-                'mc_training_threshold_done', 'create_record_done', 'stop_record_done','warn_cortex_close_session', 
+                'mc_training_threshold_done', 'create_record_done', 'stop_record_done','warn_cortex_stop_all_sub', 
                 'inject_marker_done', 'update_marker_done', 'export_record_done', 'new_data_labels', 
                 'new_com_data', 'new_fe_data', 'new_eeg_data', 'new_mot_data', 'new_dev_data', 
                 'new_met_data', 'new_pow_data', 'new_sys_data']
-    def __init__(self, user, debug_mode=False):
+    def __init__(self, client_id, client_secret, debug_mode=False, **kwargs):
         
         self.session_id = ''
         self.headset_id = ''
         self.debug = debug_mode
+        self.debit = 10
+        self.license = ''
 
-        if ('client_id' not in user) or (' ' in user['client_id']):
-            raise ValueError('Invalid client_id')
+        if client_id == '':
+            raise ValueError('Empty client_id. Please fill in client_id before running the example.')
         else:
-            self.client_id = user['client_id']
+            self.client_id = client_id
 
-        if ('client_secret' not in user) or (' ' in user['client_secret']):
-            raise ValueError('Invalid client_secret')
+        if client_secret == '':
+            raise ValueError('Empty client_secret. Please fill in client_secret before running the example.')
         else:
-            self.client_secret = user['client_secret']
+            self.client_secret = client_secret
 
-        if ('license' in user):
-            self.license = user['license']
-        else:
-            self.license = ''
-
-        if ('debit' in user):
-            self.debit = user['debit']
-        else:
-            self.debit = 10
-        
+        for key, value in kwargs.items():
+            print('init {0} - {1}'.format(key, value))
+            if key == 'license':
+                self.license = value
+            elif key == 'debit':
+                self.debit == value
+            elif  key == 'headset_id':
+                self.headset_id = value
 
     def open(self):
         url = "wss://localhost:6868"
@@ -101,10 +101,12 @@ class Cortex(Dispatcher):
                                         on_error=self.on_error,
                                         on_close=self.on_close)
         threadName = "WebsockThread:-{:%Y%m%d%H%M%S}".format(datetime.utcnow())
-        self.websock_thread  = threading.Thread(target=self.ws.run_forever, name=threadName)
+        sslopt={"cert_reqs": ssl.CERT_NONE}
+        self.websock_thread  = threading.Thread(target=self.ws.run_forever, args=(None, sslopt), name=threadName)
         self.websock_thread .start()
 
-    
+        self.websock_thread.join()
+
     def set_wanted_headset(self, headsetId):
         self.headset_id = headsetId
 
@@ -280,19 +282,11 @@ class Cortex(Dispatcher):
 
     def handle_error(self, recv_dic):
         req_id = recv_dic['id']
-        error_dic = recv_dic['error']
-        error_code = error_dic['code']
-
-        if error_code == ERR_PROFILE_ACCESS_DENIED:
-            #disconnect headset
-            error_message = error_dic['message']
-            warnings.warn(error_message)
-
-            self.disconnect_headset()
-        else:
-            print(recv_dic)
+        print('handle_error: request Id ' + str(req_id))
+        self.emit('inform_error', error_data=recv_dic['error'])
     
     def handle_warning(self, warning_dic):
+
         if self.debug:
             print(warning_dic)
         warning_code = warning_dic['code']
@@ -305,13 +299,12 @@ class Cortex(Dispatcher):
             self.query_headset()
         elif warning_code == CORTEX_AUTO_UNLOAD_PROFILE:
             self.profile_name = ''
-        elif warning_code == CORTEX_CLOSE_SESSION:
+        elif  warning_code == CORTEX_STOP_ALL_STREAMS:
+            # print(warning_msg['behavior'])
             session_id = warning_msg['sessionId']
             if session_id == self.session_id:
-                self.emit('warn_cortex_close_session', data=session_id)
+                self.emit('warn_cortex_stop_all_sub', data=session_id)
                 self.session_id = ''
-        else:
-            print(warning_msg)
 
     def handle_stream_data(self, result_dic):
         if result_dic.get('com') != None:
@@ -639,18 +632,18 @@ class Cortex(Dispatcher):
 
         self.ws.send(json.dumps(train_request_json))
 
-    def create_record(self, record_name, record_description):
+    def create_record(self, title, **kwargs):
         print('create record --------------------------------')
+
+        params_val = {"cortexToken": self.auth, "session": self.session_id, "title": title}
+
+        for key, value in kwargs.items():
+            params_val.update({key: value})
+
         create_record_request = {
             "jsonrpc": "2.0", 
             "method": "createRecord",
-            "params": {
-                "cortexToken": self.auth,
-                "session": self.session_id,
-                "title": record_name,
-                "description": record_description
-            }, 
-
+            "params": params_val, 
             "id": CREATE_RECORD_REQUEST_ID
         }
         if self.debug:
@@ -674,29 +667,33 @@ class Cortex(Dispatcher):
             print('stop record request:\n', json.dumps(stop_record_request, indent=4))
         self.ws.send(json.dumps(stop_record_request))
 
-    def export_record(self, 
-                    folder, 
-                    export_types, 
-                    export_format,
-                    export_version,
-                    record_ids):
-        print('export record --------------------------------')
+    def export_record(self, folder, stream_types, export_format, record_ids,
+                      version, **kwargs):
+        print('export record --------------------------------: ')
+        #validate destination folder
+        if (len(folder) == 0):
+            warnings.warn('Invalid folder parameter. Please set a writable destination folder for exporting data.')
+            # TODO: raise exception
+            return
+
+        params_val = {"cortexToken": self.auth, 
+                      "folder": folder,
+                      "format": export_format,
+                      "streamTypes": stream_types,
+                      "recordIds": record_ids}
+
+        if export_format == 'CSV':
+            params_val.update({'version': version})
+
+        for key, value in kwargs.items():
+            params_val.update({key: value})
+
         export_record_request = {
             "jsonrpc": "2.0",
             "id":EXPORT_RECORD_ID,
             "method": "exportRecord", 
-            "params": {
-                "cortexToken": self.auth, 
-                "folder": folder,
-                "format": export_format,
-                "streamTypes": export_types,
-                "recordIds": record_ids
-            }
+            "params": params_val
         }
-
-        # "version": export_version,
-        if export_format == 'CSV':
-            export_record_request['params']['version'] = export_version
 
         if self.debug:
             print('export record request \n',
@@ -704,37 +701,42 @@ class Cortex(Dispatcher):
         
         self.ws.send(json.dumps(export_record_request))
 
-    def inject_marker_request(self, marker):
+    def inject_marker_request(self, time, value, label, **kwargs):
         print('inject marker --------------------------------')
+        params_val = {"cortexToken": self.auth, 
+                      "session": self.session_id, 
+                      "time": time,
+                      "value": value,
+                      "label":label}
+
+        for key, value in kwargs.items():
+            params_val.update({key: value})
+
         inject_marker_request = {
             "jsonrpc": "2.0",
             "id": INJECT_MARKER_REQUEST_ID,
             "method": "injectMarker", 
-            "params": {
-                "cortexToken": self.auth, 
-                "session": self.session_id,
-                "label": marker['label'],
-                "value": marker['value'], 
-                "port": marker['port'],
-                "time": marker['time']
-            }
+            "params": params_val
         }
         if self.debug:
             print('inject marker request \n', json.dumps(inject_marker_request, indent=4))
         self.ws.send(json.dumps(inject_marker_request))
 
-    def update_marker_request(self, marker):
+    def update_marker_request(self, markerId, time, **kwargs):
         print('update marker --------------------------------')
+        params_val = {"cortexToken": self.auth, 
+                      "session": self.session_id,
+                      "markerId": markerId,
+                      "time": time}
+
+        for key, value in kwargs.items():
+            params_val.update({key: value})
+
         update_marker_request = {
             "jsonrpc": "2.0",
             "id": UPDATE_MARKER_REQUEST_ID,
             "method": "updateMarker", 
-            "params": {
-                "cortexToken": self.auth, 
-                "session": self.session_id,
-                "markerId": marker['markerId'],
-                "time": marker['time']
-            }
+            "params": params_val
         }
         if self.debug:
             print('update marker request \n', json.dumps(update_marker_request, indent=4))
