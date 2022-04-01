@@ -51,7 +51,10 @@ class Train():
 
     def start(self, profile_name, actions, headsetId=''):
         """
-        To start training process
+        To start training process as below workflow
+        (1) check access right -> authorize -> connect headset->create session
+        (2) query profile -> get current profile -> load/create profile -> subscribe sys
+        (3) start and accept MC action training in the action list one by one
         Parameters
         ----------
         profile_name : string, required
@@ -217,6 +220,8 @@ class Train():
         if train_event == 'MC_Succeeded':
             # train action successful. you can accept the training to complete or reject the training
             self.train_mc_action('accept')
+        elif train_event == 'MC_Failed':
+            self.train_mc_action("reject")
         elif train_event == 'MC_Completed' or train_event == 'MC_Rejected':
             # training complete. Move to next action
             self.action_idx = self.action_idx + 1
@@ -260,6 +265,8 @@ class Train():
 # -----------------------------------------------------------
 
 def main():
+
+    # Please fill your application clientId and clientSecret before running script
     your_app_client_id = ''
     your_app_client_secret = ''
 
@@ -270,10 +277,6 @@ def main():
 
     # list actions which you want to train
     actions = ['neutral', 'push', 'pull']
-
-    # (1) check access right -> authorize -> connect headset->create session
-    # (2) query profile -> get current profile -> load/create profile -> subscribe sys
-    # (3) start and accept MC action training in the action list one by one
     t.start(profile_name, actions)
 
 if __name__ =='__main__':

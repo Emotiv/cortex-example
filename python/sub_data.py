@@ -46,7 +46,9 @@ class Subcribe():
 
     def start(self, streams, headsetId=''):
         """
-        To start data subscribing process
+        To start data subscribing process as below workflow
+        (1)check access right -> authorize -> connect headset->create session
+        (2) subscribe streams data
         'eeg': EEG
         'mot' : Motion
         'dev' : Device information
@@ -203,6 +205,8 @@ class Subcribe():
 # -----------------------------------------------------------
 
 def main():
+
+    # Please fill your application clientId and clientSecret before running script
     your_app_client_id = ''
     your_app_client_secret = ''
 
@@ -210,9 +214,6 @@ def main():
 
     # list data streams
     streams = ['eeg','mot','met','pow']
-
-    # (1)check access right -> authorize -> connect headset->create session
-    # (2) subscribe streams data
     s.start(streams)
 
 if __name__ =='__main__':

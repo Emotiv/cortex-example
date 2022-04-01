@@ -38,7 +38,11 @@ class LiveAdvance():
 
     def start(self, profile_name, headsetId=''):
         """
-        To start live process
+        To start live process as below workflow
+        (1) check access right -> authorize -> connect headset->create session
+        (2) query profile -> get current profile -> load/create profile
+        (3) get MC active action -> get MC sensitivity -> set new MC sensitivity -> save profile
+        (4) subscribe 'com' data to show live MC data
         Parameters
         ----------
         profile_name : string, required
@@ -74,9 +78,7 @@ class LiveAdvance():
         -------
         None
         """
-
-        status = 'load'
-        self.c.setup_profile(profile_name, status)
+        self.c.setup_profile(profile_name, 'load')
 
     def unload_profile(self, profile_name):
         """
@@ -271,6 +273,8 @@ class LiveAdvance():
 # -----------------------------------------------------------
 
 def main():
+
+    # Please fill your application clientId and clientSecret before running script
     your_app_client_id = ''
     your_app_client_secret = ''
 
@@ -278,11 +282,6 @@ def main():
     l = LiveAdvance(your_app_client_id, your_app_client_secret)
 
     trained_profile_name = '' # Please set a trained profile name here
-
-    # (1) check access right -> authorize -> connect headset->create session
-    # (2) query profile -> get current profile -> load/create profile
-    # (3) get MC active action -> get MC sensitivity -> set new MC sensitivity -> save profile
-    # (4) subscribe 'com' data to show live MC data
     l.start(trained_profile_name)
 
 if __name__ =='__main__':

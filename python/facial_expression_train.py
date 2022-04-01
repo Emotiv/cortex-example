@@ -51,7 +51,10 @@ class Train():
 
     def start(self, profile_name, actions, headsetId=''):
         """
-        To start training process
+        To start training process as below workflow
+        (1) check access right -> authorize -> connect headset->create session
+        (2) query profile -> get current profile -> load/create profile -> subscribe sys
+        (3) start and accept FE action training in the action list one by one
         Parameters
         ----------
         profile_name : string, required
@@ -206,6 +209,8 @@ class Train():
         if train_event == 'FE_Succeeded':
             # train action successful. you can accept the training to complete or reject the training
             self.train_fe_action('accept')
+        elif train_event == 'FE_Failed':
+            self.train_fe_action("reject")
         elif train_event == 'FE_Completed' or train_event == 'FE_Rejected':
             # training complete. Move to next action
             self.action_idx = self.action_idx + 1
@@ -249,6 +254,8 @@ class Train():
 # -----------------------------------------------------------
 
 def main():
+
+    # Please fill your application clientId and clientSecret before running script
     your_app_client_id = ''
     your_app_client_secret = ''
 
@@ -257,13 +264,8 @@ def main():
 
     # name of training profile
     profile_name = '' # set your profile name. If the profile is not exited it will be created.
-
     # list actions which you want to train
     actions = ['neutral', 'surprise', 'smile']
-
-    # (1) check access right -> authorize -> connect headset->create session
-    # (2) query profile -> get current profile -> load/create profile -> subscribe sys
-    # (3) start and accept FE action training in the action list one by one
     t.start(profile_name, actions)
 
 if __name__ =='__main__':

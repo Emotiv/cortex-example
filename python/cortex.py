@@ -74,12 +74,12 @@ class Cortex(Dispatcher):
         self.license = ''
 
         if client_id == '':
-            raise ValueError('Empty client_id. Please fill in client_id before running the example.')
+            raise ValueError('Empty your_app_client_id. Please fill in your_app_client_id before running the example.')
         else:
             self.client_id = client_id
 
         if client_secret == '':
-            raise ValueError('Empty client_secret. Please fill in client_secret before running the example.')
+            raise ValueError('Empty your_app_client_secret. Please fill in your_app_client_secret before running the example.')
         else:
             self.client_secret = client_secret
 
@@ -634,6 +634,11 @@ class Cortex(Dispatcher):
 
     def create_record(self, title, **kwargs):
         print('create record --------------------------------')
+
+        if (len(title) == 0):
+            warnings.warn('Empty record_title. Please fill the record_title before running script.')
+            # TODO: raise exception
+            return
 
         params_val = {"cortexToken": self.auth, "session": self.session_id, "title": title}
 

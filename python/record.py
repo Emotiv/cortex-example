@@ -13,7 +13,9 @@ class Record():
 
     def start(self, record_duration_s=20, headsetId=''):
         """
-        To start data recording and exporting process
+        To start data recording and exporting process as below
+        (1) check access right -> authorize -> connect headset->create session
+        (2) start record --> stop record --> disconnect headset --> export record
         Parameters
         ----------
         record_duration_s: int, optional
@@ -83,9 +85,7 @@ class Record():
         print('on_create_session_done')
 
         # create a record
-        record_title = 'record title example'
-        record_description = 'record description example'
-        self.create_record(record_title, description=record_description)
+        self.create_record(self.record_title, description=self.record_description)
 
     def on_create_record_done(self, *args, **kwargs):
         
@@ -119,13 +119,9 @@ class Record():
         # cortex has closed session. Wait some seconds before exporting record
         time.sleep(3)
 
-        record_export_folder = '' # your place to export, you should have write permission, example on desktop
-        record_export_data_types = ['EEG', 'MOTION', 'PM', 'BP']
-        record_export_format = 'CSV'
-        record_export_version = 'V2'
-
-        self.export_record(record_export_folder, record_export_data_types,
-                           record_export_format, [self.record_id], record_export_version)
+        #export record
+        self.export_record(self.record_export_folder, self.record_export_data_types,
+                           self.record_export_format, [self.record_id], self.record_export_version)
 
     def on_export_record_done(self, *args, **kwargs):
         print('on_export_record_done: the successful record exporting as below:')
@@ -154,15 +150,26 @@ class Record():
 
 
 def main():
+    
+    # Please fill your application clientId and clientSecret before running script
     your_app_client_id = ''
     your_app_client_secret = ''
 
     r = Record(your_app_client_id, your_app_client_secret)
 
-    record_duration_s = 10
 
-    # (1) check access right -> authorize -> connect headset->create session
-    # (2) start record --> stop record --> disconnect headset --> export record
+    # input params for create_record. Please see on_create_session_done before running script
+    r.record_title = '' # required param and can not be empty
+    r.record_description = '' # optional param
+
+    # input params for export_record. Please see on_warn_cortex_stop_all_sub()
+    r.record_export_folder = '' # your place to export, you should have write permission, example on desktop
+    r.record_export_data_types = ['EEG', 'MOTION', 'PM', 'BP']
+    r.record_export_format = 'CSV'
+    r.record_export_version = 'V2'
+
+
+    record_duration_s = 10 # duration for recording in this example. It is not input param of create_record
     r.start(record_duration_s)
 
 if __name__ =='__main__':

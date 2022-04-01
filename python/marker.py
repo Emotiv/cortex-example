@@ -15,7 +15,9 @@ class Marker():
 
     def start(self, number_markers=10, headsetId=''):
         """
-        To start data recording and inject marker process
+        To start data recording and inject marker process as below workflow
+        (1) check access right -> authorize -> connect headset->create session
+        (2) start record --> inject marker --> stop record --> disconnect headset --> export record
         Parameters
         ----------
         number_markers: int, required
@@ -74,10 +76,10 @@ class Marker():
             marker_time = time.time()*1000
             print('add marker at : ', marker_time)
             
-            marker_value = "test marker value"
-            marker_label = str(m)
+            # marker_value = "test marker value"
+            marker_label = self.marker_label +"_" +  str(m)
 
-            self.inject_marker(marker_time, marker_value, marker_label, port='python_app')
+            self.inject_marker(marker_time, self.marker_value, marker_label, port='python_app')
 
             # add marker each 3 seconds
             time.sleep(3)
@@ -111,9 +113,7 @@ class Marker():
         print('on_create_session_done')
 
         # create a record
-        record_title = 'record title example'
-        record_description = 'record description example'
-        self.create_record(record_title, description=record_description)
+        self.create_record(self.record_title, description=self.record_description)
 
     def on_create_record_done(self, *args, **kwargs):
         
@@ -158,13 +158,8 @@ class Marker():
         # cortex has closed session. Wait some seconds before exporting record
         time.sleep(3)
 
-        record_export_folder = '' # your place to export, you should have write permission, example on desktop
-        record_export_data_types = ['EEG']
-        record_export_format = 'CSV'
-        record_export_version = 'V2'
-
-        self.export_record(record_export_folder, record_export_data_types,
-                           record_export_format, [self.record_id], record_export_version)
+        self.export_record(self.record_export_folder, self.record_export_data_types,
+                           self.record_export_format, [self.record_id], self.record_export_version)
 
     def on_export_record_done(self, *args, **kwargs):
         print('on_export_record_done')
@@ -192,15 +187,28 @@ class Marker():
 # -----------------------------------------------------------
 
 def main():
+    
+    # Please fill your application clientId and clientSecret before running script
     your_app_client_id = ''
     your_app_client_secret = ''
 
     m = Marker(your_app_client_id, your_app_client_secret)
 
-    marker_numbers = 10
+    # input params for create_record. Please see on_create_session_done before running script
+    m.record_title = 'test record title' # required param and can not be empty
+    m.record_description = '' # optional param
 
-    # (1) check access right -> authorize -> connect headset->create session
-    # (2) start record --> inject marker --> stop record --> disconnect headset --> export record
+    # marker input for inject marker. Please see add_markers()
+    m.marker_value = "test value" # required param and can not be empty
+    m.marker_label = "test label" #required param and can not be empty
+
+    # input params for export_record. Please see on_warn_cortex_stop_all_sub()
+    m.record_export_folder = '' # your place to export, you should have write permission, example on desktop
+    m.record_export_data_types = ['EEG', 'MOTION', 'PM', 'BP']
+    m.record_export_format = 'CSV'
+    m.record_export_version = 'V2'
+
+    marker_numbers = 10
     m.start(marker_numbers)
 
 if __name__ =='__main__':
