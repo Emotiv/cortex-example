@@ -104,8 +104,10 @@ class Cortex(Dispatcher):
         sslopt={"cert_reqs": ssl.CERT_NONE}
         self.websock_thread  = threading.Thread(target=self.ws.run_forever, args=(None, sslopt), name=threadName)
         self.websock_thread .start()
-
         self.websock_thread.join()
+
+    def close(self):
+        self.ws.close()
 
     def set_wanted_headset(self, headsetId):
         self.headset_id = headsetId
@@ -637,7 +639,8 @@ class Cortex(Dispatcher):
 
         if (len(title) == 0):
             warnings.warn('Empty record_title. Please fill the record_title before running script.')
-            # TODO: raise exception
+            # close socket
+            self.close()
             return
 
         params_val = {"cortexToken": self.auth, "session": self.session_id, "title": title}
@@ -678,7 +681,8 @@ class Cortex(Dispatcher):
         #validate destination folder
         if (len(folder) == 0):
             warnings.warn('Invalid folder parameter. Please set a writable destination folder for exporting data.')
-            # TODO: raise exception
+            # close socket
+            self.close()
             return
 
         params_val = {"cortexToken": self.auth, 

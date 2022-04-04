@@ -127,6 +127,7 @@ class Record():
         print('on_export_record_done: the successful record exporting as below:')
         data = kwargs.get('data')
         print(data)
+        self.c.close()
 
     def on_inform_error(self, *args, **kwargs):
         error_data = kwargs.get('error_data')

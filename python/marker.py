@@ -169,7 +169,7 @@ class Marker():
     def on_inform_error(self, *args, **kwargs):
         error_data = kwargs.get('error_data')
         print(error_data)
-
+        self.c.close()
         
 
 # -----------------------------------------------------------
@@ -195,7 +195,7 @@ def main():
     m = Marker(your_app_client_id, your_app_client_secret)
 
     # input params for create_record. Please see on_create_session_done before running script
-    m.record_title = 'test record title' # required param and can not be empty
+    m.record_title = '' # required param and can not be empty
     m.record_description = '' # optional param
 
     # marker input for inject marker. Please see add_markers()

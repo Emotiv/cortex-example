@@ -206,6 +206,8 @@ class Train():
         else:
             print('The profile ' + self.profile_name + ' is unloaded')
             self.profile_name = ''
+            # close socket
+            self.c.close()
 
     def on_save_profile_done (self, *args, **kwargs):
         print('Save profile ' + self.profile_name + " successfully.")
