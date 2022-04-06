@@ -11,8 +11,8 @@ class Subcribe():
 
     Methods
     -------
-    do_prepare_steps():
-        Do prepare steps before training.
+    start():
+        start data subscribing process.
     sub(streams):
         To subscribe to one or more data streams.
     on_new_data_labels(*args, **kwargs):
@@ -28,33 +28,51 @@ class Subcribe():
     on_new_pow_data(*args, **kwargs):
         To handle band power data emitted from Cortex
     """
-    def __init__(self):
+    def __init__(self, app_client_id, app_client_secret, **kwargs):
         """
         Constructs cortex client and bind a function to handle subscribed data streams
         If you do not want to log request and response message , set debug_mode = False. The default is True
         """
-        self.c = Cortex(user, debug_mode=True)
+        print("Subscribe __init__")
+        self.c = Cortex(app_client_id, app_client_secret, debug_mode=True, **kwargs)
+        self.c.bind(create_session_done=self.on_create_session_done)
         self.c.bind(new_data_labels=self.on_new_data_labels)
         self.c.bind(new_eeg_data=self.on_new_eeg_data)
         self.c.bind(new_mot_data=self.on_new_mot_data)
         self.c.bind(new_dev_data=self.on_new_dev_data)
         self.c.bind(new_met_data=self.on_new_met_data)
         self.c.bind(new_pow_data=self.on_new_pow_data)
+        self.c.bind(inform_error=self.on_inform_error)
 
-    def do_prepare_steps(self):
+    def start(self, streams, headsetId=''):
         """
-        Do prepare steps before training.
-        Step 1: Connect a headset. For simplicity, the first headset in the list will be connected in the example.
-                If you use EPOC Flex headset, you should connect the headset with a proper mappings via EMOTIV Launcher first 
-        Step 2: requestAccess: Request user approval for the current application for first time.
-                       You need to open EMOTIV Launcher to approve the access
-        Step 3: authorize: to generate a Cortex access token which is required parameter of many APIs
-        Step 4: Create a working session with the connected headset
+        To start data subscribing process as below workflow
+        (1)check access right -> authorize -> connect headset->create session
+        (2) subscribe streams data
+        'eeg': EEG
+        'mot' : Motion
+        'dev' : Device information
+        'met' : Performance metric
+        'pow' : Band power
+        'eq' : EEQ Quality
+
+        Parameters
+        ----------
+        streams : list, required
+            list of streams. For example, ['eeg', 'mot']
+        headsetId: string , optional
+             id of wanted headet which you want to work with it.
+             If the headsetId is empty, the first headset in list will be set as wanted headset
         Returns
         -------
         None
         """
-        self.c.do_prepare_steps()
+        self.streams = streams
+
+        if headsetId != '':
+            self.c.set_wanted_headset(headsetId)
+
+        self.c.open()
 
     def sub(self, streams):
         """
@@ -162,47 +180,43 @@ class Subcribe():
         data = kwargs.get('data')
         print('pow data: {}'.format(data))
 
+    # callbacks functions
+    def on_create_session_done(self, *args, **kwargs):
+        print('on_create_session_done')
+
+        # subribe data 
+        self.sub(self.streams)
+
+    def on_inform_error(self, *args, **kwargs):
+        error_data = kwargs.get('error_data')
+        print(error_data)
 
 # -----------------------------------------------------------
 # 
-# SETTING
-#   - replace your license, client_id, client_secret to user dic
-#   - specify infor for record and export
-#   - connect your headset with dongle or bluetooth, you should saw headset on EmotivApp
-# SUBSCRIBE
-#     you need to folow steps:
-#         1) do_prepare_steps: for authorization, connect headset and create working session.
-#         2) sub(): to subscribe data, you can subscribe one stream or multiple streams
+# GETTING STARTED
+#   - Please reference to https://emotiv.gitbook.io/cortex-api/ first.
+#   - Connect your headset with dongle or bluetooth. You can see the headset via Emotiv Launcher
+#   - Please make sure the your_app_client_id and your_app_client_secret are set before starting running.
+#   - In the case you borrow license from others, you need to add license = "xxx-yyy-zzz" as init parameter
 # RESULT
 #   - the data labels will be retrieved at on_new_data_labels
 #   - the data will be retreived at on_new_[dataStream]_data
 # 
 # -----------------------------------------------------------
 
-"""
-    client_id, client_secret:
-    To get a client id and a client secret, you must connect to your Emotiv account on emotiv.com and create a Cortex app
-    To subscribe eeg you need to put a valid licese (PRO license)
-"""
-user = {
-    "license" : "your emotivpro license, which could use for third party app",
-    "client_id" : "your client id",
-    "client_secret" : "your client secret",
-    "debit" : 100
-}
+def main():
 
+    # Please fill your application clientId and clientSecret before running script
+    your_app_client_id = ''
+    your_app_client_secret = ''
 
+    s = Subcribe(your_app_client_id, your_app_client_secret)
 
-s = Subcribe()
+    # list data streams
+    streams = ['eeg','mot','met','pow']
+    s.start(streams)
 
-# Do prepare steps
-s.do_prepare_steps()
+if __name__ =='__main__':
+    main()
 
-# sub multiple streams
-# streams = ['eeg','mot','met','pow']
-
-# or only sub for eeg
-streams = ['eeg']
-
-s.sub(streams)
 # -----------------------------------------------------------
