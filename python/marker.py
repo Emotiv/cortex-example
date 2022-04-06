@@ -165,11 +165,11 @@ class Marker():
         print('on_export_record_done')
         data = kwargs.get('data')
         print(data)
+        self.c.close()
 
     def on_inform_error(self, *args, **kwargs):
         error_data = kwargs.get('error_data')
         print(error_data)
-        self.c.close()
         
 
 # -----------------------------------------------------------
