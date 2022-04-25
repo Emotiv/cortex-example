@@ -2,6 +2,8 @@
 using UnityEngine.UI;
 using EmotivUnityPlugin;
 using Zenject;
+using Newtonsoft.Json.Linq;
+using System;
 
 namespace dirox.emotiv.controller
 {
@@ -35,9 +37,11 @@ namespace dirox.emotiv.controller
         {
             Debug.Log("MarkersDemo: OnStart");
             _recordManager.informMarkerResult += OnInformMarkerResult;
-            _recordManager.informRecordResult += OnInformRecordResult;
+            _recordManager.informStartRecordResult += OnInformStartRecordResult;
+            _recordManager.informStopRecordResult += OnInformStopRecordResult;
 
         }
+
 
         void Update() 
         {
@@ -60,13 +64,33 @@ namespace dirox.emotiv.controller
         }
 
 
-        private void OnInformRecordResult(object sender, string recordResult)
+        private void OnInformStartRecordResult(object sender, Record record)
         {
-            _recordResult = recordResult;
+            UnityEngine.Debug.Log("OnInformRecordResult ");
+            _recordResult = "The record " + record.Title + ", recordId: " + record.Uuid + ", created at: " + record.StartDateTime;
         }
 
-        private void OnInformMarkerResult(object sender, string markerResult)
+        private void OnInformStopRecordResult(object sender, Record record)
         {
+            UnityEngine.Debug.Log("OnInformStopRecordResult ");
+            _recordResult = "The record " + record.Title + ", recordId: " + record.Uuid + ", ended at: " + record.EndDateTime;
+        }
+
+        private void OnInformMarkerResult(object sender, JObject markerObj)
+        {
+            Debug.Log("OnInformMarkerResult " + markerObj);
+            string uuid = markerObj["uuid"].ToString();
+            string markerType = markerObj["type"].ToString();
+            string markerStartTime = markerObj["startDatetime"].ToString();
+            string markerEndTime = markerObj["endDatetime"].ToString();
+            string markerLabel = markerObj["label"].ToString();
+            string markerValue = markerObj["value"].ToString();
+
+            string markerResult = "The marker is injected successfully.\n";
+            markerResult += "markerId: " + uuid + "\n type: " + markerType
+                                 + "\n label: " + markerLabel + "\n value: " + markerValue
+                                 + "\n startDatetime: " + markerStartTime + "\n endDatetime: " + markerEndTime;
+
             _markerResult = markerResult;
         }
         

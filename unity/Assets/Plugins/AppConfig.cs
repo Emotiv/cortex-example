@@ -6,10 +6,6 @@ static class AppConfig
     public static string AppUrl              = "wss://localhost:6868";
     public static string AppName             = "UnityApp";
     
-    /// <summary>
-    /// Name of directory where contain tmp data and logs file.
-    /// </summary>
-    public static string TmpAppDataDir       = "UnityApp";
     public static string ClientId            = "put_your_clientId";
     public static string ClientSecret        = "put_your_clientSecret";
     public static string AppVersion          = "3.2.0 Dev";
