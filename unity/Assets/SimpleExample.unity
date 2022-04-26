@@ -2605,13 +2605,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcae4cf41993c8b4da39bc4ca1384235, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  headsetId: {fileID: 551019252}
-  recordTitle: {fileID: 1795800897}
-  recordDescription: {fileID: 1856857882}
-  profileName: {fileID: 1653936227}
-  actionNameList: {fileID: 85301052}
-  markerValue: {fileID: 1699489640}
-  markerLabel: {fileID: 1448973719}
+  HeadsetId: {fileID: 551019252}
+  RecordTitle: {fileID: 1795800897}
+  RecordDescription: {fileID: 1856857882}
+  ProfileName: {fileID: 1653936227}
+  ActionNameList: {fileID: 85301052}
+  MarkerValue: {fileID: 1699489640}
+  MarkerLabel: {fileID: 1448973719}
   EEGToggle: {fileID: 14215618}
   MOTToggle: {fileID: 1597588608}
   PMToggle: {fileID: 1361979635}
