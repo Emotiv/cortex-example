@@ -13,46 +13,53 @@ This example demonstrates how to work with Emotiv Cortex Service (aka Cortex) in
 * Login to the Emotiv website with a valid EmotivID, register an application at https://www.emotiv.com/my-account/cortex-apps/ to a pair of client id and client secret. If you don't have a EmotivID, you can [register here](https://id.emotivcloud.com/eoidc/account/registration/).
 * We have updated our Terms of Use, Privacy Policy and EULA to comply with GDPR. Please login via EMOTIV Launcher to read and accept our latest policies in order to proceed with the following examples.
 
-## How to compile
-<!-- how to compile  -->
-1. Open EmotivUnityPlugin.unity by Unity Editor.
-1. Put your client id and client secret to AppConfig.cs.
-1. You can run the examples directly from the Unity Editor.
-
-
-## Code structure
-
-There are some main controller scripts:
-
-**ConnectToCortex.cs**: Initialize connection to Cortex.
-
-**1_Cortex**: Contain commponent scripts to control authorization procedure.
-
-**ConnectHeadset**: Contain commponent scripts to create headset element and list headset information.
-
-**ConnectionIndicator**: Contain commponent scripts to show battery indicator, after headset is connected and device information is subscribed.
-
-**ContactQuality**: Contain commponent scripts to show contact quality of headset sensors.
-
-**DataSubscriber.cs**: The script to show subscribe and unsubscribe data. The header and data of corresponding streams will be displayed and updated. Note that the MARKERS channel of EEG data will not be shown.
-
-**MarkersDemo.cs**: Show how to inject markers and update markers to the EEG data stream and show the output log for startRecord, stopRecord, injectMarker and updateMarker both result and error messages.
-
-**Emotiv-Unity-Plugin**: The plugin that works behind the scene. Please refer to [Emotiv Unity Plugin](https://github.com/Emotiv/unity-plugin).
 
 ## How to use
-1. Put clientId, clientSecret of your application in AppConfig.cs. To subscribe EEG data or inject markers to EEG data stream you need to put a PRO license at "AppLicenseId" in AppConfig.cs. In addition, You also can customize application name, version and TmpAppDataDir to create log directory.
-1. Make sure you have logged in via EMOTIV Launcher, and the headset has been turned on.
-1. Run the example from editor. The example will connect to Cortex for authorization. You might need to grant access right for the example via EMOTIV Launcher at the first time. After that, the example will get the token to work with Cortex. The token will be saved for subsequent use.
-After authorizing successfully, the example will list available headsets. 
-1. At headset list screen, hit "Connect" button to connect, create a working session with that headset, and subscribe device information (Contact Quality).
-1. Please make sure the headset is at good contact quality and hit "Done" button to enter "Examples Board".
-1. Some examples are listed on the board:
-    1. Data Subscriber Example: Demo for EEG, Motion and Performance Metrics data subscribing.
-    1. Markers Example: Show how to inject markers to the EEG data stream and update the current marker.
-1. When you run the application at standalone mode, the log files will be located at "%LocalAppData%/${TmpAppDataDir}/logs/" on Windows or "~/Library/Application Support/${TmpAppDataDir}/logs" on macOS.
+There are 2 examples to demo how to work with Emotiv Cortex on Unity. The first one is EmotivUnityPlugin.unity which aim to demo data subscribing and marker injection. The second one is SimpleExample.unity which has simple UI but demo data subscribing, marker injection and training mentalcommand data.  
+
+### Example 1: EmotivUnityPlugin.unity
+1. Open **EmotivUnityPlugin.unity** scene.  
+2. Set the clientId, clientSecret of your application in AppConfig.cs before running.  
+3. Running the example. After authorzing process, you will see the Headset list screen. Hit **"Connect"** button to connect to your wanted headset. The unity-plugin will help to connect to headset, create a session and subscribe device information (dev).  
+4. The next screens will show device fitting and contact quality for the headset. The headset should have good contact quality. Hit the **"Done"** button to go to Example Board screen.  
+5. You can choose "Data Subscribers Example" or "Markers Example"  
+	- **"Data Subscribers Example":** demo subscribe and unsubscribe EEG, Motion and Performance metrics data. But you can subscribe other streams with some change at DataSubscriber.cs  
+	- **"Markers Example":** demo create record, inject marker and update the current marker. You must create a record first before injecting marker.
+
+> **Please note that:**
+>
+> - The subscribed data will be saved to DataBuffer then will be pulled via Update() function at DataSubscriber.cs. Currently, the new data will be shown each 1 second.  
+> - You can click to the Contact Quality indicator at the right top screen to back to Contact Quality screen to able to switch example.  
+> - The **"Update Marker"** will make the instance marker to interval marker which have start and end time.  
+
+### Example 2: SimpleExample.unity 
+1. Open **SimpleExample.unity** scene. It is all in one example.
+2. Set the clientId, clientSecret of your application in SimpleExample.cs before running.  
+3. Running the example. After authorizing process you able to create session with a headset. Enter a headset Id before clicking **"Create Session"** button to connect and create a session with the headset. If the text field is empty, the first headset in the headset list will be used.  
+4. After create session successfully, you will be able to start a record, subscribe one ore more data streams and load a profile for training.
+	- **Start and Stop Record:** Enter record title before starting a record, record description is optional field.
+	- **Inject marker:** After start a record you can inject instance marker to the record. Please enter marker value and marker label before injecting marker.
+	- **Subscribe and Unsubscribe data:** Select wanted data streams before subscribing data. The output data wil be shown at log box.
+	- **Load profile and Training:**
+		- Enter a profile name before loading profile. If the profile is not existed, it will be created then loaded.  
+		- Please subscribe the "System Event" data stream before training to see the training event.
+		- Select a mental command training at Dropdown then click "Start Training".
+		- You might see the event "MC_Succeeded" after 8 seconds. You can accept or reject the training.
+		- After traing please click "Save Profile" to save training data.
+		- Please unload the trained data before closing.  
+		
+> **Please note that:**
+>
+> - The example will use **EmotivUnityItf.cs** such as a interface to do all things.
+> - The subscribed data will be saved to DataBuffer as default. But you have option use data directly without DataBuffer by set '_isDataBufferUsing = false'. Please check the ouput for subcribed data at functions such as OnDevDataReceived(), OnEEGDataReceived().etc.. in EmotivUnityItf.cs  
+> - Please load a trained profile before subscribing **"Mental Command"** or **"Facial Expression"** data unless you only see the neutral action.
+
 
 ## Change log
+
+[15 May 2022]
+- Add SimpleExample.unity to demo subscribe data, training , start record and inject marker same time.
+- Remove some unused files and update Unity version to newer version (LTS 2021.3.2f1)
 
 [15 Jan 2022]
 - Support insight 2 for unity examples.
