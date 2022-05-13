@@ -11,11 +11,13 @@ public class SimpleExample : MonoBehaviour
     private string _clientId = "";
     private string _clientSecret = "";
     private string _appName = "UnityApp";
+    private string _appVersion = "3.3.0";
 
     EmotivUnityItf _eItf = EmotivUnityItf.Instance;
     float _timerDataUpdate = 0;
     const float TIME_UPDATE_DATA = 1f;
-    bool _isDataBufferUsing = true;
+    bool _isDataBufferUsing = false; // default subscribed data will not saved to Data buffer
+
 
     [SerializeField] public InputField  HeadsetId;   // headsetId
     [SerializeField] public InputField  RecordTitle;     // record Title
@@ -42,7 +44,7 @@ public class SimpleExample : MonoBehaviour
     void Start()
     {
         // init EmotivUnityItf without data buffer using
-        _eItf.Init(_clientId, _clientSecret, _appName, "3.3.0", _isDataBufferUsing);
+        _eItf.Init(_clientId, _clientSecret, _appName, _appVersion, _isDataBufferUsing);
 
         // Start
         _eItf.Start();
@@ -66,6 +68,8 @@ public class SimpleExample : MonoBehaviour
         // Check buttons interactable
         CheckButtonsInteractable();
 
+        // If save data to Data buffer. You can do the same EEG to get other data streams
+        // Otherwise check output data at OnEEGDataReceived(), OnMotionDataReceived() ..etc..
         if (_isDataBufferUsing) {
             // get eeg data
             if (_eItf.GetNumberEEGSamples() > 0) {
