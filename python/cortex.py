@@ -33,6 +33,7 @@ HAS_ACCESS_RIGHT_ID                 =   20
 GET_CURRENT_PROFILE_ID              =   21
 GET_CORTEX_INFO_ID                  =   22
 UPDATE_MARKER_REQUEST_ID            =   23
+UNSUB_REQUEST_ID                    =   24
 
 #define error_code
 ERR_PROFILE_ACCESS_DENIED = -32046
@@ -209,6 +210,16 @@ class Cortex(Dispatcher):
                 stream_name = stream['streamName']
                 stream_msg = stream['message']
                 print('The data stream '+ stream_name + ' is subscribed unsuccessfully. Because: ' + stream_msg)
+        elif req_id == UNSUB_REQUEST_ID:
+            for stream in result_dic['success']:
+                stream_name = stream['streamName']
+                print('The data stream '+ stream_name + ' is unsubscribed successfully.')
+
+            for stream in result_dic['failure']:
+                stream_name = stream['streamName']
+                stream_msg = stream['message']
+                print('The data stream '+ stream_name + ' is unsubscribed unsuccessfully. Because: ' + stream_msg)
+
         elif req_id == QUERY_PROFILE_ID:
             profile_list = []
             for ele in result_dic:
@@ -540,6 +551,23 @@ class Cortex(Dispatcher):
             print('subscribe request \n', json.dumps(sub_request_json, indent=4))
 
         self.ws.send(json.dumps(sub_request_json))
+
+    def unsub_request(self, stream):
+        print('unsubscribe request --------------------------------')
+        unsub_request_json = {
+            "jsonrpc": "2.0", 
+            "method": "unsubscribe", 
+            "params": { 
+                "cortexToken": self.auth,
+                "session": self.session_id,
+                "streams": stream
+            }, 
+            "id": UNSUB_REQUEST_ID
+        }
+        if self.debug:
+            print('unsubscribe request \n', json.dumps(unsub_request_json, indent=4))
+
+        self.ws.send(json.dumps(unsub_request_json))
 
     def extract_data_labels(self, stream_name, stream_cols):
         labels = {}

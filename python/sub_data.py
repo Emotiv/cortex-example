@@ -94,6 +94,26 @@ class Subcribe():
         """
         self.c.sub_request(streams)
 
+    def unsub(self, streams):
+        """
+        To unsubscribe to one or more data streams
+        'eeg': EEG
+        'mot' : Motion
+        'dev' : Device information
+        'met' : Performance metric
+        'pow' : Band power
+
+        Parameters
+        ----------
+        streams : list, required
+            list of streams. For example, ['eeg', 'mot']
+
+        Returns
+        -------
+        None
+        """
+        self.c.unsub_request(streams)
+
     def on_new_data_labels(self, *args, **kwargs):
         """
         To handle data labels of subscribed data 
