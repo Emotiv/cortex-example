@@ -15,9 +15,8 @@ public class ConnectToCortex : MonoBehaviour
     void Start()
     {
         // set Application configuration
-        _dataStream.SetAppConfig(AppConfig.ClientId, AppConfig.ClientSecret, 
-                                 AppConfig.AppVersion, AppConfig.AppName,
-                                 AppConfig.TmpAppDataDir, AppConfig.AppUrl, 
+        _dataStream.SetAppConfig(AppConfig.ClientId, AppConfig.ClientSecret,
+                                 AppConfig.AppVersion, AppConfig.AppName, AppConfig.AppName, AppConfig.AppUrl,
                                  EmotivAppslicationPath());
         
         // Init logger
@@ -26,7 +25,7 @@ public class ConnectToCortex : MonoBehaviour
         Debug.Log("Configure BrainViz - PRODUCT SERVER - version: " +AppConfig.AppVersion);
         
         // start App
-        _dataStream.StartAuthorize(AppConfig.AppLicenseId);
+        _dataStream.StartAuthorize();
     }
     
     float _timerCounter_CQ              = 0;
