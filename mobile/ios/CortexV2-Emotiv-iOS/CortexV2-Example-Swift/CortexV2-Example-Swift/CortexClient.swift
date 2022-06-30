@@ -49,10 +49,9 @@ class CortexClient {
     var onStreamDataReceived: ((String, String, Double, NSArray) -> Void)!
     
     private init() {
-        let request = URLRequest(url: URL(string: "wss://localhost:7070/")!)
+        let request = URLRequest(url: URL(string: "wss://localhost:6868/")!)
         let pinner = FoundationSecurity(allowSelfSigned: true) // don't validate SSL certificates
         socket = WebSocket(request: request, certPinner: pinner)
-        //socket = WebSocket(url: URL(string: "wss://localhost:7070/")!)
         socket.delegate = self
         nextRequestId = 1
     }
