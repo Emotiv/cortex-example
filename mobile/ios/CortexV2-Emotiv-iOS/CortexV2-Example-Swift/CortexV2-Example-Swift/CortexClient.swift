@@ -49,7 +49,10 @@ class CortexClient {
     var onStreamDataReceived: ((String, String, Double, NSArray) -> Void)!
     
     private init() {
-        socket = WebSocket(url: URL(string: "wss://localhost:6868/")!)
+        let request = URLRequest(url: URL(string: "wss://localhost:7070/")!)
+        let pinner = FoundationSecurity(allowSelfSigned: true) // don't validate SSL certificates
+        socket = WebSocket(request: request, certPinner: pinner)
+        //socket = WebSocket(url: URL(string: "wss://localhost:7070/")!)
         socket.delegate = self
         nextRequestId = 1
     }
@@ -478,6 +481,33 @@ class CortexClient {
 }
 
 extension CortexClient: WebSocketDelegate {
+    func didReceive(event: WebSocketEvent, client: WebSocket) {
+        switch event {
+            case .connected(let headers):
+                websocketDidConnect(socket: client)
+                print("websocket is connected: \(headers)")
+            case .disconnected(let reason, let code):
+                websocketDidConnect(socket: client)
+                print("websocket is disconnected: \(reason) with code: \(code)")
+            case .text(let string):
+                websocketDidReceiveMessage(socket: client, text: string)
+            case .binary(let data):
+                print("Received data: \(data.count)")
+            case .ping(_):
+                break
+            case .pong(_):
+                break
+            case .viabilityChanged(_):
+                break
+            case .reconnectSuggested(_):
+                break
+            case .cancelled:
+                break
+            case .error(let error):
+                print(error as Any)
+            }
+    }
+    
     func websocketDidConnect(socket: WebSocketClient) {
         NSLog("socket connected")
         if self.onConnected != nil {

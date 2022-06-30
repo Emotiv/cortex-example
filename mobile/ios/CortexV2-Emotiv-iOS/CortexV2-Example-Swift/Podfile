@@ -6,5 +6,5 @@ target 'CortexV2-Example-Swift' do
   use_frameworks!
 
   # Pods for CortexV2-Example-Swift
-  pod 'Starscream'
+  pod 'Starscream', '~> 4.0.0'
 end
