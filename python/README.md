@@ -38,8 +38,8 @@ recommend adjusting the code to your purposes.
 - For more details https://emotiv.gitbook.io/cortex-api/data-subscription
 
 ## BCI
-- [`mental_command_train.py`](./train.py) shows Mental Command training.
-- [`facial_expression_train.py`](./facial_expression.py) shows facial expression training.
+- [`mental_command_train.py`](./mental_command_train.py) shows Mental Command training.
+- [`facial_expression_train.py`](./facial_expression_train.py) shows facial expression training.
 - For more details https://emotiv.gitbook.io/cortex-api/bci
 
 ## Advanced BCI
