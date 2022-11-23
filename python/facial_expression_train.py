@@ -1,3 +1,4 @@
+import cortex
 from cortex import Cortex
 
 class Train():
@@ -235,7 +236,7 @@ class Train():
 
         print(error_data)
 
-        if error_code == ERR_PROFILE_ACCESS_DENIED:
+        if error_code == cortex.ERR_PROFILE_ACCESS_DENIED:
             # disconnect headset for next use
             print('Get error ' + error_message + ". Disconnect headset to fix this issue for next use.")
             self.c.disconnect_headset()
