@@ -102,7 +102,11 @@ class Cortex(Dispatcher):
                                         on_error=self.on_error,
                                         on_close=self.on_close)
         threadName = "WebsockThread:-{:%Y%m%d%H%M%S}".format(datetime.utcnow())
-        sslopt={"cert_reqs": ssl.CERT_NONE}
+        
+        # As default, a Emotiv self-signed certificate is required.
+        # If you don't want to use the certificate, please replace by the below line  by sslopt={"cert_reqs": ssl.CERT_NONE}
+        sslopt = {'ca_certs': "../certificates/rootCA.pem", "cert_reqs": ssl.CERT_REQUIRED}
+
         self.websock_thread  = threading.Thread(target=self.ws.run_forever, args=(None, sslopt), name=threadName)
         self.websock_thread .start()
         self.websock_thread.join()
@@ -121,8 +125,8 @@ class Cortex(Dispatcher):
         self.do_prepare_steps()
 
     def on_error(self, *args):
-        print("on_error")
-        print(args[1])
+        if len(args) == 2:
+            print(str(args[1]))
 
     def on_close(self, *args, **kwargs):
         print("on_close")
@@ -291,7 +295,7 @@ class Cortex(Dispatcher):
         elif req_id == INJECT_MARKER_REQUEST_ID:
             self.emit('update_marker_done', data=result_dic['marker'])
         else:
-            print('No handling for response of request ' + req_id)
+            print('No handling for response of request ' + str(req_id))
 
     def handle_error(self, recv_dic):
         req_id = recv_dic['id']
