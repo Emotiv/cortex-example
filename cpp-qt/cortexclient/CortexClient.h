@@ -57,7 +57,7 @@ public slots:
     // get an authorization token
     void authorize(QString clientId, QString clientSecret, QString license, int debit);
 
-    void controlDevice(QString headsetId, QString command, QJsonObject flexMapping = QJsonObject());
+    void controlDevice(QString headsetId, QString command, QJsonObject flexMapping = QJsonObject(), const QString xMontage = "");
 
     // open a session, so we can then get data from a headset
     // you need a license to activate the session
@@ -65,8 +65,8 @@ public slots:
     void closeSession(QString token, QString sessionId);
 
     // subscribe to a data stream
-    void subscribe(QString token, QString sessionId, QString stream);
-    void unsubscribe(QString token, QString sessionId, QString stream);
+    void subscribe(QString token, QString sessionId, QStringList stream);
+    void unsubscribe(QString token, QString sessionId, QStringList stream);
 
     // training profile management for facial expression and mental command
     void queryProfile(QString token);

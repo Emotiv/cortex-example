@@ -34,7 +34,8 @@ DataStreamExample::DataStreamExample(QObject *parent) : QObject(parent) {
     connect(&creator, &SessionCreator::sessionCreated, this, &DataStreamExample::onSessionCreated);
 }
 
-void DataStreamExample::start(QString stream, bool activateSession, QString license) {
+void DataStreamExample::start(QStringList stream, bool activateSession, QString license)
+{
     this->stream = stream;
     this->activateSession = activateSession;
     this->license = license;
@@ -86,22 +87,19 @@ void DataStreamExample::onLoadProfileOk(QString profileName)
 
 void DataStreamExample::onSubscribeOk(QStringList streams) {
     qInfo() << "Subscription successful for data streams" << streams;
-    qInfo() << "Receiving data for 30 seconds.";
-    QTimer::singleShot(30*1000, this, &DataStreamExample::unsubscribe);
+//    qInfo() << "Receiving data for 30 seconds.";
+//    QTimer::singleShot(30*1000, this, &DataStreamExample::unsubscribe);
 }
 
-void DataStreamExample::onStreamDataReceived(
-        QString sessionId, QString stream, double time, const QJsonArray &data) {
+void DataStreamExample::onStreamDataReceived(QString sessionId, QString stream,
+                                             double time, const QJsonArray &data) {
     Q_UNUSED(sessionId);
-    // a data stream can publish data with a high frequency
-    // we display only a few samples per second
-    if (time >= nextDataTime) {
-        qInfo() << stream << data;
-        nextDataTime = time + 0.2;
-    }
+    qInfo() << stream << data;
+    emit streamDataReceived(sessionId, stream, time, data);
 }
 
-void DataStreamExample::unsubscribe() {
+void DataStreamExample::unsubscribe()
+{
     client.unsubscribe(token, sessionId, stream);
 }
 

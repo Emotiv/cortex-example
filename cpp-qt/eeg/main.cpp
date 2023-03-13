@@ -27,7 +27,8 @@ int main(int argc, char *argv[])
     qInfo() << "#####";
     qInfo() << "";
 
-    QString licenseId = ""; // you can put your license id here
-    dse.start("eeg", true, licenseId);
+    QString licenseId = "56d4a389-c755-447b-839b-fd23c6bcc3c4"; // you can put your license id here
+//    dse.start({"dev"}, true, licenseId);
+    dse.start({"eeg", "dev"}, true, licenseId);
     return a.exec();
 }

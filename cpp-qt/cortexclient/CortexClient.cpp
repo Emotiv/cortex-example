@@ -59,7 +59,8 @@ void CortexClient::onSslErrors(const QList<QSslError> &errors) {
 }
 
 void CortexClient::open() {
-    socket.open(QUrl("wss://localhost:6868"));
+//    socket.open(QUrl("wss://localhost:6868")); // Product server
+    socket.open(QUrl("wss://localhost:7070"));   // DEV server
 }
 
 void CortexClient::close() {
@@ -99,13 +100,16 @@ void CortexClient::authorize(QString clientId, QString clientSecret, QString lic
     sendRequest("authorize", params);
 }
 
-void CortexClient::controlDevice(QString headsetId, QString command, QJsonObject flexMapping)
+void CortexClient::controlDevice(QString headsetId, QString command, QJsonObject flexMapping, const QString xMontage)
 {
     QJsonObject params;
     params["headset"] = headsetId;
     params["command"] = command;
     if (! flexMapping.isEmpty()) {
         params["mappings"] = flexMapping;
+    }
+    if(!xMontage.isEmpty()) {
+        params["xtrodesMontageType"] = xMontage;
     }
     sendRequest("controlDevice", params);
 }
@@ -126,20 +130,21 @@ void CortexClient::closeSession(QString token, QString sessionId) {
     sendRequest("updateSession", params);
 }
 
-void CortexClient::subscribe(QString token, QString sessionId, QString stream) {
+void CortexClient::subscribe(QString token, QString sessionId, QStringList stream) {
     QJsonObject params;
     QJsonArray streamArray;
-    streamArray.append(stream);
+    streamArray = QJsonArray::fromStringList(stream);
     params["cortexToken"] = token;
     params["session"] = sessionId;
     params["streams"] = streamArray;
     sendRequest("subscribe", params);
 }
 
-void CortexClient::unsubscribe(QString token, QString sessionId, QString stream) {
+void CortexClient::unsubscribe(QString token, QString sessionId, QStringList stream)
+{
     QJsonObject params;
     QJsonArray streamArray;
-    streamArray.append(stream);
+    streamArray = QJsonArray::fromStringList(stream);
     params["cortexToken"] = token;
     params["session"] = sessionId;
     params["streams"] = streamArray;

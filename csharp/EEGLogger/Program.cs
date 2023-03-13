@@ -12,7 +12,7 @@ namespace EEGLogger
     class Program
     {
         const string OutFilePath = @"EEGLogger.csv";
-        const string licenseID = "put_your_license_here";
+        const string licenseID = "";
         private static FileStream OutFileStream;
 
         static void Main(string[] args)
@@ -86,6 +86,7 @@ namespace EEGLogger
 
         private static void OnEEGDataReceived(object sender, ArrayList eegData)
         {
+            Console.WriteLine("Data is streaming................");
             WriteDataToFile(eegData);
         }
 

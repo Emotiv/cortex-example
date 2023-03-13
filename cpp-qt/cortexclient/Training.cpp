@@ -106,7 +106,7 @@ void Training::onLoadProfileOk(QString profileName)
 {
     qInfo() << "Training profile loaded" << profileName;
     // we must subscribe to the "sys" stream to receive training events
-    client.subscribe(token, sessionId, "sys");
+    client.subscribe(token, sessionId, {"sys"});
 }
 
 void Training::onSaveProfileOk(QString profileName)

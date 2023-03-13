@@ -33,7 +33,11 @@ public:
     explicit DataStreamExample(QObject *parent = nullptr);
 
     // you need to activate the session if you want to get the EEG data
-    void start(QString stream, bool activateSession, QString license = "");
+    void start(QStringList stream, bool activateSession, QString license = "");
+
+signals:
+    void streamDataReceived(QString sessionId, QString stream,
+                            double time, const QJsonArray &data);
 
 private slots:
     void onConnected();
@@ -61,7 +65,7 @@ private:
 
     bool activateSession;
     QString license;
-    QString stream;
+    QStringList stream;
     QString token;
     QString sessionId;
     double nextDataTime;

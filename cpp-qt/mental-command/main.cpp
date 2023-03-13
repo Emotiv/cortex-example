@@ -20,6 +20,6 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
     DataStreamExample dse;
 
-    dse.start("com", false);
+    dse.start({"com"}, false);
     return a.exec();
 }
