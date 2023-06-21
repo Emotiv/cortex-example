@@ -53,6 +53,8 @@ GET_CORTEX_INFO_ID                  =   22
 UPDATE_MARKER_REQUEST_ID            =   23
 UNSUB_REQUEST_ID                    =   24
 REFRESH_HEADSET_LIST_ID             =   25
+QUERY_RECORDS_ID                    =   26
+REQUEST_DOWNLOAD_RECORDS_ID         =   27
 
 #define error_code
 ERR_PROFILE_ACCESS_DENIED = -32046
@@ -80,9 +82,10 @@ HEADSET_SCANNING_FINISHED = 142
 
 class Cortex(Dispatcher):
 
-    _events_ = ['inform_error','create_session_done', 'query_profile_done', 'load_unload_profile_done', 
+    _events_ = ['inform_error', 'authorize_done', 'create_session_done', 'query_profile_done', 'load_unload_profile_done', 
                 'save_profile_done', 'get_mc_active_action_done','mc_brainmap_done', 'mc_action_sensitivity_done', 
-                'mc_training_threshold_done', 'create_record_done', 'stop_record_done','warn_cortex_stop_all_sub', 'warn_record_post_processing_done',
+                'mc_training_threshold_done', 'create_record_done', 'stop_record_done','warn_cortex_stop_all_sub', 
+                'warn_record_post_processing_done', 'query_records_done', 'request_download_records_done',
                 'inject_marker_done', 'update_marker_done', 'export_record_done', 'new_data_labels', 
                 'new_com_data', 'new_fe_data', 'new_eeg_data', 'new_mot_data', 'new_dev_data', 
                 'new_met_data', 'new_pow_data', 'new_sys_data']
@@ -126,7 +129,11 @@ class Cortex(Dispatcher):
         
         # As default, a Emotiv self-signed certificate is required.
         # If you don't want to use the certificate, please replace by the below line  by sslopt={"cert_reqs": ssl.CERT_NONE}
-        sslopt = {'ca_certs': "../certificates/rootCA.pem", "cert_reqs": ssl.CERT_REQUIRED}
+
+        file_dir_path = os.path.dirname(os.path.realpath(__file__))
+        parent_dir_path = os.path.abspath(os.path.join(file_dir_path, os.pardir))
+        certificate_path = os.path.join(parent_dir_path,'certificates', 'rootCA.pem')
+        sslopt = {'ca_certs': certificate_path, "cert_reqs": ssl.CERT_REQUIRED}
 
         self.websock_thread  = threading.Thread(target=self.ws.run_forever, args=(None, sslopt), name=thread_name)
         self.websock_thread .start()
@@ -303,6 +310,14 @@ class Cortex(Dispatcher):
             self.emit('mc_brainmap_done', data=result_dic)
         elif req_id == SENSITIVITY_REQUEST_ID:
             self.emit('mc_action_sensitivity_done', data=result_dic)
+        elif req_id == QUERY_RECORDS_ID:
+            record_num = result_dic['count']
+            limit_num = result_dic['limit']
+            offset_num = result_dic['offset']
+            records = result_dic['records']
+            self.emit('query_records_done', data=records, count=record_num, limit=limit_num, offset=offset_num)
+        elif req_id == REQUEST_DOWNLOAD_RECORDS_ID:
+            self.emit('request_download_records_done', data=result_dic)
         elif req_id == CREATE_RECORD_REQUEST_ID:
             self.record_id = result_dic['record']['uuid']
             self.emit('create_record_done', data=result_dic['record'])
@@ -704,6 +719,41 @@ class Cortex(Dispatcher):
             print('\n')
 
         self.ws.send(json.dumps(train_request_json))
+
+    def query_records(self, query_params):
+        print('query records --------------------------------')
+
+        params_val = {"cortexToken": self.auth}
+
+        for key, value in query_params.items():
+            params_val.update({key: value})
+
+        query_records_request = {
+            "jsonrpc": "2.0", 
+            "method": "queryRecords",
+            "params": params_val, 
+            "id": QUERY_RECORDS_ID
+        }
+        if self.debug:
+            print('query records request:\n', json.dumps(query_records_request, indent=4))
+
+        self.ws.send(json.dumps(query_records_request))
+    
+    def request_download_records(self, recordIds):
+        print('request to download records --------------------------------')
+
+        params_val = {"cortexToken": self.auth, 'recordIds': recordIds}
+
+        download_records_request = {
+            "jsonrpc": "2.0", 
+            "method": "requestToDownloadRecordData",
+            "params": params_val, 
+            "id": REQUEST_DOWNLOAD_RECORDS_ID
+        }
+        if self.debug:
+            print('requestToDownloadRecordData request:\n', json.dumps(download_records_request, indent=4))
+
+        self.ws.send(json.dumps(download_records_request))
 
     def create_record(self, title, **kwargs):
         print('create record --------------------------------')
