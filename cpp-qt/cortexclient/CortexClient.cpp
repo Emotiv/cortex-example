@@ -153,11 +153,12 @@ void CortexClient::queryProfile(QString token)
     sendRequest("queryProfile", params);
 }
 
-void CortexClient::createProfile(QString token, QString profileName)
+void CortexClient::createProfile(QString token, QString headsetId, QString profileName)
 {
     QJsonObject params;
     params["cortexToken"] = token;
     params["profile"] = profileName;
+    params["headset"] = headsetId;
     params["status"] = "create";
     sendRequest("setupProfile", params);
 }

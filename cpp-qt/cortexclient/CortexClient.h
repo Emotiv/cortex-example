@@ -70,7 +70,7 @@ public slots:
 
     // training profile management for facial expression and mental command
     void queryProfile(QString token);
-    void createProfile(QString token, QString profileName);
+    void createProfile(QString token, QString headsetId, QString profileName);
     void loadProfile(QString token, QString headsetId, QString profileName);
     void saveProfile(QString token, QString headsetId, QString profileName);
 
