@@ -94,7 +94,7 @@ class Cortex(Dispatcher):
                 self.headset_id = value
 
     def open(self):
-        url = "wss://localhost:7070"
+        url = "wss://localhost:6868"
         # websocket.enableTrace(True)
         self.ws = websocket.WebSocketApp(url, 
                                         on_message=self.on_message,
