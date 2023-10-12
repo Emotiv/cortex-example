@@ -227,8 +227,14 @@ class Cortex(Dispatcher):
         elif req_id == QUERY_PROFILE_ID:
             profile_list = []
             for ele in result_dic:
-                name = ele['name']
-                profile_list.append(name)
+                if 'name' in ele:
+                    profile_name = str(ele['name'])
+                    read_only = ele['readOnly']
+                    print('profile name :', profile_name, " readonly :", read_only)
+                    profile_list.append(profile_name)
+                else:
+                    print('Result does not contain name field.')
+
             self.emit('query_profile_done', data=profile_list)
         elif req_id == SETUP_PROFILE_ID:
             action = result_dic['action']

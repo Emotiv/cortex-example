@@ -261,7 +261,7 @@ namespace CortexAccess
                 Console.WriteLine("The profile has name " + profileName + " has existed. Please use other name");
                 return;
             }
-            _ctxClient.SetupProfile(_cortexToken, profileName, "create");
+            _ctxClient.SetupProfile(_cortexToken, profileName, "create", _headsetId);
         }
 
         public void LoadProfile(string profileName)

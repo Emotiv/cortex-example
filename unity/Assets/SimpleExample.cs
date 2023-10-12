@@ -57,11 +57,17 @@ public class SimpleExample : MonoBehaviour
         _timerDataUpdate += Time.deltaTime;
         if (_timerDataUpdate < TIME_UPDATE_DATA) 
             return;
-
         _timerDataUpdate -= TIME_UPDATE_DATA;
-        // update message log
+
+        if ( _eItf.MessageLog.Contains("Get Error:")) {
+            // show error in red color
+            MessageLog.color = Color.red;
+        }
+        else {
+            // update message log
+            MessageLog.color = Color.black;
+        }
         MessageLog.text = _eItf.MessageLog;
-        
         if (!_eItf.IsAuthorizedOK)
             return;
 
@@ -255,10 +261,6 @@ public class SimpleExample : MonoBehaviour
             return;
         }
 
-
-        if (!_eItf.IsSessionCreated)
-            return;
-        
         // make startRecordBtn interactable
         Button startRecordBtn = GameObject.Find("RecordPart").transform.Find("startRecordBtn").GetComponent<Button>();
         Button subscribeBtn = GameObject.Find("SubscribeDataPart").transform.Find("subscribeBtn").GetComponent<Button>();
@@ -273,22 +275,10 @@ public class SimpleExample : MonoBehaviour
         Button stopRecordBtn = GameObject.Find("RecordPart").transform.Find("stopRecordBtn").GetComponent<Button>();
         Button injectMarkerBtn = GameObject.Find("RecordPart").transform.Find("injectMarkerBtn").GetComponent<Button>();
 
-        if (!startRecordBtn.interactable)
-        {
-            startRecordBtn.interactable = true;
-        }
-        if (!subscribeBtn.interactable)
-        {
-            subscribeBtn.interactable = true;
-        }
-        if (!unsubscribeBtn.interactable)
-        {
-            unsubscribeBtn.interactable = true;
-        }
-        if (!loadProfileBtn.interactable)
-        {
-            loadProfileBtn.interactable = true;
-        }
+        startRecordBtn.interactable = _eItf.IsSessionCreated;
+        subscribeBtn.interactable = _eItf.IsSessionCreated;
+        unsubscribeBtn.interactable = _eItf.IsSessionCreated;
+        loadProfileBtn.interactable = _eItf.IsSessionCreated;
 
         saveProfileBtn.interactable = _eItf.IsProfileLoaded;
         startTrainingBtn.interactable = _eItf.IsProfileLoaded;
