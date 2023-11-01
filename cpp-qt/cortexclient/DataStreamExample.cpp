@@ -32,6 +32,8 @@ DataStreamExample::DataStreamExample(QObject *parent) : QObject(parent) {
     connect(&client, &CortexClient::closeSessionOk, this, &DataStreamExample::onCloseSessionOk);
     connect(&finder, &HeadsetFinder::headsetFound, this, &DataStreamExample::onHeadsetFound);
     connect(&creator, &SessionCreator::sessionCreated, this, &DataStreamExample::onSessionCreated);
+    connect(&client, &CortexClient::authorizeOk, this, &DataStreamExample::onAuthorizeOk);
+    connect(&client, &CortexClient::sigRefreshHeadsetList, this, &DataStreamExample::onRefreshHeadsetList);
 }
 
 void DataStreamExample::start(QString stream, bool activateSession, QString license) {
@@ -113,4 +115,14 @@ void DataStreamExample::onUnsubscribeOk(QStringList streams) {
 void DataStreamExample::onCloseSessionOk() {
     qInfo() << "Session closed.";
     client.close();
+}
+
+void DataStreamExample::onAuthorizeOk(QString token) {
+    Q_UNUSED(token)
+    onRefreshHeadsetList();
+}
+
+void DataStreamExample::onRefreshHeadsetList()
+{
+    finder.refreshList(&client);
 }

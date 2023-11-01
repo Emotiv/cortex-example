@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 HeadsetFinder::HeadsetFinder(QObject *parent) : QObject(parent) {
     client = nullptr;
     timerId = 0;
+//    connect(client, &CortexClient::authorizeOk, this, &HeadsetFinder::onRefreshHeadsetList);
 }
 
 void HeadsetFinder::clear() {
@@ -67,13 +68,28 @@ void HeadsetFinder::onQueryHeadsetsOk(const QList<Headset> &headsets) {
             // for an Epoc Flex headset, we need a mapping
             mapping = FlexMapping;
         }
-        client->controlDevice(headset.id, "connect", mapping);
+        client->controlDevice("connect", headset.id, mapping);
     }
     else if (headset.status == "connecting") {
         qInfo() << "Waiting for headset connection" << headset.toString();
     }
     else if (headset.status == "connected") {
         killTimer(timerId);
+        // Stop refresh list when a headset is connected
+        _allowRefreshList = false;
         emit headsetFound(headset);
+    }
+    else if (headset.status == "disconnected") {
+        qInfo() << "Headset disconnected" << headset.toString();
+        _allowRefreshList = true;
+    }
+}
+
+void HeadsetFinder::refreshList(CortexClient* client)
+{
+    // Only call refresh if headset is not connected
+    if (_allowRefreshList) {
+    qDebug() << "Refresh headset list";
+        client->controlDevice("refresh");
     }
 }
