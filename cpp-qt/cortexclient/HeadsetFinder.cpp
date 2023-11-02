@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 HeadsetFinder::HeadsetFinder(QObject *parent) : QObject(parent) {
     client = nullptr;
     timerId = 0;
-//    connect(client, &CortexClient::authorizeOk, this, &HeadsetFinder::onRefreshHeadsetList);
 }
 
 void HeadsetFinder::clear() {
