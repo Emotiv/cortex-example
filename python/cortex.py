@@ -162,6 +162,7 @@ class Cortex(Dispatcher):
         elif req_id == AUTHORIZE_ID:
             print("Authorize successfully.")
             self.auth = result_dic['cortexToken']
+            #After successful authorization, the app will call the API refresh headset list for the first time
             self.refresh_headset_list()
             # query headsets
             self.query_headset()
@@ -334,7 +335,8 @@ class Cortex(Dispatcher):
                 self.emit('warn_cortex_stop_all_sub', data=session_id)
                 self.session_id = ''
         elif  warning_code == HEADSET_SCANNING_FINISHED:
-            # only call refresh headset list when headset is not connected
+            # After headset scanning finishes, if no headset is connected yet, the app should call the controlDevice("refresh") again
+            # We recommend the app should NOT call controlDevice("refresh") when a headset is connected, to have the best data stream quality.
             if (self.isHeadsetConnected == False):
                 self.refresh_headset_list()
 
