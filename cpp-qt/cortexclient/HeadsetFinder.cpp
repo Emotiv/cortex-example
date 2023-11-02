@@ -83,7 +83,7 @@ void HeadsetFinder::onQueryHeadsetsOk(const QList<Headset> &headsets) {
 
 void HeadsetFinder::refreshList(CortexClient* client)
 {
-    // Only call refresh if headset is not connected
+    // We recommend the app should NOT call controlDevice("refresh") when a headset is connected, to have the best data stream quality.
     if (_allowRefreshList) {
     qDebug() << "Refresh headset list";
         client->controlDevice("refresh");

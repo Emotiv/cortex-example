@@ -139,7 +139,7 @@ signals:
     // we received data from a data stream
     void streamDataReceived(QString sessionId, QString stream,
                             double time, const QJsonArray &data);
-    void sigRefreshHeadsetList();
+    void sigRefreshHeadsetListFinished();
 
 private slots:
     void onError(QAbstractSocket::SocketError error);

@@ -378,7 +378,7 @@ void CortexClient::onMessageReceived(QString message) {
         int code = warning["code"].toInt();
         if (code == WARNING_CODE_SCAN_FINISHED)
         {
-            emit sigRefreshHeadsetList();
+            emit sigRefreshHeadsetListFinished();
         }
     }
 }
