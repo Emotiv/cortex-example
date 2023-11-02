@@ -53,6 +53,7 @@ void HeadsetFinder::timerEvent(QTimerEvent *event) {
 
 void HeadsetFinder::onQueryHeadsetsOk(const QList<Headset> &headsets) {
     if (headsets.isEmpty()) {
+        _allowRefreshList = true;
         return;
     }
     printHeadsets(headsets);
@@ -78,10 +79,6 @@ void HeadsetFinder::onQueryHeadsetsOk(const QList<Headset> &headsets) {
         // Stop refresh list when a headset is connected
         _allowRefreshList = false;
         emit headsetFound(headset);
-    }
-    else if (headset.status == "disconnected") {
-        qInfo() << "Headset disconnected" << headset.toString();
-        _allowRefreshList = true;
     }
 }
 
