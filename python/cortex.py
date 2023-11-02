@@ -34,6 +34,7 @@ GET_CURRENT_PROFILE_ID              =   21
 GET_CORTEX_INFO_ID                  =   22
 UPDATE_MARKER_REQUEST_ID            =   23
 UNSUB_REQUEST_ID                    =   24
+REFRESH_HEADSET_LIST_ID             =   25
 
 #define error_code
 ERR_PROFILE_ACCESS_DENIED = -32046
@@ -56,7 +57,7 @@ HEADSET_DISCONNECTED_TIMEOUT = 103
 HEADSET_CONNECTED = 104
 HEADSET_CANNOT_WORK_WITH_BTLE = 112
 HEADSET_CANNOT_CONNECT_DISABLE_MOTION = 113
-
+HEADSET_SCANNING_FINISHED = 142
 
 class Cortex(Dispatcher):
 
@@ -73,6 +74,7 @@ class Cortex(Dispatcher):
         self.debug = debug_mode
         self.debit = 10
         self.license = ''
+        self.isHeadsetConnected = False
 
         if client_id == '':
             raise ValueError('Empty your_app_client_id. Please fill in your_app_client_id before running the example.')
@@ -160,6 +162,7 @@ class Cortex(Dispatcher):
         elif req_id == AUTHORIZE_ID:
             print("Authorize successfully.")
             self.auth = result_dic['cortexToken']
+            self.refresh_headset_list()
             # query headsets
             self.query_headset()
         elif req_id == QUERY_HEADSET_ID:
@@ -176,6 +179,7 @@ class Cortex(Dispatcher):
                     headset_status = status
 
             if len(self.headset_list) == 0:
+                self.isHeadsetConnected = False
                 warnings.warn("No headset available. Please turn on a headset.")
             elif self.headset_id == '':
                 # set first headset is default headset
@@ -186,6 +190,7 @@ class Cortex(Dispatcher):
                 warnings.warn("Can not found the headset " + self.headset_id + ". Please make sure the id is correct.")
             elif found_headset == True:
                 if headset_status == 'connected':
+                    self.isHeadsetConnected = True
                     # create session with the headset
                     self.create_session()
                 elif headset_status == 'discovered':
@@ -328,6 +333,10 @@ class Cortex(Dispatcher):
             if session_id == self.session_id:
                 self.emit('warn_cortex_stop_all_sub', data=session_id)
                 self.session_id = ''
+        elif  warning_code == HEADSET_SCANNING_FINISHED:
+            # only call refresh headset list when headset is not connected
+            if (self.isHeadsetConnected == False):
+                self.refresh_headset_list()
 
     def handle_stream_data(self, result_dic):
         if result_dic.get('com') != None:
@@ -891,6 +900,21 @@ class Cortex(Dispatcher):
         if self.debug:
             print('get mental command training threshold \n', json.dumps(training_threshold_request, indent=4))
         self.ws.send(json.dumps(training_threshold_request))
+
+    def refresh_headset_list(self):
+        print('refresh headset list --------------------------------')
+        refresh_request = {
+            "jsonrpc": "2.0", 
+            "id": REFRESH_HEADSET_LIST_ID,
+            "method": "controlDevice",
+            "params": {
+                "command": "refresh"
+            }
+        }
+        if self.debug:
+            print('controlDevice refresh request \n', json.dumps(refresh_request, indent=4))
+
+        self.ws.send(json.dumps(refresh_request, indent=4))
 
 # -------------------------------------------------------------------
 # -------------------------------------------------------------------
