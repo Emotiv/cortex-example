@@ -7,6 +7,10 @@ const WebSocket = require('ws');
  *  - handle 2 main flows : sub and train flow
  *  - use async/await and Promise for request need to be run on sync
  */
+
+const WARNING_CODE_HEADSET_DISCOVERY_COMPLETE = 142;
+const WARNING_CODE_HEADSET_CONNECTED = 104;
+
 class Cortex {
     constructor (user, socketUrl) {
         // create socket
@@ -15,37 +19,46 @@ class Cortex {
 
         // read user infor
         this.user = user
+        this.isHeadsetConnected = false
+
     }
-
-    queryHeadsetId(){
-        const QUERY_HEADSET_ID = 2
-        let socket = this.socket
-        let queryHeadsetRequest =  {
-            "jsonrpc": "2.0", 
-            "id": QUERY_HEADSET_ID,
-            "method": "queryHeadsets",
-            "params": {}
-        }
-
-        return new Promise(function(resolve, reject){
-            socket.send(JSON.stringify(queryHeadsetRequest));
-            socket.on('message', (data)=>{
+    
+    queryHeadsetId() {
+        return new Promise((resolve, reject) => {
+            const QUERY_HEADSET_ID = 2;
+            let socket = this.socket;
+            let queryHeadsetRequest = {
+                "jsonrpc": "2.0",
+                "id": QUERY_HEADSET_ID,
+                "method": "queryHeadsets",
+                "params": {}
+            };
+            const sendQueryRequest = () => {
+                socket.send(JSON.stringify(queryHeadsetRequest));
+            };
+            
+            sendQueryRequest();
+    
+            socket.on('message', (data) => {
                 try {
                     if(JSON.parse(data)['id']==QUERY_HEADSET_ID){
+                        if (JSON.parse(data)['result'].length > 0) {
                         // console.log(data)
                         // console.log(JSON.parse(data)['result'].length)
                         if(JSON.parse(data)['result'].length > 0){
                             let headsetId = JSON.parse(data)['result'][0]['id']
                             resolve(headsetId)
-                        }
-                        else{
+                        } else {
                             console.log('No have any headset, please connect headset with your pc.')
+                            this.isHeadsetConnected = false
                         }
                     }
-                   
                 } catch (error) {}
-            })
-        })
+            });
+    
+            // Schedule subsequent requests every 1 minute
+            const intervalId = setInterval(sendQueryRequest, 60000);
+        });
     }
 
     requestAccess(){
@@ -97,6 +110,8 @@ class Cortex {
                     if(JSON.parse(data)['id']==AUTHORIZE_ID){
                         let cortexToken = JSON.parse(data)['result']['cortexToken']
                         resolve(cortexToken)
+                        // Call controlDevice("refresh") when authorization is successful
+                        this.refreshHeadsetList();
                     }
                 } catch (error) {}
             })
@@ -662,6 +677,41 @@ class Cortex {
         })
     }
 
+    refreshHeadsetList() {
+        const REFRESH_HEADSET_LIST_ID = 14;
+        const refreshHeadsetListRequest = {
+            "jsonrpc": "2.0",
+            "id": REFRESH_HEADSET_LIST_ID,
+            "method": "controlDevice",
+            "params": {
+                "command": "refresh"
+            }
+        };
+        console.log('Refresh the headset list');
+        socket.send(JSON.stringify(refreshHeadsetListRequest));
+    }
+
+    listenForWarnings() {
+        this.socket.on('message', (data) => {
+            try {
+                const message = JSON.parse(data);
+                if (message.warning) {
+                    console.log('Warning Received Code:', message.warning.code);
+                    console.log('Message:', message.warning.message);
+                    console.log('--------------------------------------');
+
+                    if (message.warning.code === WARNING_CODE_HEADSET_CONNECTED) {
+                        this.isHeadsetConnected = true;
+                    }
+                    // After headset scanning finishes, if no headset is connected yet, the app should call the controlDevice("refresh") again
+                    if (message.warning.code === WARNING_CODE_HEADSET_DISCOVERY_COMPLETE && !this.isHeadsetConnected) {
+                        this.refreshHeadsetList();
+                    }
+                } 
+            } catch (error) {}
+        });
+    }
+
 }
 
 // ---------------------------------------------------------
@@ -674,6 +724,7 @@ let user = {
 }
 
 let c = new Cortex(user, socketUrl)
+c.listenForWarnings();
 
 // ---------- sub data stream
 // have six kind of stream data ['fac', 'pow', 'eeg', 'mot', 'met', 'com']
