@@ -76,6 +76,12 @@ namespace CortexAccess
                 string name = (string)ele["name"];
                 _profileLists.Add(name);
             }
+            if (!_headsetFinder.IsHeadsetScanning)
+            {
+                // Start scanning headset. It will call one time whole program.
+                // If you want re-scan, please check IsHeadsetScanning and call ScanHeadsets() again
+                _headsetFinder.ScanHeadsets();
+            }
             // find headset
             _headsetFinder.FindHeadset();
         }

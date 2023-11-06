@@ -13,10 +13,14 @@ namespace CortexAccess
         private Timer _aTimer;
 
         private bool _isFoundHeadset;
+        private bool _isHeadsetScanning = false;
 
         // Event
         public event EventHandler<string> OnHeadsetConnected;
         public event EventHandler<bool> OnHeadsetDisConnected;
+
+
+        public bool IsHeadsetScanning { get => _isHeadsetScanning; }
 
         public HeadsetFinder()
         {
@@ -26,12 +30,18 @@ namespace CortexAccess
             _ctxClient.OnQueryHeadset += QueryHeadsetOK;
             _ctxClient.OnHeadsetConnected += HeadsetConnectedOK;
             _ctxClient.OnHeadsetDisConnected += HeadsetDisconnectedOK;
+            _ctxClient.HeadsetScanFinished += OnHeadsetScanFinished;
         }
 
         private void HeadsetDisconnectedOK(object sender, bool e)
         {
             _headsetId = "";
             OnHeadsetDisConnected(this, true);
+        }
+        private void OnHeadsetScanFinished(object sender, string message)
+        {
+            _isHeadsetScanning = false;
+            Console.WriteLine(message);
         }
 
         private void HeadsetConnectedOK(object sender, string headsetId)
@@ -97,6 +107,16 @@ namespace CortexAccess
                 SetTimer(); // set timer for query headset
                 _ctxClient.QueryHeadsets("");
             }            
+        }
+
+        /// <summary>
+        /// ScanHeadsets to trigger scan headsets from Cortex
+        /// </summary>
+        public void ScanHeadsets()
+        {
+            Console.WriteLine("Start scanning headset.");
+            _isHeadsetScanning = true;
+            _ctxClient.ControlDevice("refresh", "", new JObject());
         }
 
         // Create Timer for headset finding

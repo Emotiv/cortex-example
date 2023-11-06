@@ -80,6 +80,7 @@ This section describe structure overview, core classes and examples. The C# Cort
 * You must login and logout via EMOTIV Launcher.
 * You must use EMOTIV Launcher to grant AccessRight for the App one time for one emotiv user.
 * You need a valid license to subscribe EEG data, Performance metrics data.
+* From Emotiv Cortex 3.7, you need to call ScanHeadsets() at HeadsetFinder.cs to start headset scanning. Otherwise your headsets might not appeared in the headset list return from queryHeadsets(). If IsHeadsetScanning = false, you need re-call the ScanHeadsets() if want to re-scan headsets again.
 * The Examples are only demo for some Apis not all apis and to be continue updating.
 
 
