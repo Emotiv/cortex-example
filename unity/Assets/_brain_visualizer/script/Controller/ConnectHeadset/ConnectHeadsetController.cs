@@ -139,6 +139,14 @@ namespace dirox.emotiv.controller
             base.Activate();
         }
 
+        void Update() {
+
+            if (IsActive && !DataStreamManager.Instance.IsHeadsetScanning) {
+				// Start scanning headset at headset list screen
+				DataStreamManager.Instance.ScanHeadsets();
+			}
+        }
+
         IEnumerator ChangeCanvasScaleMode(float delayTime, bool isHeadsetListForm)
         {
             if (isHeadsetListForm) {
