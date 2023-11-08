@@ -43,17 +43,20 @@ class Cortex {
                 try {
                     if(JSON.parse(data)['id']==QUERY_HEADSET_ID){
                         if (JSON.parse(data)['result'].length > 0) {
-                        // console.log(data)
-                        // console.log(JSON.parse(data)['result'].length)
-                        if(JSON.parse(data)['result'].length > 0){
-                            let headsetId = JSON.parse(data)['result'][0]['id']
-                            resolve(headsetId)
-                        } else {
-                            console.log('No have any headset, please connect headset with your pc.')
-                            this.isHeadsetConnected = false
+                            // console.log(data)
+                            // console.log(JSON.parse(data)['result'].length)
+                            if(JSON.parse(data)['result'].length > 0){
+                                let headsetId = JSON.parse(data)['result'][0]['id']
+                                resolve(headsetId)
+                            } else {
+                                console.log('No have any headset, please connect headset with your pc.')
+                                this.isHeadsetConnected = false
+                            }
                         }
                     }
-                } catch (error) {}
+                } catch (error) {
+                    console.error(error);
+                }
             });
     
             // Schedule subsequent requests every 1 minute
