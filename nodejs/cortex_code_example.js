@@ -146,30 +146,37 @@ class Cortex {
     }
 
     createSession(authToken, headsetId){
-        let socket = this.socket
-        const CREATE_SESSION_ID = 5
-        let createSessionRequest = { 
-            "jsonrpc": "2.0",
-            "id": CREATE_SESSION_ID,
-            "method": "createSession",
-            "params": {
-                "cortexToken": authToken,
-                "headset": headsetId,
-                "status": "active"
+        return new Promise((resolve, reject) => {
+            if (!this.isHeadsetConnected) {
+                // If the headset is not connected, wait for 1 second and then try again
+                setTimeout(() => {
+                    this.createSession(authToken, headsetId).then(resolve).catch(reject);
+                }, 10000);
+                return;
             }
-        }
-        return new Promise(function(resolve, reject){
+    
+            let socket = this.socket
+            const CREATE_SESSION_ID = 5
+            let createSessionRequest = { 
+                "jsonrpc": "2.0",
+                "id": CREATE_SESSION_ID,
+                "method": "createSession",
+                "params": {
+                    "cortexToken": authToken,
+                    "headset": headsetId,
+                    "status": "active"
+                }
+            }
+    
             socket.send(JSON.stringify(createSessionRequest));
-            socket.on('message', (data)=>{
-                // console.log(data)
-                try {
-                    if(JSON.parse(data)['id']==CREATE_SESSION_ID){
-                        let sessionId = JSON.parse(data)['result']['id']
-                        resolve(sessionId)
-                    }
-                } catch (error) {}
-            })
-        })
+            socket.on('message', (data) => {
+                let parsedData = JSON.parse(data);
+                if (parsedData.id === CREATE_SESSION_ID) {
+                    let sessionId = parsedData['result']['id']
+                    resolve(sessionId)
+                }
+            });
+        });
     }
 
     startRecord(authToken, sessionId, recordName){
@@ -194,7 +201,7 @@ class Cortex {
                 try {
                     if(JSON.parse(data)['id']==CREATE_RECORD_REQUEST_ID){
                         console.log('CREATE RECORD RESULT --------------------------------')
-                        console.log(data)
+                        // console.log(data)
                         let recordId = JSON.parse(data)['result']['record']['uuid']
                         console.log("=======> recordId:", recordId)
                         resolve(recordId)
@@ -228,7 +235,7 @@ class Cortex {
                 try {
                     if(JSON.parse(data)['id']==INJECT_MARKER_REQUEST_ID){
                         console.log('INJECT MARKER RESULT --------------------------------')
-                        console.log(data)
+                        // console.log(data)
                         resolve(data)
                     }
                 } catch (error) {}
@@ -257,7 +264,7 @@ class Cortex {
                 try {
                     if(JSON.parse(data)['id']==STOP_RECORD_REQUEST_ID){
                         console.log('STOP RECORD RESULT --------------------------------')
-                        console.log(data)
+                        // console.log(data)
                         resolve(data)
                     }
                 } catch (error) {}
@@ -319,7 +326,7 @@ class Cortex {
             try {
                 // if(JSON.parse(data)['id']==SUB_REQUEST_ID){
                     console.log('SUB REQUEST RESULT --------------------------------')
-                    console.log(data)
+                    console.log(data.toString('utf8'))
                     console.log('\r\n')
                 // }
             } catch (error) {}
@@ -348,7 +355,7 @@ class Cortex {
                 try {
                     if(JSON.parse(data)['id']==MENTAL_COMMAND_ACTIVE_ACTION_ID){
                         console.log('MENTAL COMMAND ACTIVE ACTION RESULT --------------------')
-                        console.log(data)
+                        // console.log(data)
                         console.log('\r\n')
                         resolve(data)
                     }
@@ -437,7 +444,7 @@ class Cortex {
             this.subRequest(streams, this.authToken, this.sessionId)
             this.socket.on('message', (data)=>{
                 // log stream data to file or console here
-                console.log(data)
+                // console.log(data)
             })
         })
     }
@@ -470,7 +477,7 @@ class Cortex {
                     if(JSON.parse(data)['id']==SETUP_PROFILE_ID){
                         if(JSON.parse(data)['result']['action']==status){
                             console.log('SETUP PROFILE -------------------------------------')
-                            console.log(data)
+                            // console.log(data)
                             console.log('\r\n')
                             resolve(data)
                         }
@@ -544,7 +551,7 @@ class Cortex {
                 // console.log('inside training ', data)
                 try {
                     if (JSON.parse(data)[id]==TRAINING_ID){
-                        console.log(data)
+                        // console.log(data)
                     }  
                 } catch (error) {}
 
@@ -553,7 +560,7 @@ class Cortex {
                     try {
                         if(JSON.parse(data)['sys'][1]=='MC_Succeeded'){
                             console.log('START TRAINING RESULT --------------------------------------')
-                            console.log(data)
+                            // console.log(data)
                             console.log('\r\n')
                             resolve(data)
                         }
@@ -565,7 +572,7 @@ class Cortex {
                     try {
                         if(JSON.parse(data)['sys'][1]=='MC_Completed'){
                             console.log('ACCEPT TRAINING RESULT --------------------------------------')
-                            console.log(data)
+                            // console.log(data)
                             console.log('\r\n')
                             resolve(data)
                         }
@@ -675,7 +682,7 @@ class Cortex {
             this.subRequest(['com'], this.authToken, this.sessionId)
 
             this.socket.on('message', (data)=>{
-                console.log(data)
+                // console.log(data)
             })
         })
     }
