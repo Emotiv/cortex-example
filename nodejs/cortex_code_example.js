@@ -34,6 +34,7 @@ class Cortex {
                 "params": {}
             };
             const sendQueryRequest = () => {
+                console.log('queryHeadsetRequest');
                 socket.send(JSON.stringify(queryHeadsetRequest));
             };
             
@@ -42,20 +43,18 @@ class Cortex {
             socket.on('message', (data) => {
                 try {
                     if(JSON.parse(data)['id']==QUERY_HEADSET_ID){
-                        if (JSON.parse(data)['result'].length > 0) {
-                            // console.log(data)
-                            // console.log(JSON.parse(data)['result'].length)
-                            if(JSON.parse(data)['result'].length > 0){
-                                JSON.parse(data)['result'].forEach(headset => {
-                                    if (headset['status'] === 'connected') {
-                                        this.isHeadsetConnected = true;
-                                    }
-                                });
-                                resolve(JSON.parse(data))
-                            } else {
-                                console.log('No have any headset, please connect headset with your pc.')
-                                this.isHeadsetConnected = false
-                            }
+                        // console.log(data)
+                        // console.log(JSON.parse(data)['result'].length)
+                        if(JSON.parse(data)['result'].length > 0){
+                            JSON.parse(data)['result'].forEach(headset => {
+                                if (headset['status'] === 'connected') {
+                                    this.isHeadsetConnected = true;
+                                }
+                            });
+                            resolve(JSON.parse(data))
+                        } else {
+                            console.log('No have any headset, please connect headset with your pc.')
+                            this.isHeadsetConnected = false
                         }
                     }
                 } catch (error) {
@@ -139,10 +138,19 @@ class Cortex {
         }
         return new Promise(function(resolve, reject){
             socket.send(JSON.stringify(controlDeviceRequest));
+            console.log('control device request: ', controlDeviceRequest)
             socket.on('message', (data)=>{
                 try {
-                    if(JSON.parse(data)['id']==CONTROL_DEVICE_ID){
-                        resolve(JSON.parse(data))
+                    let response = JSON.parse(data);
+                    if(response['id'] == CONTROL_DEVICE_ID){
+                        if(response.error) {
+                            console.log(response.error.message);
+                            setTimeout(() => {
+                                socket.send(JSON.stringify(controlDeviceRequest));
+                            }, 10000);
+                        } else {
+                            resolve(response);
+                        }
                     }
                 } catch (error) {}
             })
@@ -384,7 +392,7 @@ class Cortex {
         this.qhResult = qhResult
         this.headsetId = qhResult['result'][0]['id']
         let ctResult=""
-        await this.controlDevice(headsetId).then((result)=>{ctResult=result})
+        await this.controlDevice(this.headsetId).then((result)=>{ctResult=result})
         this.ctResult = ctResult
         console.log(ctResult)
 
