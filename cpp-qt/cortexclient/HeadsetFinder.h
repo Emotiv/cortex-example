@@ -48,10 +48,14 @@ protected:
 
 private slots:
     void onQueryHeadsetsOk(const QList<Headset> &headsets);
+    
+public slots:
+    void refreshList(CortexClient *client);
 
 private:
     CortexClient* client;
     int timerId;
+    bool _allowRefreshList = true;
 };
 
 #endif // HEADSETFINDER_H

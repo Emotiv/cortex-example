@@ -99,7 +99,7 @@ void CortexClient::authorize(QString clientId, QString clientSecret, QString lic
     sendRequest("authorize", params);
 }
 
-void CortexClient::controlDevice(QString headsetId, QString command, QJsonObject flexMapping)
+void CortexClient::controlDevice(QString command, QString headsetId, QJsonObject flexMapping)
 {
     QJsonObject params;
     params["headset"] = headsetId;
@@ -375,6 +375,11 @@ void CortexClient::onMessageReceived(QString message) {
     }
     else if (! warning.isEmpty()) {
         qInfo().noquote() << " * warning " << message;
+        int code = warning["code"].toInt();
+        if (code == WARNING_CODE_SCAN_FINISHED)
+        {
+            emit sigRefreshHeadsetListFinished();
+        }
     }
 }
 

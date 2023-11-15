@@ -32,6 +32,11 @@ DataStreamExample::DataStreamExample(QObject *parent) : QObject(parent) {
     connect(&client, &CortexClient::closeSessionOk, this, &DataStreamExample::onCloseSessionOk);
     connect(&finder, &HeadsetFinder::headsetFound, this, &DataStreamExample::onHeadsetFound);
     connect(&creator, &SessionCreator::sessionCreated, this, &DataStreamExample::onSessionCreated);
+
+    // After successful authorization, the app will call the API refresh for the first time
+    connect(&client, &CortexClient::authorizeOk, this, &DataStreamExample::onAuthorizeOk);
+    // After headset scanning finishes, if no headset is connected yet, the app should call the controlDevice("refresh") again
+    connect(&client, &CortexClient::sigRefreshHeadsetListFinished, this, &DataStreamExample::onRefreshHeadsetList);
 }
 
 void DataStreamExample::start(QString stream, bool activateSession, QString license) {
@@ -113,4 +118,14 @@ void DataStreamExample::onUnsubscribeOk(QStringList streams) {
 void DataStreamExample::onCloseSessionOk() {
     qInfo() << "Session closed.";
     client.close();
+}
+
+void DataStreamExample::onAuthorizeOk(QString token) {
+    Q_UNUSED(token)
+    onRefreshHeadsetList();
+}
+
+void DataStreamExample::onRefreshHeadsetList()
+{
+    finder.refreshList(&client);
 }

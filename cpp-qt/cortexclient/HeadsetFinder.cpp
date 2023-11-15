@@ -52,6 +52,7 @@ void HeadsetFinder::timerEvent(QTimerEvent *event) {
 
 void HeadsetFinder::onQueryHeadsetsOk(const QList<Headset> &headsets) {
     if (headsets.isEmpty()) {
+        _allowRefreshList = true;
         return;
     }
     printHeadsets(headsets);
@@ -67,13 +68,24 @@ void HeadsetFinder::onQueryHeadsetsOk(const QList<Headset> &headsets) {
             // for an Epoc Flex headset, we need a mapping
             mapping = FlexMapping;
         }
-        client->controlDevice(headset.id, "connect", mapping);
+        client->controlDevice("connect", headset.id, mapping);
     }
     else if (headset.status == "connecting") {
         qInfo() << "Waiting for headset connection" << headset.toString();
     }
     else if (headset.status == "connected") {
         killTimer(timerId);
+        // Stop refresh list when a headset is connected
+        _allowRefreshList = false;
         emit headsetFound(headset);
+    }
+}
+
+void HeadsetFinder::refreshList(CortexClient* client)
+{
+    // We recommend the app should NOT call controlDevice("refresh") when a headset is connected, to have the best data stream quality.
+    if (_allowRefreshList) {
+    qDebug() << "Refresh headset list";
+        client->controlDevice("refresh");
     }
 }

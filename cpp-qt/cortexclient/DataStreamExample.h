@@ -53,6 +53,10 @@ private slots:
 
     void onCloseSessionOk();
 
+    void onAuthorizeOk(QString token);
+    
+    void onRefreshHeadsetList();
+
 private:
     CortexClient client;
     HeadsetFinder finder;

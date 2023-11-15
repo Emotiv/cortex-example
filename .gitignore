@@ -10,3 +10,4 @@ unity/Tmp/
 Temp/
 unity/*.userprefs
 unity/*.unityproj
+*build-*

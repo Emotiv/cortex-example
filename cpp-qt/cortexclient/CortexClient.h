@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <QSslError>
 #include "Headset.h"
 
+static const int WARNING_CODE_SCAN_FINISHED = 142;
+
 struct TrainedAction
 {
     QString name;
@@ -57,7 +59,7 @@ public slots:
     // get an authorization token
     void authorize(QString clientId, QString clientSecret, QString license, int debit);
 
-    void controlDevice(QString headsetId, QString command, QJsonObject flexMapping = QJsonObject());
+    void controlDevice(QString command, QString headsetId = QString(), QJsonObject flexMapping = QJsonObject());
 
     // open a session, so we can then get data from a headset
     // you need a license to activate the session
@@ -137,6 +139,7 @@ signals:
     // we received data from a data stream
     void streamDataReceived(QString sessionId, QString stream,
                             double time, const QJsonArray &data);
+    void sigRefreshHeadsetListFinished();
 
 private slots:
     void onError(QAbstractSocket::SocketError error);
