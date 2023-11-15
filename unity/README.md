@@ -34,7 +34,7 @@ There are 2 examples to demo how to work with Emotiv Cortex on Unity. The first 
 
 ### Example 2: SimpleExample.unity 
 1. Open **SimpleExample.unity** scene. It is all in one example.
-2. Set the clientId, clientSecret of your application in SimpleExample.cs before running.  
+2. Set the clientId, clientSecret of your application in SimpleExample.cs before running.
 3. Running the example. After authorizing process you able to create session with a headset. Enter a headset Id before clicking **"Create Session"** button to connect and create a session with the headset. If the text field is empty, the first headset in the headset list will be used.  
 4. After create session successfully, you will be able to start a record, subscribe one ore more data streams and load a profile for training.
 	- **Start and Stop Record:** Enter record title before starting a record, record description is optional field.
@@ -49,13 +49,16 @@ There are 2 examples to demo how to work with Emotiv Cortex on Unity. The first 
 		- Please unload the trained data before closing.  
 		
 > **Please note that:**
->
+> - From Emotiv Cortex 3.7, you need to call ScanHeadsets() at DataStreamManager.cs to start headset scanning. Otherwise your headsets might not appeared in the headset list return from queryHeadsets(). If IsHeadsetScanning = false, you need re-call the ScanHeadsets() if want to re-scan headsets again but should not call ScanHeadsets() when has a headset connected.
 > - The example will use **EmotivUnityItf.cs** such as a interface to do all things.
 > - The subscribed data will be saved to DataBuffer as default. But you have option use data directly without DataBuffer by set '_isDataBufferUsing = false'. Please check the ouput for subcribed data at functions such as OnDevDataReceived(), OnEEGDataReceived().etc.. in EmotivUnityItf.cs  
 > - Please load a trained profile before subscribing **"Mental Command"** or **"Facial Expression"** data unless you only see the neutral action.
 
 
 ## Change log
+
+[10 Nov 2023]
+- Support new headset scanning flow from Emotiv Cortex 3.7
 
 [15 May 2022]
 - Add SimpleExample.unity to demo subscribe data, training , start record and inject marker same time.

@@ -71,6 +71,12 @@ public class SimpleExample : MonoBehaviour
         if (!_eItf.IsAuthorizedOK)
             return;
 
+        // Check to call scan headset if no session is created and no scanning headset
+        if (!_eItf.IsSessionCreated && !DataStreamManager.Instance.IsHeadsetScanning) {
+				// Start scanning headset at headset list screen
+				DataStreamManager.Instance.ScanHeadsets();
+		}
+        
         // Check buttons interactable
         CheckButtonsInteractable();
 
