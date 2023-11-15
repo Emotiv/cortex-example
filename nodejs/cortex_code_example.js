@@ -7,6 +7,10 @@ const WebSocket = require('ws');
  *  - handle 2 main flows : sub and train flow
  *  - use async/await and Promise for request need to be run on sync
  */
+
+const WARNING_CODE_HEADSET_DISCOVERY_COMPLETE = 142;
+const WARNING_CODE_HEADSET_CONNECTED = 104;
+
 class Cortex {
     constructor (user, socketUrl) {
         // create socket
@@ -15,37 +19,52 @@ class Cortex {
 
         // read user infor
         this.user = user
+        this.isHeadsetConnected = false
+
     }
-
-    queryHeadsetId(){
-        const QUERY_HEADSET_ID = 2
-        let socket = this.socket
-        let queryHeadsetRequest =  {
-            "jsonrpc": "2.0", 
-            "id": QUERY_HEADSET_ID,
-            "method": "queryHeadsets",
-            "params": {}
-        }
-
-        return new Promise(function(resolve, reject){
-            socket.send(JSON.stringify(queryHeadsetRequest));
-            socket.on('message', (data)=>{
+    
+    queryHeadsetId() {
+        return new Promise((resolve, reject) => {
+            const QUERY_HEADSET_ID = 2;
+            let socket = this.socket;
+            let queryHeadsetRequest = {
+                "jsonrpc": "2.0",
+                "id": QUERY_HEADSET_ID,
+                "method": "queryHeadsets",
+                "params": {}
+            };
+            const sendQueryRequest = () => {
+                console.log('queryHeadsetRequest');
+                socket.send(JSON.stringify(queryHeadsetRequest));
+            };
+            
+            sendQueryRequest();
+    
+            socket.on('message', (data) => {
                 try {
                     if(JSON.parse(data)['id']==QUERY_HEADSET_ID){
                         // console.log(data)
                         // console.log(JSON.parse(data)['result'].length)
                         if(JSON.parse(data)['result'].length > 0){
-                            let headsetId = JSON.parse(data)['result'][0]['id']
-                            resolve(headsetId)
-                        }
-                        else{
+                            JSON.parse(data)['result'].forEach(headset => {
+                                if (headset['status'] === 'connected') {
+                                    this.isHeadsetConnected = true;
+                                }
+                            });
+                            resolve(JSON.parse(data))
+                        } else {
                             console.log('No have any headset, please connect headset with your pc.')
+                            this.isHeadsetConnected = false
                         }
                     }
-                   
-                } catch (error) {}
-            })
-        })
+                } catch (error) {
+                    console.error(error);
+                }
+            });
+    
+            // Schedule subsequent requests every 1 minute
+            setInterval(sendQueryRequest, 60000);
+        });
     }
 
     requestAccess(){
@@ -97,6 +116,8 @@ class Cortex {
                     if(JSON.parse(data)['id']==AUTHORIZE_ID){
                         let cortexToken = JSON.parse(data)['result']['cortexToken']
                         resolve(cortexToken)
+                        // Call controlDevice("refresh") when authorization is successful
+                        this.refreshHeadsetList();
                     }
                 } catch (error) {}
             })
@@ -117,41 +138,59 @@ class Cortex {
         }
         return new Promise(function(resolve, reject){
             socket.send(JSON.stringify(controlDeviceRequest));
+            console.log('control device request: ', controlDeviceRequest)
             socket.on('message', (data)=>{
                 try {
-                    if(JSON.parse(data)['id']==CONTROL_DEVICE_ID){
-                        resolve(data)
+                    let response = JSON.parse(data);
+                    if(response['id'] == CONTROL_DEVICE_ID){
+                        if(response.error) {
+                            console.log(response.error.message);
+                            setTimeout(() => {
+                                socket.send(JSON.stringify(controlDeviceRequest));
+                            }, 10000);
+                        } else {
+                            resolve(response);
+                        }
                     }
                 } catch (error) {}
             })
         }) 
     }
 
-    createSession(authToken, headsetId){
-        let socket = this.socket
-        const CREATE_SESSION_ID = 5
-        let createSessionRequest = { 
-            "jsonrpc": "2.0",
-            "id": CREATE_SESSION_ID,
-            "method": "createSession",
-            "params": {
-                "cortexToken": authToken,
-                "headset": headsetId,
-                "status": "active"
-            }
-        }
-        return new Promise(function(resolve, reject){
-            socket.send(JSON.stringify(createSessionRequest));
-            socket.on('message', (data)=>{
-                // console.log(data)
-                try {
-                    if(JSON.parse(data)['id']==CREATE_SESSION_ID){
-                        let sessionId = JSON.parse(data)['result']['id']
-                        resolve(sessionId)
-                    }
-                } catch (error) {}
-            })
-        })
+    createSession(authToken, headsetId) {
+        return new Promise(async (resolve, reject) => {
+            let socket = this.socket;
+            const CREATE_SESSION_ID = 5;
+            let sessionId;
+            const checkHeadsetId = async () => {
+                const response = await this.queryHeadsetId();
+                const found = response["result"].find(item => String(item["id"]) === String(headsetId) && item["status"] === "connected");
+                if (found) {
+                    clearInterval(queryInterval);
+                    let createSessionRequest = {
+                        "jsonrpc": "2.0",
+                        "id": CREATE_SESSION_ID,
+                        "method": "createSession",
+                        "params": {
+                            "cortexToken": authToken,
+                            "headset": headsetId,
+                            "status": "active"
+                        }
+                    };
+                    socket.send(JSON.stringify(createSessionRequest));
+    
+                    socket.on('message', (data) => {
+                        let parsedData = JSON.parse(data);
+                        if (parsedData.id === CREATE_SESSION_ID) {
+                            sessionId = parsedData['result']['id'];
+                            resolve(sessionId);
+                        }
+                    });
+                }
+            };
+            const queryInterval = setInterval(checkHeadsetId, 30000);
+            checkHeadsetId();
+        });
     }
 
     startRecord(authToken, sessionId, recordName){
@@ -176,7 +215,7 @@ class Cortex {
                 try {
                     if(JSON.parse(data)['id']==CREATE_RECORD_REQUEST_ID){
                         console.log('CREATE RECORD RESULT --------------------------------')
-                        console.log(data)
+                        // console.log(data)
                         let recordId = JSON.parse(data)['result']['record']['uuid']
                         console.log("=======> recordId:", recordId)
                         resolve(recordId)
@@ -210,7 +249,7 @@ class Cortex {
                 try {
                     if(JSON.parse(data)['id']==INJECT_MARKER_REQUEST_ID){
                         console.log('INJECT MARKER RESULT --------------------------------')
-                        console.log(data)
+                        // console.log(data)
                         resolve(data)
                     }
                 } catch (error) {}
@@ -239,7 +278,7 @@ class Cortex {
                 try {
                     if(JSON.parse(data)['id']==STOP_RECORD_REQUEST_ID){
                         console.log('STOP RECORD RESULT --------------------------------')
-                        console.log(data)
+                        // console.log(data)
                         resolve(data)
                     }
                 } catch (error) {}
@@ -301,7 +340,7 @@ class Cortex {
             try {
                 // if(JSON.parse(data)['id']==SUB_REQUEST_ID){
                     console.log('SUB REQUEST RESULT --------------------------------')
-                    console.log(data)
+                    console.log(data.toString('utf8'))
                     console.log('\r\n')
                 // }
             } catch (error) {}
@@ -330,7 +369,7 @@ class Cortex {
                 try {
                     if(JSON.parse(data)['id']==MENTAL_COMMAND_ACTIVE_ACTION_ID){
                         console.log('MENTAL COMMAND ACTIVE ACTION RESULT --------------------')
-                        console.log(data)
+                        // console.log(data)
                         console.log('\r\n')
                         resolve(data)
                     }
@@ -347,12 +386,13 @@ class Cortex {
      * - create session and get back session id
      */
     async querySessionInfo(){
-        let headsetId=""
-        await this.queryHeadsetId().then((headset)=>{headsetId = headset})
-        this.headsetId = headsetId
-
+        let qhResult = ""
+        let headsetId = ""
+        await this.queryHeadsetId().then((result)=>{qhResult = result})
+        this.qhResult = qhResult
+        this.headsetId = qhResult['result'][0]['id']
         let ctResult=""
-        await this.controlDevice(headsetId).then((result)=>{ctResult=result})
+        await this.controlDevice(this.headsetId).then((result)=>{ctResult=result})
         this.ctResult = ctResult
         console.log(ctResult)
 
@@ -361,7 +401,7 @@ class Cortex {
         this.authToken = authToken
 
         let sessionId = ""
-        await this.createSession(authToken, headsetId).then((result)=>{sessionId=result})
+        await this.createSession(authToken, this.headsetId).then((result)=>{sessionId=result})
         this.sessionId = sessionId
 
         console.log('HEADSET ID -----------------------------------')
@@ -419,7 +459,7 @@ class Cortex {
             this.subRequest(streams, this.authToken, this.sessionId)
             this.socket.on('message', (data)=>{
                 // log stream data to file or console here
-                console.log(data)
+                // console.log(data)
             })
         })
     }
@@ -452,7 +492,7 @@ class Cortex {
                     if(JSON.parse(data)['id']==SETUP_PROFILE_ID){
                         if(JSON.parse(data)['result']['action']==status){
                             console.log('SETUP PROFILE -------------------------------------')
-                            console.log(data)
+                            // console.log(data)
                             console.log('\r\n')
                             resolve(data)
                         }
@@ -526,7 +566,7 @@ class Cortex {
                 // console.log('inside training ', data)
                 try {
                     if (JSON.parse(data)[id]==TRAINING_ID){
-                        console.log(data)
+                        // console.log(data)
                     }  
                 } catch (error) {}
 
@@ -535,7 +575,7 @@ class Cortex {
                     try {
                         if(JSON.parse(data)['sys'][1]=='MC_Succeeded'){
                             console.log('START TRAINING RESULT --------------------------------------')
-                            console.log(data)
+                            // console.log(data)
                             console.log('\r\n')
                             resolve(data)
                         }
@@ -547,7 +587,7 @@ class Cortex {
                     try {
                         if(JSON.parse(data)['sys'][1]=='MC_Completed'){
                             console.log('ACCEPT TRAINING RESULT --------------------------------------')
-                            console.log(data)
+                            // console.log(data)
                             console.log('\r\n')
                             resolve(data)
                         }
@@ -657,9 +697,44 @@ class Cortex {
             this.subRequest(['com'], this.authToken, this.sessionId)
 
             this.socket.on('message', (data)=>{
-                console.log(data)
+                // console.log(data)
             })
         })
+    }
+
+    refreshHeadsetList() {
+        const REFRESH_HEADSET_LIST_ID = 14;
+        const refreshHeadsetListRequest = {
+            "jsonrpc": "2.0",
+            "id": REFRESH_HEADSET_LIST_ID,
+            "method": "controlDevice",
+            "params": {
+                "command": "refresh"
+            }
+        };
+        console.log('Refresh the headset list');
+        socket.send(JSON.stringify(refreshHeadsetListRequest));
+    }
+
+    listenForWarnings() {
+        this.socket.on('message', (data) => {
+            try {
+                const message = JSON.parse(data);
+                if (message.warning) {
+                    console.log('Warning Received Code:', message.warning.code);
+                    console.log('Message:', message.warning.message);
+                    console.log('--------------------------------------');
+
+                    if (message.warning.code === WARNING_CODE_HEADSET_CONNECTED) {
+                        this.isHeadsetConnected = true;
+                    }
+                    // After headset scanning finishes, if no headset is connected yet, the app should call the controlDevice("refresh") again
+                    if (message.warning.code === WARNING_CODE_HEADSET_DISCOVERY_COMPLETE && !this.isHeadsetConnected) {
+                        this.refreshHeadsetList();
+                    }
+                } 
+            } catch (error) {}
+        });
     }
 
 }
@@ -674,6 +749,7 @@ let user = {
 }
 
 let c = new Cortex(user, socketUrl)
+c.listenForWarnings();
 
 // ---------- sub data stream
 // have six kind of stream data ['fac', 'pow', 'eeg', 'mot', 'met', 'com']
