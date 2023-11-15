@@ -211,6 +211,12 @@ namespace RecordData
             if (!String.IsNullOrEmpty(cortexToken))
             {
                 _cortexToken = cortexToken;
+                if (!_headsetFinder.IsHeadsetScanning)
+                {
+                    // Start scanning headset. It will call one time whole program.
+                    // If you want re-scan, please check IsHeadsetScanning and call ScanHeadsets() again
+                    _headsetFinder.ScanHeadsets();
+                }
                 // find headset
                 _headsetFinder.FindHeadset();
             }

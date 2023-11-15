@@ -118,6 +118,7 @@ namespace CortexAccess
         public event EventHandler<JArray> OnQueryProfile;
         public event EventHandler<double> OnGetTrainingTime;
         public event EventHandler<JObject> OnTraining;
+        public event EventHandler<string> HeadsetScanFinished;
 
         // Constructor
         static CortexClient()
@@ -128,6 +129,9 @@ namespace CortexAccess
         {
             _nextRequestId = 1;
             _wSC = new WebSocket(Url);
+            // Since Emotiv Cortex 3.7.0, the supported SSL Protocol will be TLS1.2 or later
+            _wSC.Security.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+
             _methodForRequestId = new Dictionary<int, string>();
             _wSC.Opened += new EventHandler(WebSocketClient_Opened);
 
@@ -220,21 +224,13 @@ namespace CortexAccess
             else if (response["warning"] != null)
             {
                 JObject warning = (JObject)response["warning"];
-                string messageWarning = "";
                 int code = -1;
                 if (warning["code"] != null)
                 {
                     code = (int)warning["code"];
                 }
-                if (warning["message"].Type == JTokenType.String)
-                {
-                    messageWarning = warning["message"].ToString();
-                }
-                else if (warning["message"].Type == JTokenType.Object)
-                {
-                    Console.WriteLine("Received Warning Object");
-                }
-                HandleWarning(code, messageWarning);
+                JToken messageData = warning["message"];
+                HandleWarning(code, messageData);
             }
         }
         // handle Response
@@ -441,9 +437,9 @@ namespace CortexAccess
         }
 
         // handle warning response
-        private void HandleWarning(int code, string message)
+        private void HandleWarning(int code, JToken messageData)
         {
-            Console.WriteLine("handleWarning: " + code + " message: " + message);
+            Console.WriteLine("handleWarning: " + code);
             if (code == WarningCode.AccessRightGranted)
             {
                 // granted access right
@@ -459,11 +455,18 @@ namespace CortexAccess
             }
             else if (code == WarningCode.UserLogin)
             {
+                string message = messageData.ToString();
                 OnUserLogin(this, message);
             }
             else if (code == WarningCode.UserLogout)
             {
+                string message = messageData.ToString();
                 OnUserLogout(this, message);
+            }
+            else if (code == WarningCode.HeadsetScanFinished)
+            {
+                string message = messageData["behavior"].ToString();
+                HeadsetScanFinished(this, message);
             }
 
         }
