@@ -52,6 +52,7 @@ CORTEX_AUTO_UNLOAD_PROFILE = 15
 EULA_ACCEPTED = 17
 DISKSPACE_LOW = 19
 DISKSPACE_CRITICAL = 20
+CORTEX_RECORD_POST_PROCESSING_DONE = 30
 HEADSET_CANNOT_CONNECT_TIMEOUT = 102
 HEADSET_DISCONNECTED_TIMEOUT = 103
 HEADSET_CONNECTED = 104
@@ -63,7 +64,7 @@ class Cortex(Dispatcher):
 
     _events_ = ['inform_error','create_session_done', 'query_profile_done', 'load_unload_profile_done', 
                 'save_profile_done', 'get_mc_active_action_done','mc_brainmap_done', 'mc_action_sensitivity_done', 
-                'mc_training_threshold_done', 'create_record_done', 'stop_record_done','warn_cortex_stop_all_sub', 
+                'mc_training_threshold_done', 'create_record_done', 'stop_record_done','warn_cortex_stop_all_sub', 'warn_record_post_processing_done',
                 'inject_marker_done', 'update_marker_done', 'export_record_done', 'new_data_labels', 
                 'new_com_data', 'new_fe_data', 'new_eeg_data', 'new_mot_data', 'new_dev_data', 
                 'new_met_data', 'new_pow_data', 'new_sys_data']
@@ -334,6 +335,9 @@ class Cortex(Dispatcher):
             if session_id == self.session_id:
                 self.emit('warn_cortex_stop_all_sub', data=session_id)
                 self.session_id = ''
+        elif warning_code == CORTEX_RECORD_POST_PROCESSING_DONE:
+                record_id = warning_msg['recordId']
+                self.emit('warn_record_post_processing_done', data=record_id)
         elif  warning_code == HEADSET_SCANNING_FINISHED:
             # After headset scanning finishes, if no headset is connected yet, the app should call the controlDevice("refresh") again
             # We recommend the app should NOT call controlDevice("refresh") when a headset is connected, to have the best data stream quality.

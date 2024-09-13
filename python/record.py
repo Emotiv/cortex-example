@@ -7,7 +7,7 @@ class Record():
         self.c.bind(create_session_done=self.on_create_session_done)
         self.c.bind(create_record_done=self.on_create_record_done)
         self.c.bind(stop_record_done=self.on_stop_record_done)
-        self.c.bind(warn_cortex_stop_all_sub=self.on_warn_cortex_stop_all_sub)
+        self.c.bind(warn_record_post_processing_done=self.on_warn_record_post_processing_done)
         self.c.bind(export_record_done=self.on_export_record_done)
         self.c.bind(inform_error=self.on_inform_error)
 
@@ -108,20 +108,15 @@ class Record():
         start_time = data['startDatetime']
         end_time = data['endDatetime']
         title = data['title']
-        print('on_stop_record_done: recordId: {0}, title: {1}, startTime: {2}, endTime: {3}'.format(record_id, title, start_time, end_time))
+        print('The record has been stopped: recordId: {0}, title: {1}, startTime: {2}, endTime: {3}'.format(record_id, title, start_time, end_time))
 
-        # disconnect headset to export record
-        print('on_stop_record_done: Disconnect the headset to export record')
-        self.c.disconnect_headset()
-
-    def on_warn_cortex_stop_all_sub(self, *args, **kwargs):
-        print('on_warn_cortex_stop_all_sub')
-        # cortex has closed session. Wait some seconds before exporting record
-        time.sleep(3)
+    def on_warn_record_post_processing_done(self, *args, **kwargs):
+        record_id = kwargs.get('data')
+        print('on_warn_record_post_processing_done: The record', record_id, 'has been post-processed. Now, you can export the record')
 
         #export record
         self.export_record(self.record_export_folder, self.record_export_data_types,
-                           self.record_export_format, [self.record_id], self.record_export_version)
+                           self.record_export_format, [record_id], self.record_export_version)
 
     def on_export_record_done(self, *args, **kwargs):
         print('on_export_record_done: the successful record exporting as below:')
