@@ -122,7 +122,7 @@ void Marker::onRecordStopped()
     // we can get the record now and we will display it
     client.getRecordInfos(token, recordId);
     // but to export the record we must disconnect the headset first
-    client.controlDevice(headsetId, "disconnect");
+    client.controlDevice("disconnect", headsetId);
     // it can take a few milliseconds to disconnect the headset, so we check its status
     connect(&client, &CortexClient::queryHeadsetsOk, this, &Marker::onQueryHeadsetOk);
     client.queryHeadsets(headsetId);

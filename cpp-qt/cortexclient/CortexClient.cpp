@@ -100,7 +100,7 @@ void CortexClient::authorize(QString clientId, QString clientSecret, QString lic
     sendRequest("authorize", params);
 }
 
-void CortexClient::controlDevice(QString headsetId, QString command, QJsonObject flexMapping, const QString xMontage)
+void CortexClient::controlDevice(QString command, QString headsetId, QJsonObject flexMapping, const QString xMontage)
 {
     QJsonObject params;
     params["headset"] = headsetId;
@@ -158,11 +158,12 @@ void CortexClient::queryProfile(QString token)
     sendRequest("queryProfile", params);
 }
 
-void CortexClient::createProfile(QString token, QString profileName)
+void CortexClient::createProfile(QString token, QString headsetId, QString profileName)
 {
     QJsonObject params;
     params["cortexToken"] = token;
     params["profile"] = profileName;
+    params["headset"] = headsetId;
     params["status"] = "create";
     sendRequest("setupProfile", params);
 }
@@ -379,6 +380,11 @@ void CortexClient::onMessageReceived(QString message) {
     }
     else if (! warning.isEmpty()) {
         qInfo().noquote() << " * warning " << message;
+        int code = warning["code"].toInt();
+        if (code == WARNING_CODE_SCAN_FINISHED)
+        {
+            emit sigRefreshHeadsetListFinished();
+        }
     }
 }
 

@@ -92,7 +92,7 @@ void Training::onQueryProfileOk(QStringList profiles)
     else {
         // the profile doesn't exist, we must create it first
         qInfo() << "Creating new training profile" << TrainingProfileName;
-        client.createProfile(token, TrainingProfileName);
+        client.createProfile(token, headset.id, TrainingProfileName);
     }
 }
 

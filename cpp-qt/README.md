@@ -13,7 +13,7 @@ These examples were compiled and tested with Qt 5.12
 
 On macOS, you also need to install Xcode, or the "Command Line Tools for Xcode".
 
-We have updated our Terms of Use, Privacy Policy and EULA to comply with GDPR. Please login via the EMOTIV App to read and accept our latest policies in order to proceed using the following examples.
+We have updated our Terms of Use, Privacy Policy and EULA to comply with GDPR. Please login via the EMOTIV Launcher to read and accept our latest policies in order to proceed using the following examples.
 
 ## How to compile
 
@@ -34,9 +34,9 @@ To get a client id and a client secret, you must connect to your Emotiv account 
 
 If you use an Epoc Flex headset, you need to edit its channel mapping in **cortexclient/Config.h**.
 
-Before you run these examples, you need to login with your Emotiv id in the EMOTIV App.
+Before you run these examples, you need to login with your Emotiv id in the EMOTIV Launcher.
 
-The first time you run these examples, you also need to authorize them in the EMOTIV App.
+The first time you run these examples, you also need to authorize them in the EMOTIV Launcher.
 
 ## Code structure
 

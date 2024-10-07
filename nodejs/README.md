@@ -1,95 +1,91 @@
-# Nodejs cortex code example
-This guide explain how to use Emotiv cortex api and explain node js example code.
+# NodeJS Cortex code example
+This guide explains how to use Emotiv Cortex API and NodeJS example code.
 
 ## Installation
-* [Install Nodejs](https://nodejs.org/en/)
+* [Install NodeJS](https://nodejs.org/en/)
 
-* [Install EmotivApps](https://emotiv.com)
+* [Install Emotiv Launcher](https://emotiv.com)
 
 * Install ws package with npm ```npm install ws```
 
 ## Prepare
-### Create emotiv id
-Go to [emotiv website](https://emotiv.com) for create new emotivid
+### Create EmotivID
+Go to [Emotiv website](https://emotiv.com) to create new EmotivID.
 
-### License
-Login to [emotiv website](https://emotiv.com) with above emotiv id then buy a license for coding third party app.
+### Purchase license
+Purchase the Developer license from [Emotiv website](https://emotiv.com).
 
 ### Create client id and client secret
-Go to [emotiv website](https://emotiv.com) to create a new pair of client id and client secret for your app.
+Login [Emotiv website](https://emotiv.com) under your account to create a new pair of client id and client secret for your app.
 
 
 ## Cortex class explained
-Cortex is class wrap around Emotiv cortex service api. In this class not yet contain all api function but essential functions for user could subcribe data stream from headset and doing mental command.
+The Cortex class is wrapped around Emotiv Cortex service API. The wrapper class does not contain all the API mapping but essential features for user to subcribe data stream from headset and basic BCI actions.
 
-```async / await``` and ```Promise``` is used for function that need to run in sync mode.
+```async / await``` and ```Promise``` are used for functions that need to be run in sync mode.
 
-### Check login and access request
-Check user login status and access request are handled with function ```checkGrantAccessAndQuerySessionInfo```
-Incase user not yet login or access request not yet granted, message will show up.
+### Login and access request
+User login status and access request are handled with function ```checkGrantAccessAndQuerySessionInfo```.
 
 ```javascript
 /**
-* - check if user logined
+* - check if user is logged in
 * - check if app is granted for access
-* - query session info to prepare for sub and train
+* - query session info to prepare for data subscription and BCI actions
 */
 async checkGrantAccessAndQuerySessionInfo(){
 }
 ```
 
-### Get session info
+### Session info
 Session info is handled with function
 ```javascript
 /**
-* - query headset infor
+* - query headset info
 * - connect to headset
-* - authentication and get back auth token
-* - create session and get back session id
+* - authentication and retrieve auth token
+* - create session and retrieve session id
 */
 async querySessionInfo(){
 }
 ```
 
-### Subcribe data stream
-Have 6 kind of data streams ('fac', 'pow', 'eeg', 'mot', 'met', 'com'). Subcribe data streams is handled by function ```sub```. Each time call user could sub one or many difference stream.
+### Subcribe to data streams
+There are 6 kind of data streams ('fac', 'pow', 'eeg', 'mot', 'met', 'com'). Subcription of data streams is handled by function ```sub```. User could subscribe one or many difference streams at the same time.
 ```javascript
 /**
- * 
  * - check login and grant access
- * - subcribe for stream
- * - logout data stream to console or file
+ * - subcribe for stream(s)
+ * - log data stream to console or file
  */
  sub(streams){}
 ```
 
-### Training profile
-Training mental command for specific profile is handled with function ```train```.
-Each time call function will train list of command, number of repeat train is free to specify but it is recommended to train atlease 5 times for each command.
+### Mental Command Training mode
+Mental Command training is handled with function ```train```.
+A single or list of actions can be specified, and it is recommended to train at leaset 5 times for each action to get enough data for accurate live detection.
 
 ```javascript
 /**
 * - check login and grant access
-* - create profile if not yet exist
+* - create profile if not yet existed
 * - load profile
 * - sub stream 'sys' for training
-* - train for actions, each action in number of time
-* 
+* - train for actions and the number of times that will be trained
 */
 train(profileName, trainingActions, numberOfTrain){
 }
 ```
 
 
-### Live mode
-After traing mental command successfully, user could test that command again in live mode with function ```live```.
+### Mental Command Live mode
+After training the Mental Command action successfully, user could test that command again in live mode with function ```live```.
 ```javascript
 /**
- * 
- * - load profile which trained before
- * - sub 'com' stream (mental command)
- * - user think specific thing which used while training, for example 'push' action
- * - 'push' command should show up on mental command stream
+ * - load profile which have been trained before
+ * - sub 'com' stream (Mental Command)
+ * - user performs the same action which used while training, for example 'push' action
+ * - 'push' command should show up on Mental Command stream
  */
 live(profileName) {
 }
@@ -98,7 +94,7 @@ live(profileName) {
 ## How to use Cortex class
 
 ### Create cortex instance
-To initialize a Cortex instance, you will need websocket url where cortex service running and information related to specific user : license, client id, client secret.
+To initialize a Cortex instance, you will need to connect to the Cortex service and provide specific parameters like license, client id, client secret.
 
 ```javascript
 // use local cortex service
@@ -114,22 +110,22 @@ let user = {
 let c = new Cortex(user, socketUrl)
 ```
 
-### Subscribe data stream
+### Subscribe data stream(s)
 ```javascript
 // subcribe headset data stream
-// user could sub one or many stream at once
+// user could subcribe one or many streams at once
 // streams = ['fac', 'pow', 'eeg', 'mot', 'met', 'com']
 let streams = ['eeg']
 c.sub(streams)
 ```
 
-### Training mental command and live mode
-User need to train 'neutral' first. Then train for wanted action, for example 'push' action.
+### Training Mental Command and live mode
+User needs to train 'neutral' first before any other actions.
 ```javascript
-// train is do with a specific profile
+// training data is saved with a specific profile
 // if profile not yet exist, it will be created
 let profileName = 'test'
-// number of repeat train for each action
+// number of training for each action
 // user have 8 seconds for each time of training
 let numberOfTrain = 5
 // always train 'neutral' first then train other action
@@ -137,18 +133,18 @@ let trainingActions = ['neutral', 'push']
 // c.train(profileName, trainingActions, numberOfTrain)
 ```
 
-Finally test mental command in live mode with profile already trained
+Finally test Mental Command in live mode with profile that has been trained
 ``` javascript
-// load profile which already trained then test your mental command
+// load the profile which has already been trained to test the Mental Command
 c.live(profileName)
 ```
 
 ### Running steps
 
-* Start CortexUI
-* Login on CortexUI with emotivid and password manually
-* Connect headset with pc or mac
-* Wear headset and make sure have a good contact quality, contact quality could be viewed visually on CortexUI
+* Start Launcher
+* Login on with EmotivID and crediential
+* Connect headset with the computer
+* Wear headset and make sure to get a good contact quality
 * Run example first time to request access ```node cortex_code_example.js```
-* Approve access on CortexUI manually (Action of approve need to do only onece)
-* Rerun example to sub data or training
+* Approve access on Launcher manually (which only needs to be done once)
+* Re-run example to subcribe data streams or perform training

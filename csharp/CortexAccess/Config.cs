@@ -39,5 +39,6 @@
         public const int EULAAccepted = 17;
         public const int StreamWritingClosed = 18;
         public const int HeadsetConnected = 104;
+        public const int HeadsetScanFinished = 142;
     }
 }
