@@ -5,7 +5,7 @@
   "main": "cortex_code_example.js",
   "dependencies": {
     "async-limiter": "^2.0.0",
-    "ws": "^6.2.2"
+    "ws": "^6.2.3"
   },
   "devDependencies": {},
   "scripts": {
