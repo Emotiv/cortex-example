@@ -11,7 +11,10 @@ namespace BandPowerLogger
 {
     class Program
     {
+        // init constants before running
         const string OutFilePath = @"BandPowerLogger.csv";
+        const string WantedHeadsetId = ""; // if you want to connect to specific headset, put headset id here. For example: "EPOCX-71D833AC"
+
         private static FileStream OutFileStream;
 
         static void Main(string[] args)
@@ -31,7 +34,7 @@ namespace BandPowerLogger
             dse.AddStreams("pow");
             dse.OnSubscribed += SubscribedOK;
             dse.OnBandPowerDataReceived += OnBandPowerOK;
-            dse.Start();
+            dse.Start("", true, WantedHeadsetId);
 
             Console.WriteLine("Press Esc to flush data to file and exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }

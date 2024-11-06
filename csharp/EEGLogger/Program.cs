@@ -11,8 +11,11 @@ namespace EEGLogger
 {
     class Program
     {
+        // init constants before running
         const string OutFilePath = @"EEGLogger.csv";
-        const string licenseID = "put_your_license_here";
+        const string LicenseID = ""; // Should be put empty string. Emotiv Cloud will choose the license automatically
+        const string WantedHeadsetId = ""; // if you want to connect to specific headset, put headset id here. For example: "EPOCX-71D833AC"
+
         private static FileStream OutFileStream;
 
         static void Main(string[] args)
@@ -33,8 +36,7 @@ namespace EEGLogger
             dse.OnSubscribed += SubscribedOK;
             dse.OnEEGDataReceived += OnEEGDataReceived;
 
-            // Need a valid license key and activeSession when subscribe eeg data
-            dse.Start(licenseID, true);
+            dse.Start(LicenseID, true, WantedHeadsetId);
 
             Console.WriteLine("Press Esc to flush data to file and exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }

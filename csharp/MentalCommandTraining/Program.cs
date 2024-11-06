@@ -8,7 +8,10 @@ namespace MentalCommandTraining
 {
     class Program
     {
+        const string WantedHeadsetId = ""; // if you want to connect to specific headset, put headset id here. For example: "EPOCX-71D833AC"
+
         private static string _profileName = "put_your_profile_here"; // new profile name for creating or existed profile name for loading
+        
 
         private static Training _trainer = new Training();
         private static bool _isSucceeded = false;
@@ -30,7 +33,7 @@ namespace MentalCommandTraining
 
             Console.WriteLine("Prepare to training");
             // Start
-            _trainer.Start("mentalCommand");
+            _trainer.Start("mentalCommand", WantedHeadsetId);
 
             if (_readyForTrainingEvent.WaitOne(50000))
             {

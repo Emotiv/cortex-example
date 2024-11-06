@@ -16,6 +16,7 @@ namespace CortexAccess
         private HeadsetFinder _headsetFinder;
         private Authorizer _authorizer;
         private SessionCreator _sessionCreator;
+        private string _wantedHeadsetId;
 
         public List<string> Streams
         {
@@ -63,6 +64,7 @@ namespace CortexAccess
             _ctxClient.OnStreamDataReceived += StreamDataReceived;
             _ctxClient.OnSubscribeData += SubscribeDataOK;
             _ctxClient.OnUnSubscribeData += UnSubscribeDataOK;
+            _ctxClient.SessionClosedNotify += SessionClosedOK;
 
             _authorizer.OnAuthorized += AuthorizedOK;
             _headsetFinder.OnHeadsetConnected += HeadsetConnectedOK;
@@ -72,7 +74,12 @@ namespace CortexAccess
 
         private void SessionClosedOK(object sender, string sessionId)
         {
-            Console.WriteLine("The Session " + sessionId + " has closed successfully.");
+            if (sessionId == _sessionId)
+            {
+                Console.WriteLine("The Session " + sessionId + " has closed successfully.");
+                _sessionId = "";
+                _headsetFinder.HasHeadsetConnected = false;
+            }
         }
 
         private void UnSubscribeDataOK(object sender, MultipleResultEventArgs e)
@@ -126,14 +133,16 @@ namespace CortexAccess
 
         private void SessionCreatedOk(object sender, string sessionId)
         {
-            // subscribe
             _sessionId = sessionId;
+            // subscribe
+            string streamsString = string.Join(", ", Streams);
+            Console.WriteLine("Session is created successfully. Subscribe for Streams: " + streamsString);
             _ctxClient.Subscribe(_cortexToken, _sessionId, Streams);
         }
 
         private void HeadsetConnectedOK(object sender, string headsetId)
         {
-            //Console.WriteLine("HeadsetConnectedOK " + headsetId);
+            Console.WriteLine("HeadsetConnectedOK " + headsetId);
             // Wait a moment before creating session
             System.Threading.Thread.Sleep(1500);
             // CreateSession
@@ -152,7 +161,7 @@ namespace CortexAccess
                     _headsetFinder.ScanHeadsets();
                 }
                 // find headset
-                _headsetFinder.FindHeadset();
+                _headsetFinder.FindHeadset(_wantedHeadsetId);
             }
         }
 
@@ -194,8 +203,9 @@ namespace CortexAccess
             }
         }
         // start
-        public void Start(string licenseID="", bool activeSession = false)
+        public void Start(string licenseID="", bool activeSession = false, string wantedHeadsetId = "")
         {
+            _wantedHeadsetId = wantedHeadsetId;
             _isActiveSession = activeSession;
             _authorizer.Start(licenseID);
         }

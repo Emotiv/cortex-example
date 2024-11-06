@@ -68,6 +68,20 @@ namespace CortexAccess
         public string MessageError { get; set; }
     }
 
+    // event to inform about headset connect
+    public class HeadsetConnectEventArgs
+    {
+        public HeadsetConnectEventArgs(bool isSuccess, string message, string headsetId)
+        {
+            IsSuccess = isSuccess;
+            Message = message;
+            HeadsetId = headsetId;
+        }
+        public bool IsSuccess { get; set; }
+        public string Message { get; set; }
+        public string HeadsetId { get; set; }
+    }
+
     public sealed class CortexClient
     {
         const string Url = "wss://localhost:6868";
@@ -86,8 +100,6 @@ namespace CortexAccess
         public event EventHandler<ErrorMsgEventArgs> OnErrorMsgReceived;
         public event EventHandler<StreamDataEventArgs> OnStreamDataReceived;
         public event EventHandler<List<Headset>> OnQueryHeadset;
-        public event EventHandler<string> OnHeadsetConnected;
-        public event EventHandler<bool> OnHeadsetDisConnected;
         public event EventHandler<bool> OnHasAccessRight;
         public event EventHandler<bool> OnRequestAccessDone;
         public event EventHandler<bool> OnAccessRightGranted;
@@ -118,6 +130,8 @@ namespace CortexAccess
         public event EventHandler<JArray> OnQueryProfile;
         public event EventHandler<double> OnGetTrainingTime;
         public event EventHandler<JObject> OnTraining;
+        public event EventHandler<string> SessionClosedNotify;
+        public event EventHandler<HeadsetConnectEventArgs> HeadsetConnectNotify;
         public event EventHandler<string> HeadsetScanFinished;
 
         // Constructor
@@ -250,29 +264,7 @@ namespace CortexAccess
             else if (method == "controlDevice")
             {
                 string command = (string)data["command"];
-                if (command == "connect")
-                {
-                    string message = (string)data["message"];
-                    string headsetId = "";
-
-                    Console.WriteLine("ConnectHeadset " + message);
-                    if (message.Contains("Start connecting to device"))
-                    {
-                        //"Start connecting to device " + headsetId
-                        headsetId = message.Substring(27);
-                    }
-                    else if (message.Contains("The device"))
-                    {
-                        //"The device " + headsetId + " has been connected or is connecting";
-                        string tmp = message.Replace(" has been connected or is connecting", "");
-                        headsetId = tmp.Substring(11);
-                    }
-                    OnHeadsetConnected(this, headsetId);
-                }
-                else if (command == "disconnect")
-                {
-                    OnHeadsetDisConnected(this, true);
-                }
+                Console.WriteLine("controlDevice response for command " + command);
             }
             else if (method == "getUserLogin")
             {
@@ -468,6 +460,36 @@ namespace CortexAccess
                 string message = messageData["behavior"].ToString();
                 HeadsetScanFinished(this, message);
             }
+            else if (code == WarningCode.StreamStop)
+            {
+                string sessionId = messageData["sessionId"].ToString();
+                SessionClosedNotify(this, sessionId);
+            }
+            else if (code == WarningCode.SessionAutoClosed)
+            {
+                string sessionId = messageData["sessionId"].ToString();
+                SessionClosedNotify(this, sessionId);
+            }
+            else if (code == WarningCode.HeadsetConnected)
+            {
+                string headsetId = messageData["headsetId"].ToString();
+                string message = messageData["behavior"].ToString();
+                Console.WriteLine("handleWarning:" + message);
+                HeadsetConnectNotify(this, new HeadsetConnectEventArgs(true, message, headsetId));
+            }
+            else if (code == WarningCode.HeadsetWrongInformation ||
+                     code == WarningCode.HeadsetCannotConnected ||
+                     code == WarningCode.HeadsetConnectingTimeout)
+            {
+                string headsetId = messageData["headsetId"].ToString();
+                string message = messageData["behavior"].ToString();
+                HeadsetConnectNotify(this, new HeadsetConnectEventArgs(false, message, headsetId));
+            }
+            else if (code == WarningCode.CortexAutoUnloadProfile)
+            {
+                // the current profile is unloaded automatically
+                OnUnloadProfile(this, true);
+            }
 
         }
         private void WebSocketClient_Closed(object sender, EventArgs e)
@@ -580,6 +602,7 @@ namespace CortexAccess
         // mappings is required if connect to epoc flex
         public void ControlDevice(string command, string headsetId, JObject mappings)
         {
+            Console.WriteLine("ControlDevice " + command + " headsetId:" + headsetId);
             JObject param = new JObject();
             param.Add("command", command);
             if (!String.IsNullOrEmpty(headsetId))
@@ -622,7 +645,7 @@ namespace CortexAccess
         // CreateRecord
         // Required params: session, title, cortexToken
         public void CreateRecord(string cortexToken, string sessionId, string title,
-                                 JToken description = null, JToken subjectName = null, JToken tags= null)
+                                 JToken description = null, JToken subjectName = null, List<string> tags = null)
         {
             JObject param = new JObject();
             param.Add("session", sessionId);
@@ -638,7 +661,7 @@ namespace CortexAccess
             }
             if (tags != null)
             {
-                param.Add("tags", tags);
+                param.Add("tags", JArray.FromObject(tags));
             }
             SendTextMessage(param, "createRecord", true);
         }
