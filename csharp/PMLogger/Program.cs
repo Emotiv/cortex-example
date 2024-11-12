@@ -15,6 +15,7 @@ namespace PMLogger
         const string OutFilePath = @"PMLogger.csv";
         const string LicenseID = ""; // Should be put empty string. Emotiv Cloud will choose the license automatically
         const string WantedHeadsetId = ""; // if you want to connect to specific headset, put headset id here. For example: "EPOCX-71D833AC"
+        const bool ActiveSession = false; // set true if you want to uses the license of the user. Depending on the license scope of the license, you can subscribe high resolution performance metrics
 
         private static FileStream OutFileStream;
 
@@ -36,7 +37,7 @@ namespace PMLogger
             dse.OnSubscribed += SubscribedOK;
             dse.OnPerfDataReceived += OnPMDataReceived;
 
-            dse.Start(LicenseID, true, WantedHeadsetId);
+            dse.Start(LicenseID, ActiveSession, WantedHeadsetId);
 
             Console.WriteLine("Press Esc to flush data to file and exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }

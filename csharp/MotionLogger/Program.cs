@@ -37,7 +37,7 @@ namespace MotionLogger
             dse.OnSubscribed += SubscribedOK;
             dse.OnMotionDataReceived += OnMotionDataReceived;
 
-            dse.Start(LicenseID, true, WantedHeadsetId);
+            dse.Start(LicenseID, false, WantedHeadsetId);
 
             Console.WriteLine("Press Esc to flush data to file and exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }

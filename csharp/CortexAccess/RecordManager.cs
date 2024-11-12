@@ -166,7 +166,7 @@ namespace CortexAccess
         /// <summary>
         /// start a record manager with a license ID and a wanted headset ID.
         /// </summary>
-        public void Start(string licenseID = "", string wantedHeadsetId = "")
+        public void Start( string wantedHeadsetId = "", string licenseID = "")
         {
             _wantedHeadsetId = wantedHeadsetId;
             _authorizer.Start(licenseID);

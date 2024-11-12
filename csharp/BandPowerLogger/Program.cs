@@ -34,7 +34,7 @@ namespace BandPowerLogger
             dse.AddStreams("pow");
             dse.OnSubscribed += SubscribedOK;
             dse.OnBandPowerDataReceived += OnBandPowerOK;
-            dse.Start("", true, WantedHeadsetId);
+            dse.Start("", false, WantedHeadsetId);
 
             Console.WriteLine("Press Esc to flush data to file and exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }
