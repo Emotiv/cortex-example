@@ -24,8 +24,9 @@ This section describe structure overview, core classes and examples. The C# Cort
 * CortexClient: Responsible for sending requests to Cortex and handle responses, warning, data from Cortex.
 * Config: Contain configurations. User must fill clientId, client Secret of App. To get EEG and Performance metric data, an appropriate license is required.
 * Authorizer: Responsible for getUserLogin, requestAccess, authorize for App.
-* HeadsetFinder: Reponsible for finding headsets, connect headset.
-* SessionCreator: Responsible for createSession, updateSession for work-flow.
+* HeadsetFinder: Reponsible for finding headsets, connect headset. If  you don't want to connect automatically to a headset (after first time), you should set IsAutoConnect = false
+* SessionCreator: Responsible for createSession, updateSession, start/stop/update record for work-flow.
+* RecordManager: To handle records and markers 
 * Training: Responsible for create/load/unload/ query Profiles and training.
 * Examples: We have examples to demo subscribe data, record, inject marker, training.
 
@@ -34,8 +35,7 @@ This section describe structure overview, core classes and examples. The C# Cort
 * This example opens a session with the first Emotiv headset. Then subscribe and save eeg data to EEGLogger.csv file until Esc key pressed. 
 * The basic work-flow: Login via EMOTIV Launcher -> requestAccess-> Authorize (an appropriate license is required) -> find and connect headset -> Create Session -> Subscribe EEG data.
 * Notes: 
-  - 1) Need put an appropriate license in Program.cs
-  - 2) Press Esc to flush data to output file and exit.
+  - 1) Press Esc to flush data to output file and exit.
 
 **2. MotionLogger**
 * This example opens a session with the first Emotiv headset. Then subscribe and save motion data to MotionLogger.csv file until Esc key pressed.
@@ -73,9 +73,8 @@ This section describe structure overview, core classes and examples. The C# Cort
 * The basic work-flow: Login via EMOTIV Launcher -> requestAccess-> Authorize (an appropriate license is required) -> find and connect headset -> Create Session -> Subscribe PM data.
 * The performance metric data frequency depend on scope of license. For low performance metric : 1 sample/ 10 seconds ; for high performance metric 2 samples/ seconds.
 * Notes: 
-  - 1) Need put an appropriate license in Program.cs
-  - 2) Press Esc to flush data to output file and exit.
-  - 3) Each performance metric is a decimal number between 0 and 1. Zero means "low power", 1 means "high power". If the detection cannot run because of a bad contact quality then the value can also be **null**
+  - 1) Press Esc to flush data to output file and exit.
+  - 2) Each performance metric is a decimal number between 0 and 1. Zero means "low power", 1 means "high power". If the detection cannot run because of a bad contact quality then the value can also be **null**
 ### Notes
 * You must login and logout via EMOTIV Launcher.
 * You must use EMOTIV Launcher to grant AccessRight for the App one time for one emotiv user.

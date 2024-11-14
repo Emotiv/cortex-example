@@ -20,6 +20,7 @@ namespace CortexAccess
         private Authorizer _authorizer;
         private SessionCreator _sessionCreator;
         private List<string> _profileLists;
+        private string _wantedHeadsetId;
 
         // event
         public event EventHandler<string> OnProfileLoaded;
@@ -51,6 +52,7 @@ namespace CortexAccess
             _ctxClient.OnUnloadProfile += ProfileUnloadedOK;
             _ctxClient.OnTraining += TrainingOK;
             _ctxClient.OnQueryProfile += QueryProfileOK;
+            _ctxClient.SessionClosedNotify += SessionClosedOK;
 
             _authorizer.OnAuthorized += AuthorizedOK;
             _headsetFinder.OnHeadsetConnected += HeadsetConnectedOK;
@@ -61,6 +63,12 @@ namespace CortexAccess
         private void SessionClosedOK(object sender, string sessionId)
         {
             Console.WriteLine("Session " + sessionId + " has closed");
+            if (sessionId == _sessionId)
+            {
+                Console.WriteLine("The Session " + sessionId + " has closed successfully.");
+                _sessionId = "";
+                _headsetFinder.HasHeadsetConnected = false;
+            }
         }
 
         private void ProfileUnloadedOK(object sender, bool e)
@@ -83,7 +91,7 @@ namespace CortexAccess
                 _headsetFinder.ScanHeadsets();
             }
             // find headset
-            _headsetFinder.FindHeadset();
+            _headsetFinder.FindHeadset(_wantedHeadsetId);
         }
 
         private void ProfileSavedOK(object sender, string profileName)
@@ -176,7 +184,7 @@ namespace CortexAccess
             if (found)
             {
                 // Ready for training
-                OnReadyForTraning(this, true);                
+                OnReadyForTraning(this, true);
             }
             else
             {
@@ -227,11 +235,12 @@ namespace CortexAccess
             Console.WriteLine("MessageErrorRecieved :code " + e.Code + " message " + e.MessageError);
         }
 
-        public void Start(string detection)
+        public void Start(string detection, string wantedHeadsetId = "")
         {
             if (detection == "mentalCommand" ||
                 detection == "facialExpression")
             {
+                _wantedHeadsetId = wantedHeadsetId;
                 _detection = detection;
                 _authorizer.Start();
             }
