@@ -39,15 +39,98 @@ public class SimpleExample : MonoBehaviour
     [SerializeField] public Toggle SYSToggle;
 
     [SerializeField] public Text MessageLog;
-    
+
+    // for android
+    #if UNITY_ANDROID
+    const string pluginName = "com.emotiv.unity.CortexLibManager";
+
+	private static AndroidJavaClass _pluginClass;
+	private static AndroidJavaObject _pluginInstance;
+    private AndroidJavaObject currentActivity;
+    public static AndroidJavaClass PluginClass
+	{
+		get {
+			if (_pluginClass==null)
+			{
+				_pluginClass = new AndroidJavaClass(pluginName);
+			}
+			return _pluginClass;
+		}
+	}
+
+	public static AndroidJavaObject PluginInstance
+	{
+		get {
+			if (_pluginInstance==null)
+			{
+				_pluginInstance = PluginClass.CallStatic<AndroidJavaObject>("getInstance");
+			}
+			return _pluginInstance;
+		}
+	}
+    private const string FineLocationPermission = "android.permission.ACCESS_FINE_LOCATION";
+    private const string BluetoothScanPermission = "android.permission.BLUETOOTH_SCAN";
+    private const string BluetoothConnectPermission = "android.permission.BLUETOOTH_CONNECT";
+
+    IEnumerator RequestPermissions()
+    {
+        yield return new WaitForSeconds(1f); // Wait for a second to ensure the app is fully initialized
+
+        if (!HasPermission(FineLocationPermission))
+        {
+            RequestPermission(FineLocationPermission);
+        }
+
+        if (!HasPermission(BluetoothScanPermission))
+        {
+            RequestPermission(BluetoothScanPermission);
+        }
+
+        if (!HasPermission(BluetoothConnectPermission))
+        {
+            RequestPermission(BluetoothConnectPermission);
+        }
+    }
+
+    private static bool HasPermission(string permissionName)
+    {
+        return Permission.HasUserAuthorizedPermission(permissionName);
+    }
+
+    private static void RequestPermission(string permissionName) {
+        if (Permission.HasUserAuthorizedPermission(permissionName))
+        {
+            Debug.Log("Permission " + permissionName + " is authorized");
+        }
+        else
+        {
+            // We do not have permission to use the microphone.
+            // Ask for permission or proceed without the functionality enabled.
+            Permission.RequestUserPermission(permissionName);
+        }
+    }
+    #endif
     
     void Start()
     {
         // init EmotivUnityItf without data buffer using
         _eItf.Init(_clientId, _clientSecret, _appName, _appVersion, _isDataBufferUsing);
 
-        // Start
+        // load cortex lib for android
+        #if UNITY_ANDROID
+        AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+        // Get the current activity
+        currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+        // Open :request permissions
+        // StartCoroutine(RequestPermissions());
+
+        _eItf.Start(currentActivity.Call<AndroidJavaObject>("getApplication"));
+        // if not mobile platform, start cortex
+        #elif UNITY_IOS
+            // TODO: load cortex lib for ios
+        #else
         _eItf.Start();
+        #endif
 
     }
 
