@@ -1,0 +1,81 @@
+apply plugin: 'com.android.application'
+
+dependencies {
+    implementation project(':unityLibrary')
+    }
+
+android {
+    ndkPath "**NDKPATH**"
+    namespace "**NAMESPACE**"
+
+    compileSdkVersion **APIVERSION**
+    buildToolsVersion '**BUILDTOOLS**'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion **TARGETSDKVERSION**
+        applicationId '**APPLICATIONID**'
+        ndk {
+            abiFilters **ABIFILTERS**
+        }
+        versionCode **VERSIONCODE**
+        versionName '**VERSIONNAME**'
+    }
+
+    aaptOptions {
+        noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ')
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }**SIGN**
+
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled **MINIFY_DEBUG**
+            proguardFiles getDefaultProguardFile('proguard-android.txt')**SIGNCONFIG**
+            jniDebuggable true
+        }
+        release {
+            minifyEnabled **MINIFY_RELEASE**
+            proguardFiles getDefaultProguardFile('proguard-android.txt')**SIGNCONFIG**
+        }
+    }
+	packagingOptions {
+        exclude 'META-INF/kotlinx_coroutines_core.version'
+        exclude 'META-INF/androidx.lifecycle_lifecycle-livedata-core.version'
+        exclude 'kotlin/internal/internal.kotlin_builtins'
+        exclude 'META-INF/androidx.lifecycle_lifecycle-viewmodel-savedstate.version'
+        exclude 'META-INF/androidx.appcompat_appcompat.version'
+        exclude 'kotlin/reflect/reflect.kotlin_builtins'
+        exclude 'META-INF/*.version'
+        exclude 'DebugProbesKt.bin'
+        exclude 'kotlin/collections/*.kotlin_builtins'
+        exclude 'kotlin/**/*.kotlin_builtins'
+        exclude 'kotlin/*.kotlin_builtins'
+    }
+	**PACKAGING_OPTIONS****PLAY_ASSET_PACKS****SPLITS**
+**BUILT_APK_LOCATION**
+    bundle {
+        language {
+            enableSplit = false
+        }
+        density {
+            enableSplit = false
+        }
+        abi {
+            enableSplit = true
+        }
+        texture {
+            enableSplit = true
+        }
+    }
+
+	**GOOGLE_PLAY_DEPENDENCIES**
+}**SPLITS_VERSION_CODE****LAUNCHER_SOURCE_BUILD_SETUP**

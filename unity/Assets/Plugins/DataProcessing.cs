@@ -71,6 +71,7 @@ public class DataProcessing
     {
         DataStreamManager.Instance.SessionActivatedOK += OnSessionActivatedOK;
         DataStreamManager.Instance.LicenseValidTo  += onLicenseValidTo;
+        DataStreamManager.Instance.MessageQueryHeadsetOK +=OnMessageQueryHeadsetOK;
     }
     ~DataProcessing()
     {
@@ -412,6 +413,11 @@ public class DataProcessing
             // TEST Start Record
             // _recordManager.StartRecord("tung260420", "demoUnity");
         }
+    }
+
+    private void OnMessageQueryHeadsetOK(object sender, string msg)
+    {
+        // TODO: Implement it later
     }
 
     private void onLicenseValidTo(object sender, DateTime validToDate)

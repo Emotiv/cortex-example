@@ -16,11 +16,14 @@ public class ConnectToCortex : MonoBehaviour
     {
         // set Application configuration
         _dataStream.SetAppConfig(AppConfig.ClientId, AppConfig.ClientSecret,
-                                 AppConfig.AppVersion, AppConfig.AppName, AppConfig.AppName, AppConfig.AppUrl,
+                                 AppConfig.AppVersion, AppConfig.AppName, AppConfig.UserName, AppConfig.Password,
+                                 AppConfig.AppName, AppConfig.AppUrl,
                                  EmotivAppslicationPath());
         
         // Init logger
+        #if !UNITY_ANDROID && !UNITY_IOS
         _logger.Init();
+        #endif
         
         Debug.Log("Configure BrainViz - PRODUCT SERVER - version: " +AppConfig.AppVersion);
         

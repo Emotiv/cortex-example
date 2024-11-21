@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using EmotivUnityPlugin;
 using UnityEngine.UI;
+using System;
+
 #if UNITY_ANDROID
 using UnityEngine.Android;
-using Gpm.WebView;
 #endif
 public class SimpleExample : MonoBehaviour
 {
@@ -15,6 +16,8 @@ public class SimpleExample : MonoBehaviour
     private string _clientSecret = "";
     private string _appName = "UnityApp";
     private string _appVersion = "3.3.0";
+    private bool _isStarted = false;
+
 
     EmotivUnityItf _eItf = EmotivUnityItf.Instance;
     float _timerDataUpdate = 0;
@@ -74,6 +77,27 @@ public class SimpleExample : MonoBehaviour
     private const string FineLocationPermission = "android.permission.ACCESS_FINE_LOCATION";
     private const string BluetoothScanPermission = "android.permission.BLUETOOTH_SCAN";
     private const string BluetoothConnectPermission = "android.permission.BLUETOOTH_CONNECT";
+    private const string WriteExternalStoragePermission = "android.permission.WRITE_EXTERNAL_STORAGE";
+
+    private readonly string[] permissions = {
+        FineLocationPermission,
+        BluetoothScanPermission,
+        BluetoothConnectPermission,
+        WriteExternalStoragePermission
+    };
+
+    private bool HasAllPermissions()
+    {
+        foreach (string permission in permissions)
+        {
+            if (!Permission.HasUserAuthorizedPermission(permission))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     IEnumerator RequestPermissions()
     {
@@ -92,6 +116,10 @@ public class SimpleExample : MonoBehaviour
         if (!HasPermission(BluetoothConnectPermission))
         {
             RequestPermission(BluetoothConnectPermission);
+        }
+        if (!HasPermission(WriteExternalStoragePermission))
+        {
+            RequestPermission(WriteExternalStoragePermission);
         }
     }
 
@@ -113,55 +141,14 @@ public class SimpleExample : MonoBehaviour
         }
     }
     #endif
-
-    // Popup default
-public void ShowUrlPopupDefault()
-{
-        string server = "cerebrum.emotivcloud.com";
-        string urlRequest = "https://" + server + "/api/oauth/authorize/" ;
-
-    GpmWebView.ShowUrl(
-        urlRequest,
-        new GpmWebViewRequest.Configuration()
-        {
-            style = GpmWebViewStyle.POPUP,
-            orientation = GpmOrientation.UNSPECIFIED,
-            isClearCookie = true,
-            isClearCache = true,
-            isNavigationBarVisible = true,
-            isCloseButtonVisible = true,
-            supportMultipleWindows = true,
-#if UNITY_IOS
-            contentMode = GpmWebViewContentMode.MOBILE,
-            isMaskViewVisible = true,
-#endif
-        },
-        // See the end of the code example
-        OnCallback,
-        new List<string>()
-        {
-            "USER_ CUSTOM_SCHEME"
-        });
-}
     
     void Start()
     {
         // init EmotivUnityItf without data buffer using
-        _eItf.Init(_clientId, _clientSecret, _appName, _appVersion, _isDataBufferUsing);
+        _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, _appName, _appVersion, AppConfig.UserName, AppConfig.Password, _isDataBufferUsing);
 
-        // load cortex lib for android
-        #if UNITY_ANDROID
-        AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-        // Get the current activity
-        currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-        // Open :request permissions
-        // StartCoroutine(RequestPermissions());
-
-        _eItf.Start(currentActivity.Call<AndroidJavaObject>("getApplication"));
-        // if not mobile platform, start cortex
-        #elif UNITY_IOS
-            // TODO: load cortex lib for ios
-        #else
+        #if !UNITY_ANDROID && !UNITY_IOS
+        UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for test");
         _eItf.Start();
         #endif
 
@@ -185,21 +172,28 @@ public void ShowUrlPopupDefault()
         }
         MessageLog.text = _eItf.MessageLog;
 
-        // check login status
-        if (_eItf.GetConnectToCortexState() == ConnectToCortexStates.Login_notYet) {
-            #if UNITY_ANDROID
-                UnityEngine.Debug.Log("ShowUrlPopupDefault");
-                ShowUrlPopupDefault();
-            #endif
+        #if UNITY_ANDROID
+        if (HasAllPermissions() && !_isStarted) {
+            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            // Get the current activity
+            currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            _eItf.Start(currentActivity);
+
+            _isStarted = true;
         }
+        else if (!_isStarted) {
+            StartCoroutine(RequestPermissions());
+        }
+        #endif
 
         if (!_eItf.IsAuthorizedOK)
             return;
 
         // Check to call scan headset if no session is created and no scanning headset
         if (!_eItf.IsSessionCreated && !DataStreamManager.Instance.IsHeadsetScanning) {
+                // UnityEngine.Debug.Log("qqqqqqq SimpleExp: No scanning headset");
 				// Start scanning headset at headset list screen
-				DataStreamManager.Instance.ScanHeadsets();
+				// DataStreamManager.Instance.ScanHeadsets();
 		}
         
         // Check buttons interactable
@@ -231,6 +225,15 @@ public void ShowUrlPopupDefault()
     /// <summary>
     /// create session 
     /// </summary>
+    public void onQueryHeadsetBtnClick() {
+        Debug.Log("onQueryHeadsetBtnClick");
+        _eItf.QueryHeadsets();
+    }
+
+
+    /// <summary>
+    /// create session 
+    /// </summary>
     public void onCreateSessionBtnClick() {
         Debug.Log("onCreateSessionBtnClick");
         if (!_eItf.IsSessionCreated)
@@ -248,9 +251,14 @@ public void ShowUrlPopupDefault()
     /// </summary>
     public void onStartRecordBtnClick() {
         Debug.Log("onStartRecordBtnClick " + RecordTitle.text + ":" + RecordDescription.text);
-        if (_eItf.IsSessionCreated && !string.IsNullOrEmpty(RecordTitle.text))
+        if (_eItf.IsSessionCreated)
         {
-            _eItf.StartRecord(RecordTitle.text, RecordDescription.text);
+            string recordTitle = RecordTitle.text;
+            if (string.IsNullOrEmpty(recordTitle)) {
+                recordTitle = "Record test_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            }
+
+            _eItf.StartRecord(recordTitle, RecordDescription.text);
         }
         else {
             UnityEngine.Debug.LogError("Can not start a record because there is no active session or record title is empty.");
@@ -270,7 +278,15 @@ public void ShowUrlPopupDefault()
     /// </summary>
     public void onInjectMarkerBtnClick() {
         Debug.Log("onInjectMarkerBtnClick " + MarkerValue.text + ":" + MarkerLabel.text);
-        _eItf.InjectMarker(MarkerLabel.text, MarkerLabel.text);
+        String markerValue = MarkerValue.text;
+        String markerLabel = MarkerLabel.text;
+        if (string.IsNullOrEmpty(markerValue)) {
+            markerValue = DateTime.Now.ToString("ss");
+        }
+        if (string.IsNullOrEmpty(markerLabel)) {
+            markerLabel = "Marker_" + markerValue;
+        }
+        _eItf.InjectMarker(markerLabel, markerValue);
     }
 
     /// <summary>
@@ -452,73 +468,5 @@ public void ShowUrlPopupDefault()
             _streams.Add("com");
         }
         return _streams;
-    }
-
-    private void OnCallback(
-    GpmWebViewCallback.CallbackType callbackType,
-    string data,
-    GpmWebViewError error)
-    {
-        Debug.Log("OnCallback: " + callbackType + " data: " + data + " error: " + error);
-        switch (callbackType)
-        {
-            case GpmWebViewCallback.CallbackType.Open:
-                if (error != null)
-                {
-                    Debug.LogFormat("Fail to open WebView. Error:{0}", error);
-                }
-                break;
-            case GpmWebViewCallback.CallbackType.Close:
-                if (error != null)
-                {
-                    Debug.LogFormat("Fail to close WebView. Error:{0}", error);
-                }
-                break;
-            case GpmWebViewCallback.CallbackType.PageStarted:
-                if (string.IsNullOrEmpty(data) == false)
-                {
-                    Debug.LogFormat("PageStarted Url : {0}", data);
-                }
-                break;
-            case GpmWebViewCallback.CallbackType.PageLoad:
-                if (string.IsNullOrEmpty(data) == false)
-                {
-                    Debug.LogFormat("Loaded Page:{0}", data);
-                }
-                break;
-            case GpmWebViewCallback.CallbackType.MultiWindowOpen:
-                Debug.Log("MultiWindowOpen");
-                break;
-            case GpmWebViewCallback.CallbackType.MultiWindowClose:
-                Debug.Log("MultiWindowClose");
-                break;
-            case GpmWebViewCallback.CallbackType.Scheme:
-                if (error == null)
-                {
-                    if (data.Equals("USER_ CUSTOM_SCHEME") == true || data.Contains("CUSTOM_SCHEME") == true)
-                    {
-                        Debug.Log(string.Format("scheme:{0}", data));
-                    }
-                }
-                else
-                {
-                    Debug.Log(string.Format("Fail to custom scheme. Error:{0}", error));
-                }
-                break;
-            case GpmWebViewCallback.CallbackType.GoBack:
-                Debug.Log("GoBack");
-                break;
-            case GpmWebViewCallback.CallbackType.GoForward:
-                Debug.Log("GoForward");
-                break;
-            case GpmWebViewCallback.CallbackType.ExecuteJavascript:
-                Debug.LogFormat("ExecuteJavascript data : {0}, error : {1}", data, error);
-                break;
-    #if UNITY_ANDROID
-            case GpmWebViewCallback.CallbackType.BackButtonClose:
-                Debug.Log("BackButtonClose");
-                break;
-    #endif
-        }
     }
 }
