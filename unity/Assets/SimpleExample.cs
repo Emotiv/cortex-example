@@ -10,14 +10,10 @@ using UnityEngine.Android;
 #endif
 public class SimpleExample : MonoBehaviour
 {
-    
-    // Please fill clientId and clientSecret of your application before starting
-    private string _clientId = "";
-    private string _clientSecret = "";
+    // Please fill clientId and clientSecret of your application in AppConfig.cs before starting
     private string _appName = "UnityApp";
     private string _appVersion = "3.3.0";
     private bool _isStarted = false;
-
 
     EmotivUnityItf _eItf = EmotivUnityItf.Instance;
     float _timerDataUpdate = 0;
@@ -48,32 +44,6 @@ public class SimpleExample : MonoBehaviour
 
     // for android
     #if UNITY_ANDROID
-    const string pluginName = "com.emotiv.unity.CortexLibManager";
-
-	private static AndroidJavaClass _pluginClass;
-	private static AndroidJavaObject _pluginInstance;
-    private AndroidJavaObject currentActivity;
-    public static AndroidJavaClass PluginClass
-	{
-		get {
-			if (_pluginClass==null)
-			{
-				_pluginClass = new AndroidJavaClass(pluginName);
-			}
-			return _pluginClass;
-		}
-	}
-
-	public static AndroidJavaObject PluginInstance
-	{
-		get {
-			if (_pluginInstance==null)
-			{
-				_pluginInstance = PluginClass.CallStatic<AndroidJavaObject>("getInstance");
-			}
-			return _pluginInstance;
-		}
-	}
     private const string FineLocationPermission = "android.permission.ACCESS_FINE_LOCATION";
     private const string BluetoothScanPermission = "android.permission.BLUETOOTH_SCAN";
     private const string BluetoothConnectPermission = "android.permission.BLUETOOTH_CONNECT";
@@ -101,7 +71,7 @@ public class SimpleExample : MonoBehaviour
 
     IEnumerator RequestPermissions()
     {
-        yield return new WaitForSeconds(1f); // Wait for a second to ensure the app is fully initialized
+        yield return new WaitForSeconds(1f);
 
         if (!HasPermission(FineLocationPermission))
         {
@@ -120,6 +90,18 @@ public class SimpleExample : MonoBehaviour
         if (!HasPermission(WriteExternalStoragePermission))
         {
             RequestPermission(WriteExternalStoragePermission);
+        }
+    }
+
+    // start EmotivUnityItf for android
+    private void StartEmotivUnityItfForAndroid() {
+        if (HasAllPermissions()) {
+            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
+            _eItf.Start(unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"));
+            _isStarted = true;
+        }
+        else if (!HasAllPermissions()) {
+            StartCoroutine(RequestPermissions());
         }
     }
 
@@ -144,14 +126,21 @@ public class SimpleExample : MonoBehaviour
     
     void Start()
     {
+        if (_isStarted)
+            return;
+
         // init EmotivUnityItf without data buffer using
         _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, _appName, _appVersion, AppConfig.UserName, AppConfig.Password, _isDataBufferUsing);
-
-        #if !UNITY_ANDROID && !UNITY_IOS
-        UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for test");
-        _eItf.Start();
+        
+        #if UNITY_ANDROID
+            StartEmotivUnityItfForAndroid();
+        # elif UNITY_IOS
+            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios");
+        #else
+            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop");
+            _eItf.Start();
+            _isStarted = true;
         #endif
-
     }
 
     // Update is called once per frame
@@ -173,16 +162,9 @@ public class SimpleExample : MonoBehaviour
         MessageLog.text = _eItf.MessageLog;
 
         #if UNITY_ANDROID
-        if (HasAllPermissions() && !_isStarted) {
-            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-            // Get the current activity
-            currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-            _eItf.Start(currentActivity);
-
-            _isStarted = true;
-        }
-        else if (!_isStarted) {
-            StartCoroutine(RequestPermissions());
+        // check all permissions are granted
+        if (!_isStarted) {
+            StartEmotivUnityItfForAndroid();
         }
         #endif
 
@@ -191,8 +173,7 @@ public class SimpleExample : MonoBehaviour
 
         // Check to call scan headset if no session is created and no scanning headset
         if (!_eItf.IsSessionCreated && !DataStreamManager.Instance.IsHeadsetScanning) {
-                // UnityEngine.Debug.Log("qqqqqqq SimpleExp: No scanning headset");
-				// Start scanning headset at headset list screen
+				// TODO :Start scanning headset at headset list screen
 				// DataStreamManager.Instance.ScanHeadsets();
 		}
         
