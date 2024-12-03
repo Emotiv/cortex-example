@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 using System;
-using DG.Tweening;
+// using DG.Tweening;
 
 using EmotivUnityPlugin;
 
@@ -160,7 +160,8 @@ namespace dirox.emotiv.controller
             rootCanvasScaler.matchWidthOrHeight  = 0.5f;
             tempColor.a = 0f;
             yield return new WaitForSeconds(delayTime);
-            fadeImage.DOColor(tempColor, delayTime);
+            // Tempory comment out for unity android build
+            // fadeImage.DOColor(tempColor, delayTime);
         }
         
         bool updateCortexStates ()

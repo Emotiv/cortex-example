@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using UnityEngine.UI;
-using DG.Tweening;
+// using DG.Tweening;
 
 namespace dirox.emotiv.controller
 {
@@ -59,28 +59,30 @@ namespace dirox.emotiv.controller
 
         protected virtual void AnimateActivate (Action onComplete = null)
         {
-            if (canvasGroup.alpha < 0.1f) {
-                canvasGroup.DOFade (1, FADE_IN_TIME).OnComplete (() => {
-                    makeItInteractable (true);
-                    if (onComplete != null)
-                        onComplete.Invoke ();
-                });
-            } else {
-                canvasGroup.alpha = 1;
-                makeItInteractable (true);
-                if (onComplete != null)
-                    onComplete.Invoke ();
-            }
+            // Tempory comment out for unity android build
+            // if (canvasGroup.alpha < 0.1f) {
+            //     canvasGroup.DOFade (1, FADE_IN_TIME).OnComplete (() => {
+            //         makeItInteractable (true);
+            //         if (onComplete != null)
+            //             onComplete.Invoke ();
+            //     });
+            // } else {
+            //     canvasGroup.alpha = 1;
+            //     makeItInteractable (true);
+            //     if (onComplete != null)
+            //         onComplete.Invoke ();
+            // }
             isActive = true;
         }
 
         protected virtual void AnimateActivateOnly ()
         {
-            if (canvasGroup.alpha < 0.1f) {
-                canvasGroup.DOFade (1, FADE_IN_TIME);
-            } else {
-                canvasGroup.alpha = 1;
-            }
+            // Tempory comment out for unity android build
+            // if (canvasGroup.alpha < 0.1f) {
+            //     canvasGroup.DOFade (1, FADE_IN_TIME);
+            // } else {
+            //     canvasGroup.alpha = 1;
+            // }
         }
 
         protected void makeItInteractable ()
@@ -95,19 +97,20 @@ namespace dirox.emotiv.controller
         }
 
         protected virtual void AnimateDeactivate (Action onComplete = null)
-        {			
-            if (canvasGroup.alpha > 0.9f)
-                canvasGroup.DOFade (0, FADE_OUT_TIME).OnComplete(()=> {
-                    makeItInteractable(false);
-                    if (onComplete != null)
-                        onComplete.Invoke();
-                });
-            else {
-                canvasGroup.alpha = 0;
-                makeItInteractable(false);
-                if (onComplete != null)
-                    onComplete.Invoke();
-            }
+        {	
+            // Tempory comment out for unity android build		
+            // if (canvasGroup.alpha > 0.9f)
+            //     canvasGroup.DOFade (0, FADE_OUT_TIME).OnComplete(()=> {
+            //         makeItInteractable(false);
+            //         if (onComplete != null)
+            //             onComplete.Invoke();
+            //     });
+            // else {
+            //     canvasGroup.alpha = 0;
+            //     makeItInteractable(false);
+            //     if (onComplete != null)
+            //         onComplete.Invoke();
+            // }
             isActive = false;
         }
     }
