@@ -16,10 +16,9 @@ public class SimpleExample : MonoBehaviour
     private bool _isStarted = false;
 
     EmotivUnityItf _eItf = EmotivUnityItf.Instance;
+    BCIGameItf _bciGameItf = BCIGameItf.Instance;
     float _timerDataUpdate = 0;
     const float TIME_UPDATE_DATA = 1f;
-    bool _isDataBufferUsing = false; // default subscribed data will not saved to Data buffer
-
 
     [SerializeField] public InputField  HeadsetId;   // headsetId
     [SerializeField] public InputField  RecordTitle;     // record Title
@@ -47,13 +46,13 @@ public class SimpleExample : MonoBehaviour
     private const string FineLocationPermission = "android.permission.ACCESS_FINE_LOCATION";
     private const string BluetoothScanPermission = "android.permission.BLUETOOTH_SCAN";
     private const string BluetoothConnectPermission = "android.permission.BLUETOOTH_CONNECT";
-    private const string WriteExternalStoragePermission = "android.permission.WRITE_EXTERNAL_STORAGE";
+    // private const string WriteExternalStoragePermission = "android.permission.WRITE_EXTERNAL_STORAGE";
 
     private readonly string[] permissions = {
         FineLocationPermission,
         BluetoothScanPermission,
-        BluetoothConnectPermission,
-        WriteExternalStoragePermission
+        BluetoothConnectPermission
+        // WriteExternalStoragePermission
     };
 
     private bool HasAllPermissions()
@@ -87,17 +86,18 @@ public class SimpleExample : MonoBehaviour
         {
             RequestPermission(BluetoothConnectPermission);
         }
-        if (!HasPermission(WriteExternalStoragePermission))
-        {
-            RequestPermission(WriteExternalStoragePermission);
-        }
+        // if (!HasPermission(WriteExternalStoragePermission))
+        // {
+        //     RequestPermission(WriteExternalStoragePermission);
+        // }
     }
 
     // start EmotivUnityItf for android
     private void StartEmotivUnityItfForAndroid() {
         if (HasAllPermissions()) {
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-            _eItf.Start(unityPlayer.GetStatic<AndroidJavaObject>("currentActivity"));
+            AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
+            _bciGameItf.Start(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.UserName, AppConfig.Password, currentActivity);
             _isStarted = true;
         }
         else if (!HasAllPermissions()) {
@@ -129,15 +129,13 @@ public class SimpleExample : MonoBehaviour
         if (_isStarted)
             return;
 
-        // init EmotivUnityItf without data buffer using
-        _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, _appName, _appVersion, AppConfig.UserName, AppConfig.Password, _isDataBufferUsing);
-        
         #if UNITY_ANDROID
             StartEmotivUnityItfForAndroid();
         # elif UNITY_IOS
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios");
         #else
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop");
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, _appName, _appVersion, AppConfig.UserName, AppConfig.Password);
             _eItf.Start();
             _isStarted = true;
         #endif
@@ -151,7 +149,7 @@ public class SimpleExample : MonoBehaviour
             return;
         _timerDataUpdate -= TIME_UPDATE_DATA;
 
-        if ( _eItf.MessageLog.Contains("Get Error:")) {
+        if ( _bciGameItf.GetLogMessage().Contains("Get Error:")) {
             // show error in red color
             MessageLog.color = Color.red;
         }
@@ -159,7 +157,11 @@ public class SimpleExample : MonoBehaviour
             // update message log
             MessageLog.color = Color.black;
         }
-        MessageLog.text = _eItf.MessageLog;
+        MessageLog.text = _bciGameItf.GetLogMessage();
+
+        // get detected headset lists
+        // List<Headset> detectedHeadsets = _bciGameItf.GetDetectedHeadsets();
+
 
         #if UNITY_ANDROID
         // check all permissions are granted
@@ -168,11 +170,11 @@ public class SimpleExample : MonoBehaviour
         }
         #endif
 
-        if (!_eItf.IsAuthorizedOK)
+        if (!_bciGameItf.IsAuthorized())
             return;
 
         // Check to call scan headset if no session is created and no scanning headset
-        if (!_eItf.IsSessionCreated && !DataStreamManager.Instance.IsHeadsetScanning) {
+        if (!_bciGameItf.IsSessionCreated() && !_bciGameItf.IsHeadsetScanning()) {
 				// TODO :Start scanning headset at headset list screen
 				// DataStreamManager.Instance.ScanHeadsets();
 		}
@@ -182,24 +184,40 @@ public class SimpleExample : MonoBehaviour
 
         // If save data to Data buffer. You can do the same EEG to get other data streams
         // Otherwise check output data at OnEEGDataReceived(), OnMotionDataReceived() ..etc..
-        if (_isDataBufferUsing) {
-            // get eeg data
-            if (_eItf.GetNumberEEGSamples() > 0) {
-                string eegHeaderStr = "EEG Header: ";
-                string eegDataStr   = "EEG Data: ";
-                foreach (var ele in _eItf.GetEEGChannels()) {
-                    string chanStr  = ChannelStringList.ChannelToString(ele);
-                    double[] data     = _eItf.GetEEGData(ele);
-                    eegHeaderStr    += chanStr + ", ";
-                    if (data != null && data.Length > 0)
-                        eegDataStr      +=  data[0].ToString() + ", ";
-                    else
-                        eegDataStr      +=  "null, "; // for null value
-                }
-                string msgLog = eegHeaderStr + "\n" + eegDataStr;
-                MessageLog.text = msgLog;
-            }
+        // get contact quality and battery level of the headset
+        if (_bciGameItf.GetNumberCQSamples() > 0) {
+            BatteryInfo batteryInfo = _bciGameItf.GetBattery();
+            UnityEngine.Debug.Log("Battery: " + batteryInfo.overallBattery + ", batteryleft: " + batteryInfo.batteryLeft + ", batteryRight: " + batteryInfo.batteryRight);
+
+            // get contact quality for channel t7 and t8
+            double cqT7 = _bciGameItf.GetContactQuality(Channel_t.CHAN_T7);
+            double cqT8 = _bciGameItf.GetContactQuality(Channel_t.CHAN_T8);
+            UnityEngine.Debug.Log("CQ T7: " + cqT7 + ", CQ T8: " + cqT8);
         }
+
+        // get training done
+        if (_bciGameItf.IsTrainingCompleted()) {
+            UnityEngine.Debug.Log("Training done" + _bciGameItf.GetMentalCommandActionPower() + " is good mcAction " + _bciGameItf.IsGoodMCAction());
+        } 
+
+        // if (_isDataBufferUsing) {
+        //     // get eeg data
+        //     if (_eItf.GetNumberEEGSamples() > 0) {
+        //         string eegHeaderStr = "EEG Header: ";
+        //         string eegDataStr   = "EEG Data: ";
+        //         foreach (var ele in _eItf.GetEEGChannels()) {
+        //             string chanStr  = ChannelStringList.ChannelToString(ele);
+        //             double[] data     = _eItf.GetEEGData(ele);
+        //             eegHeaderStr    += chanStr + ", ";
+        //             if (data != null && data.Length > 0)
+        //                 eegDataStr      +=  data[0].ToString() + ", ";
+        //             else
+        //                 eegDataStr      +=  "null, "; // for null value
+        //         }
+        //         string msgLog = eegHeaderStr + "\n" + eegDataStr;
+        //         MessageLog.text = msgLog;
+        //     }
+        // }
 
     }
 
@@ -208,7 +226,7 @@ public class SimpleExample : MonoBehaviour
     /// </summary>
     public void onQueryHeadsetBtnClick() {
         Debug.Log("onQueryHeadsetBtnClick");
-        _eItf.QueryHeadsets();
+        _bciGameItf.QueryHeadsets();
     }
 
 
@@ -217,9 +235,9 @@ public class SimpleExample : MonoBehaviour
     /// </summary>
     public void onCreateSessionBtnClick() {
         Debug.Log("onCreateSessionBtnClick");
-        if (!_eItf.IsSessionCreated)
+        if (!_bciGameItf.IsSessionCreated())
         {
-            _eItf.CreateSessionWithHeadset(HeadsetId.text);
+            _bciGameItf.StartStreamData(HeadsetId.text);
         }
         else
         {
@@ -310,7 +328,7 @@ public class SimpleExample : MonoBehaviour
     /// </summary>
     public void onLoadProfileBtnClick() {
         Debug.Log("onLoadProfileBtnClick " + ProfileName.text);
-        _eItf.LoadProfile(ProfileName.text);
+        _bciGameItf.CreatePlayer(ProfileName.text);
     }
 
     /// <summary>
@@ -318,7 +336,7 @@ public class SimpleExample : MonoBehaviour
     /// </summary>
     public void onUnLoadProfileBtnClick() {
         Debug.Log("onUnLoadProfileBtnClick " + ProfileName.text);
-        _eItf.UnLoadProfile(ProfileName.text);
+        _eItf.UnLoadProfile();
     }
 
     /// <summary>
@@ -333,10 +351,19 @@ public class SimpleExample : MonoBehaviour
     /// start a mental command training action
     /// </summary>
     public void onStartMCTrainingBtnClick() {
-        if (_eItf.IsProfileLoaded)
-            _eItf.StartMCTraining(ActionNameList.captionText.text);
-        else
-            UnityEngine.Debug.LogError("onStartMCTrainingBtnClick: Please load a profile before starting training.");
+
+        if (ActionNameList.captionText.text == "neutral") {
+            _bciGameItf.StartNeutralTraining();
+        }
+        else {
+            _bciGameItf.StartTraining();
+        }
+        
+        
+        // if (_eItf.IsProfileLoaded)
+        //     _eItf.StartMCTraining(ActionNameList.captionText.text);
+        // else
+        //     UnityEngine.Debug.LogError("onStartMCTrainingBtnClick: Please load a profile before starting training.");
     }
 
     /// <summary>
