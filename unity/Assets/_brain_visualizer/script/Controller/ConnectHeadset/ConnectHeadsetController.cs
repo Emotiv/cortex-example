@@ -141,10 +141,6 @@ namespace dirox.emotiv.controller
 
         void Update() {
 
-            if (IsActive && !DataStreamManager.Instance.IsHeadsetScanning) {
-				// Start scanning headset at headset list screen
-				DataStreamManager.Instance.ScanHeadsets();
-			}
         }
 
         IEnumerator ChangeCanvasScaleMode(float delayTime, bool isHeadsetListForm)
