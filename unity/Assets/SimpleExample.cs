@@ -15,6 +15,8 @@ public class SimpleExample : MonoBehaviour
     private string _appVersion = "3.3.0";
     private bool _isStarted = false;
 
+    Logger _logger = Logger.Instance;
+
     EmotivUnityItf _eItf = EmotivUnityItf.Instance;
     BCIGameItf _bciGameItf = BCIGameItf.Instance;
     float _timerDataUpdate = 0;
@@ -46,20 +48,33 @@ public class SimpleExample : MonoBehaviour
     private const string FineLocationPermission = "android.permission.ACCESS_FINE_LOCATION";
     private const string BluetoothScanPermission = "android.permission.BLUETOOTH_SCAN";
     private const string BluetoothConnectPermission = "android.permission.BLUETOOTH_CONNECT";
-    // private const string WriteExternalStoragePermission = "android.permission.WRITE_EXTERNAL_STORAGE";
+    private const string BluetoothPermission = "android.permission.BLUETOOTH";
 
-    private readonly string[] permissions = {
-        FineLocationPermission,
-        BluetoothScanPermission,
-        BluetoothConnectPermission
-        // WriteExternalStoragePermission
-    };
 
     private bool HasAllPermissions()
     {
-        foreach (string permission in permissions)
+        // check location permission
+        if (!HasPermission(FineLocationPermission))
         {
-            if (!Permission.HasUserAuthorizedPermission(permission))
+            return false;
+        }
+
+        // check bluetooth permission
+        AndroidJavaClass jc = new AndroidJavaClass("android.os.Build$VERSION");
+        int androidVersion = jc.GetStatic<int>("SDK_INT");
+
+        if (androidVersion >= 31)
+        {
+            // Android 12 or higher. need bluetooth scan and connect permission
+            if (!HasPermission(BluetoothScanPermission) || !HasPermission(BluetoothConnectPermission))
+            {
+                return false;
+            }
+        }
+        else
+        {
+            // Android 11 or lower. need bluetooth permission
+            if (!HasPermission(BluetoothPermission))
             {
                 return false;
             }
@@ -67,29 +82,30 @@ public class SimpleExample : MonoBehaviour
         return true;
     }
 
-
-    IEnumerator RequestPermissions()
+    private IEnumerator RequestPermissions()
     {
-        yield return new WaitForSeconds(1f);
+        // check android version . if android version >= 31, need bluetooth scan and connect permission otherwise need bluetooth permission only. the location permission is always needed
+        AndroidJavaClass jc = new AndroidJavaClass("android.os.Build$VERSION");
+        int androidVersion = jc.GetStatic<int>("SDK_INT");
+        string[] _permissions;
 
-        if (!HasPermission(FineLocationPermission))
+        if (androidVersion >= 30)
         {
-            RequestPermission(FineLocationPermission);
+            _permissions = new string[] { FineLocationPermission, BluetoothScanPermission, BluetoothConnectPermission };
+        }
+        else
+        {
+            _permissions = new string[] { FineLocationPermission, BluetoothPermission };
         }
 
-        if (!HasPermission(BluetoothScanPermission))
+        foreach (var permission in _permissions)
         {
-            RequestPermission(BluetoothScanPermission);
+            if (!HasPermission(permission))
+            {
+                RequestPermission(permission);
+                yield return new WaitUntil(() => HasPermission(permission));
+            }
         }
-
-        if (!HasPermission(BluetoothConnectPermission))
-        {
-            RequestPermission(BluetoothConnectPermission);
-        }
-        // if (!HasPermission(WriteExternalStoragePermission))
-        // {
-        //     RequestPermission(WriteExternalStoragePermission);
-        // }
     }
 
     // start EmotivUnityItf for android
@@ -100,7 +116,7 @@ public class SimpleExample : MonoBehaviour
             _bciGameItf.Start(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.UserName, AppConfig.Password, currentActivity);
             _isStarted = true;
         }
-        else if (!HasAllPermissions()) {
+        else {
             StartCoroutine(RequestPermissions());
         }
     }
@@ -128,6 +144,8 @@ public class SimpleExample : MonoBehaviour
     {
         if (_isStarted)
             return;
+        
+        _logger.Init();
 
         #if UNITY_ANDROID
             StartEmotivUnityItfForAndroid();
@@ -159,6 +177,7 @@ public class SimpleExample : MonoBehaviour
         }
         MessageLog.text = _bciGameItf.GetLogMessage();
 
+
         // get detected headset lists
         // List<Headset> detectedHeadsets = _bciGameItf.GetDetectedHeadsets();
 
@@ -172,6 +191,10 @@ public class SimpleExample : MonoBehaviour
 
         if (!_bciGameItf.IsAuthorized())
             return;
+
+
+        // check connect headset state
+        // ConnectHeadsetStates connectHeadsetState = _bciGameItf.GetConnectHeadsetState();
         
         // Check buttons interactable
         CheckButtonsInteractable();
@@ -188,6 +211,17 @@ public class SimpleExample : MonoBehaviour
             double cqT8 = _bciGameItf.GetContactQuality(Channel_t.CHAN_T8);
             UnityEngine.Debug.Log("CQ T7: " + cqT7 + ", CQ T8: " + cqT8);
         }
+
+        // if (_bciGameItf.GetNumberEQSamples() > 0) {
+        //     BatteryInfo batteryInfo = _bciGameItf.GetBattery();
+        //     UnityEngine.Debug.Log("qqqq Battery: " + batteryInfo.overallBattery + ", batteryleft: " + batteryInfo.batteryLeft + ", batteryRight: " + batteryInfo.batteryRight);
+
+        //     // get contact quality for channel t7 and t8
+        //     double cqT7 = _bciGameItf.GetEQ(Channel_t.CHAN_T7);
+        //     double cqT8 = _bciGameItf.GetEQ(Channel_t.CHAN_T8);
+        //     UnityEngine.Debug.Log("qqqqqq CQ T7: " + cqT7 + ", CQ T8: " + cqT8);
+        // }
+
 
         // get training done
         if (_bciGameItf.IsTrainingCompleted()) {
@@ -347,10 +381,10 @@ public class SimpleExample : MonoBehaviour
     public void onStartMCTrainingBtnClick() {
 
         if (ActionNameList.captionText.text == "neutral") {
-            _bciGameItf.StartNeutralTraining();
+            _bciGameItf.StartNeutralTrainingAddtive();
         }
         else {
-            _bciGameItf.StartTraining();
+            _bciGameItf.StartTrainingAddative();
         }
         
         
@@ -374,21 +408,32 @@ public class SimpleExample : MonoBehaviour
     /// reject a mental command training
     /// </summary>
     public void onRejectMCTrainingBtnClick() {
-        if (_eItf.IsProfileLoaded)
-            _eItf.RejectMCTraining();
-        else
-            UnityEngine.Debug.LogError("onRejectMCTrainingBtnClick: Please load a profile before start training.");
+        
+        if (ActionNameList.captionText.text == "neutral") {
+            _bciGameItf.StartNeutralTraining();
+        }
+        else {
+            _bciGameItf.StartTraining();
+        }
+        
+        // if (_eItf.IsProfileLoaded)
+        //     _eItf.RejectMCTraining();
+        // else
+        //     UnityEngine.Debug.LogError("onRejectMCTrainingBtnClick: Please load a profile before start training.");
     }
 
     /// <summary>
     /// erase a mental command training
     /// </summary>
     public void onEraseMCTrainingBtnClick() {
+        
+        _bciGameItf.EraseAllMCTraining();
+
         Debug.Log("onEraseMCTrainingBtnClick " + ActionNameList.captionText.text);
-        if (_eItf.IsProfileLoaded)
-            _eItf.EraseMCTraining(ActionNameList.captionText.text);
-        else
-            UnityEngine.Debug.LogError("onAcceptMCTrainingBtnClick: Please load a profile before start training.");
+        // if (_eItf.IsProfileLoaded)
+        //     _eItf.EraseMCTraining(ActionNameList.captionText.text);
+        // else
+        //     UnityEngine.Debug.LogError("onAcceptMCTrainingBtnClick: Please load a profile before start training.");
     }
 
 
