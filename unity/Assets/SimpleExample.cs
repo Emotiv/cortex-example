@@ -226,7 +226,12 @@ public class SimpleExample : MonoBehaviour
         // get training done
         if (_bciGameItf.IsTrainingCompleted()) {
             UnityEngine.Debug.Log("Training done" + _bciGameItf.GetMentalCommandActionPower() + " is good mcAction " + _bciGameItf.IsGoodMCAction());
-        } 
+        }
+
+        // get sensitivity
+        // if (_bciGameItf.GetFirstMCActionSensitivity()  > -1) {
+        //     UnityEngine.Debug.Log("First MC Action Sensitivity: " + _bciGameItf.GetFirstMCActionSensitivity());
+        // }
 
         // if (_isDataBufferUsing) {
         //     // get eeg data
@@ -378,48 +383,23 @@ public class SimpleExample : MonoBehaviour
     /// <summary>
     /// start a mental command training action
     /// </summary>
-    public void onStartMCTrainingBtnClick() {
-
-        if (ActionNameList.captionText.text == "neutral") {
-            _bciGameItf.StartNeutralTrainingAddtive();
-        }
-        else {
-            _bciGameItf.StartTrainingAddative();
-        }
+    public void onStartMCTrainingBtnClick() {        
         
-        
-        // if (_eItf.IsProfileLoaded)
-        //     _eItf.StartMCTraining(ActionNameList.captionText.text);
-        // else
-        //     UnityEngine.Debug.LogError("onStartMCTrainingBtnClick: Please load a profile before starting training.");
+        _bciGameItf.StartTraining(ActionNameList.captionText.text);
     }
 
     /// <summary>
     /// accept a mental command training
     /// </summary>
     public void onAcceptMCTrainingBtnClick() {
-        if (_eItf.IsProfileLoaded)
-            _eItf.AcceptMCTraining();
-        else
-            UnityEngine.Debug.LogError("onAcceptMCTrainingBtnClick: Please load a profile before start training.");
+        _bciGameItf.AcceptTraining();
     }
 
     /// <summary>
     /// reject a mental command training
     /// </summary>
     public void onRejectMCTrainingBtnClick() {
-        
-        if (ActionNameList.captionText.text == "neutral") {
-            _bciGameItf.StartNeutralTraining();
-        }
-        else {
-            _bciGameItf.StartTraining();
-        }
-        
-        // if (_eItf.IsProfileLoaded)
-        //     _eItf.RejectMCTraining();
-        // else
-        //     UnityEngine.Debug.LogError("onRejectMCTrainingBtnClick: Please load a profile before start training.");
+        _bciGameItf.RejectTraining();
     }
 
     /// <summary>
@@ -427,20 +407,14 @@ public class SimpleExample : MonoBehaviour
     /// </summary>
     public void onEraseMCTrainingBtnClick() {
         
-        _bciGameItf.EraseAllMCTraining();
-
-        Debug.Log("onEraseMCTrainingBtnClick " + ActionNameList.captionText.text);
-        // if (_eItf.IsProfileLoaded)
-        //     _eItf.EraseMCTraining(ActionNameList.captionText.text);
-        // else
-        //     UnityEngine.Debug.LogError("onAcceptMCTrainingBtnClick: Please load a profile before start training.");
+        _bciGameItf.EraseDataForMCTrainingAction(ActionNameList.captionText.text);
     }
 
 
     void OnApplicationQuit()
     {
         Debug.Log("Application ending after " + Time.time + " seconds");
-        _eItf.Stop();
+        _bciGameItf.Stop();
     }
 
     private void CheckButtonsInteractable()
