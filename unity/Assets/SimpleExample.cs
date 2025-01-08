@@ -145,6 +145,9 @@ public class SimpleExample : MonoBehaviour
         if (_isStarted)
             return;
         
+        // init utils to create needed directory
+        Utils.Init();
+        
         _logger.Init();
 
         #if UNITY_ANDROID
