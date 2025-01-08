@@ -15,7 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application>
         <!--Used when Application Entry is set to Activity, otherwise remove this activity block-->
-        <activity android:name="com.unity3d.player.UnityPlayerActivity"
+        <activity android:name="com.emotiv.unityplugin.CustomUnityPlayerActivity"
                   android:theme="@style/UnityThemeSelector">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,5 +23,8 @@
             </intent-filter>
             <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
         </activity>
+        
+        <!-- Define the foreground service here -->
+        <service android:name="com.emotiv.unityplugin.BForegroundService" />
     </application>
 </manifest>

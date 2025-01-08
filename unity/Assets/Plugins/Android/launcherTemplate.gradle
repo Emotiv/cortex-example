@@ -25,6 +25,16 @@ android {
         }
         versionCode **VERSIONCODE**
         versionName '**VERSIONNAME**'
+        String client_id = "xxx-yyyy-zzz"
+        if (client_id.isEmpty())
+            System.err << "You need to config value for client_id"
+        else
+        {
+            String value = client_id.md5()
+            manifestPlaceholders = [
+                    'appAuthRedirectScheme': 'emotiv-' + value
+            ]
+        }
     }
 
     aaptOptions {
