@@ -23,5 +23,12 @@
             </intent-filter>
             <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
         </activity>
+
+        <!-- Cortex Lib Activity -->
+        <activity android:name="com.emotiv.unityplugin.AutoAuthorizeActivity"
+                  android:launchMode="singleTask"
+                  android:exported="true">
+                  android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|mcc|mnc|locale|touchscreen|fontScale|uiMode|density">
+        </activity>
     </application>
 </manifest>
