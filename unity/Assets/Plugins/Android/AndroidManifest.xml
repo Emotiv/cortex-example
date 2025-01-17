@@ -20,15 +20,11 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="${appAuthRedirectScheme}" android:host="authorize" />
             </intent-filter>
             <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
-        </activity>
-
-        <!-- Cortex Lib Activity -->
-        <activity android:name="com.emotiv.unityplugin.AutoAuthorizeActivity"
-                  android:launchMode="singleTask"
-                  android:exported="true">
-                  android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|navigation|mcc|mnc|locale|touchscreen|fontScale|uiMode|density">
         </activity>
     </application>
 </manifest>
