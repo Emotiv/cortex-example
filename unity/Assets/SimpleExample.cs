@@ -4,6 +4,14 @@ using UnityEngine;
 using EmotivUnityPlugin;
 using UnityEngine.UI;
 using System;
+using Cdm.Authentication.Browser;
+using Cdm.Authentication.OAuth2;
+using System.Threading;
+using System.Security.Cryptography;
+using System.Text;
+using Cdm.Authentication.Clients;
+using Newtonsoft.Json;
+
 
 #if UNITY_ANDROID
 using UnityEngine.Android;
@@ -42,6 +50,47 @@ public class SimpleExample : MonoBehaviour
     [SerializeField] public Toggle SYSToggle;
 
     [SerializeField] public Text MessageLog;
+
+    // for android and ios
+    #if UNITY_ANDROID || UNITY_IOS
+    private CrossPlatformBrowser _crossPlatformBrowser;
+    private AuthenticationSession _authenticationSession;
+    private CancellationTokenSource _cancellationTokenSource;
+
+
+    private static readonly char[] HEX_ARRAY = "0123456789abcdef".ToCharArray();
+
+    private string BytesToHex(byte[] bytes)
+    {
+        char[] hexChars = new char[bytes.Length * 2];
+        for (int j = 0; j < bytes.Length; ++j)
+        {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new string(hexChars);
+    }
+
+    private string Md5(string s)
+    {
+        try
+        {
+            using (var md5 = MD5.Create())
+            {
+                byte[] inputBytes = Encoding.UTF8.GetBytes(s);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+                return BytesToHex(hashBytes);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            return string.Empty;
+        }
+    }
+    
+    #endif
 
     // for android
     #if UNITY_ANDROID
@@ -139,6 +188,14 @@ public class SimpleExample : MonoBehaviour
         }
     }
     #endif
+
+
+    protected void Awake()
+    {
+        #if UNITY_ANDROID || UNITY_IOS
+        InitForAuthentication();
+        #endif
+    }
     
     void Start()
     {
@@ -257,12 +314,92 @@ public class SimpleExample : MonoBehaviour
 
     }
 
+    protected void OnDestroy()
+    {
+        _cancellationTokenSource?.Cancel();
+        _authenticationSession?.Dispose();
+    }
+
+    private void InitForAuthentication()
+    {
+        _crossPlatformBrowser = new CrossPlatformBrowser();
+        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.IPhonePlayer,
+            new ASWebAuthenticationSessionBrowser());
+        // add DeepLinkBrowser for Android
+        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.Android, new DeepLinkBrowser());
+
+        string server = "cerebrum.emotivcloud.com";
+        string hash = Md5(AppConfig.ClientId);
+        string redirectUrl = "emotiv-" + hash + "://authorize";
+        string serverUrl = $"https://{server}";
+
+        var configuration = new AuthorizationCodeFlow.Configuration()
+        {
+            clientId = AppConfig.ClientId,
+            clientSecret = AppConfig.ClientSecret,
+            redirectUri = redirectUrl,
+            scope = ""
+        };
+        var auth = new MockServerAuth(configuration, serverUrl);
+        _authenticationSession = new AuthenticationSession(auth, _crossPlatformBrowser);
+        _authenticationSession.loginTimeout = TimeSpan.FromSeconds(240);
+    }
+
+    private async void AuthenticateAsync()
+    {
+        if (_authenticationSession != null)
+        {
+            // print log
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = new CancellationTokenSource();
+            try
+            {
+                var accessTokenResponse =
+                    await _authenticationSession.AuthenticateAsync(_cancellationTokenSource.Token);
+
+                Debug.Log(
+                    $"Access token response:\n {JsonConvert.SerializeObject(accessTokenResponse, Formatting.Indented)}");
+                // get access token code
+                string accessToken = accessTokenResponse.accessToken;
+                // login with access token
+                _bciGameItf.LoginWithAuthenticationCode(accessToken);
+
+            }
+            catch (AuthorizationCodeRequestException ex)
+            {
+                Debug.LogError($"{nameof(AuthorizationCodeRequestException)} " +
+                            $"error: {ex.error.code}, description: {ex.error.description}, uri: {ex.error.uri}");
+            }
+            catch (AccessTokenRequestException ex)
+            {
+                Debug.LogError($"{nameof(AccessTokenRequestException)} " +
+                            $"error: {ex.error.code}, description: {ex.error.description}, uri: {ex.error.uri}");
+            }
+            catch (Exception ex)
+            {
+                Debug.LogException(ex);
+            }
+        }
+    }
+
     /// <summary>
     /// create session 
     /// </summary>
     public void onQueryHeadsetBtnClick() {
         Debug.Log("onQueryHeadsetBtnClick");
         _bciGameItf.QueryHeadsets();
+    }
+
+    /// <summary>
+    /// create session 
+    /// </summary>
+    public void onAuthenticateBtnClick() {
+        
+        ConnectToCortexStates connectionState =  _bciGameItf.GetConnectToCortexState();
+        Debug.Log("onAuthenticateBtnClick" + connectionState);
+        if (connectionState == ConnectToCortexStates.Login_notYet) {
+            AuthenticateAsync();
+        }
     }
 
 
