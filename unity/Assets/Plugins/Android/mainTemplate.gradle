@@ -4,6 +4,7 @@ apply plugin: 'com.android.library'
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.5.1'
+    implementation 'net.openid:appauth:0.8.0'
 **DEPS**}
 
 buildscript {
