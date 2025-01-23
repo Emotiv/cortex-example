@@ -161,7 +161,7 @@ PlayerSettings:
   androidMinAspectRatio: 1
   applicationIdentifier:
     Android: com.emotiv.unityexample
-    Standalone: unity.Emotiv.Emotiv 3D Brain Visualizer v2.4.1
+    Standalone: com.Emotiv.UnityExample
     Tizen: com.emotiv.brainvisualizer
     iPhone: com.emotiv.brainvisualizer
     tvOS: com.emotiv.brainvisualizer
@@ -170,7 +170,7 @@ PlayerSettings:
     Standalone: 0
     iPhone: 0
     tvOS: 0
-  overrideDefaultApplicationIdentifier: 1
+  overrideDefaultApplicationIdentifier: 0
   AndroidBundleVersionCode: 13
   AndroidMinSdkVersion: 23
   AndroidTargetSdkVersion: 0
@@ -266,7 +266,7 @@ PlayerSettings:
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
   AndroidKeystoreName: 
-  AndroidKeyaliasName:
+  AndroidKeyaliasName: 
   AndroidEnableArmv9SecurityFeatures: 0
   AndroidEnableArm64MTE: 0
   AndroidBuildApkPerCpuArchitecture: 0
@@ -729,7 +729,9 @@ PlayerSettings:
   webGLWebAssemblyTable: 0
   webGLWebAssemblyBigInt: 0
   webGLCloseOnQuit: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    Standalone: USE_EMBEDDED_LIB_WIN
+    Windows Store Apps: USE_EMBEDDED_LIB_WIN
   additionalCompilerArguments: {}
   platformArchitecture:
     iPhone: 1
@@ -780,7 +782,7 @@ PlayerSettings:
   metroCertificateNotAfter: 0000000000000000
   metroApplicationDescription: Brain
   wsaImages: {}
-  metroTileShortName: 
+  metroTileShortName: UnityExample
   metroTileShowName: 0
   metroMediumTileShowName: 0
   metroLargeTileShowName: 0
@@ -845,7 +847,7 @@ PlayerSettings:
   hmiCpuConfiguration: 
   hmiLogStartupTiming: 0
   qnxGraphicConfPath: 
-  apiCompatibilityLevel: 6
+  apiCompatibilityLevel: 3
   captureStartupLogs: {}
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
