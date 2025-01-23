@@ -729,7 +729,8 @@ PlayerSettings:
   webGLWebAssemblyTable: 0
   webGLWebAssemblyBigInt: 0
   webGLCloseOnQuit: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    Standalone: USE_EMBEDDED_LIB
   additionalCompilerArguments: {}
   platformArchitecture:
     iPhone: 1
