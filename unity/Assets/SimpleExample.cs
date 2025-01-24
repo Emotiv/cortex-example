@@ -4,6 +4,7 @@ using UnityEngine;
 using EmotivUnityPlugin;
 using UnityEngine.UI;
 using System;
+using System.Threading.Tasks;
 
 #if UNITY_ANDROID
 using UnityEngine.Android;
@@ -192,9 +193,26 @@ public class SimpleExample : MonoBehaviour
         }
         #endif
 
-        if (!_bciGameItf.IsAuthorized())
+        
+        Button AuthenticateBtn = GameObject.Find("SessionPart").transform.Find("AuthenticateBtn").GetComponent<Button>();
+        if (!_bciGameItf.IsAuthorized()) {
+            // get cortex connection state
+            ConnectToCortexStates connectionState =  _bciGameItf.GetConnectToCortexState();
+            if (connectionState == ConnectToCortexStates.Login_notYet) {
+                MessageLog.text = "Please authenticate first.";
+                
+                if (!AuthenticateBtn.interactable)
+                {
+                    AuthenticateBtn.interactable = true;
+                }
+            }
             return;
-
+        }
+        else if (AuthenticateBtn.interactable)
+        {
+            AuthenticateBtn.interactable = false;
+        }
+        
 
         // check connect headset state
         // ConnectHeadsetStates connectHeadsetState = _bciGameItf.GetConnectHeadsetState();
@@ -257,6 +275,12 @@ public class SimpleExample : MonoBehaviour
 
     }
 
+    private async Task AuthenticateAsync()
+    {
+        // Authenticate
+        await _bciGameItf.AuthenticateAsync();
+    }
+
     /// <summary>
     /// create session 
     /// </summary>
@@ -264,6 +288,15 @@ public class SimpleExample : MonoBehaviour
         Debug.Log("onQueryHeadsetBtnClick");
         _bciGameItf.QueryHeadsets();
     }
+
+    public async void onAuthenticateBtnClick() {
+    
+            ConnectToCortexStates connectionState =  _bciGameItf.GetConnectToCortexState();
+            Debug.Log("onAuthenticateBtnClick" + connectionState);
+            if (connectionState == ConnectToCortexStates.Login_notYet) {
+                await AuthenticateAsync();
+            }
+        }
 
 
     /// <summary>
@@ -445,6 +478,8 @@ public class SimpleExample : MonoBehaviour
         Button startTrainingBtn = GameObject.Find("TrainingPart").transform.Find("startTrainingBtn").GetComponent<Button>();
         Button stopRecordBtn = GameObject.Find("RecordPart").transform.Find("stopRecordBtn").GetComponent<Button>();
         Button injectMarkerBtn = GameObject.Find("RecordPart").transform.Find("injectMarkerBtn").GetComponent<Button>();
+        //authenticate button
+        Button authenticateBtn = GameObject.Find("AuthenticationPart").transform.Find("authenticateBtn").GetComponent<Button>();
 
         startRecordBtn.interactable = _eItf.IsSessionCreated;
         subscribeBtn.interactable = _eItf.IsSessionCreated;
