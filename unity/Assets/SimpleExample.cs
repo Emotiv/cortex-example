@@ -152,6 +152,8 @@ public class SimpleExample : MonoBehaviour
     #endif
 
     #if USE_EMBEDDED_LIB_WIN
+
+    private string _redirectUrl = "";
     private CrossPlatformBrowser _crossPlatformBrowser;
     private AuthenticationSession _authenticationSession;
     private CancellationTokenSource _cancellationTokenSource;
@@ -189,18 +191,17 @@ public class SimpleExample : MonoBehaviour
 
     private void InitForAuthentication()
     {
-        new RegistryConfig("xxxx-yyyyyy").Configure();
-
         _crossPlatformBrowser = new CrossPlatformBrowser();
-        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsEditor, new DeepLinkBrowser());
-        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsPlayer, new DeepLinkBrowser());
-        // uwp
-        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WSAPlayerX64, new DeepLinkBrowser());
+        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsEditor, new WindowsSystemBrowser());
+        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsPlayer, new WindowsSystemBrowser());
 
         string server = "cerebrum.emotivcloud.com";
         string hash = Md5(AppConfig.ClientId);
-        string redirectUrl = "emotiv-" + hash + "://authorize";
+        string prefixRedirectUrl = "emotiv-" + hash;
+        string redirectUrl = prefixRedirectUrl + "://authorize";
         string serverUrl = $"https://{server}";
+
+        new RegistryConfig(prefixRedirectUrl).Configure();
 
         var configuration = new AuthorizationCodeFlow.Configuration()
         {
@@ -231,7 +232,7 @@ public class SimpleExample : MonoBehaviour
                 // get access token code
                 string accessToken = accessTokenResponse.accessToken;
                 // login with access token
-                // _bciGameItf.LoginWithAuthenticationCode(accessToken);
+                _bciGameItf.LoginWithAuthenticationCode(accessToken);
 
             }
             catch (AuthorizationCodeRequestException ex)
@@ -257,13 +258,26 @@ public class SimpleExample : MonoBehaviour
 
     #endif
 
-    protected void Awake()
+    protected async Task Awake()
     {
         #if USE_EMBEDDED_LIB_WIN
         Utils.Init();
-        
         _logger.Init();
-        InitForAuthentication();
+
+        string[] args = Environment.GetCommandLineArgs();
+        if (args.Length > 1)
+        {
+            // Call ProcessCallback with the first argument
+            MessageLog.text = "Processing callback";
+            await WindowsSystemBrowser.ProcessCallback(args[1]);
+            _redirectUrl = args[1];
+        }
+        else {
+            
+            InitForAuthentication();
+        }
+
+        
         #endif
     }
 
@@ -306,16 +320,23 @@ public class SimpleExample : MonoBehaviour
             return;
         _timerDataUpdate -= TIME_UPDATE_DATA;
 
-        if ( _bciGameItf.GetLogMessage().Contains("Get Error:")) {
-            // show error in red color
-            MessageLog.color = Color.red;
+
+        if (_redirectUrl != "")
+        {
+            // quite app
+            Application.Quit();
         }
-        else {
-            // update message log
-            MessageLog.color = Color.black;
-        }
-        // MessageLog.text = _bciGameItf.GetLogMessage();
-        MessageLog.text = Utils.GetLogPath();
+
+        // if ( _bciGameItf.GetLogMessage().Contains("Get Error:")) {
+        //     // show error in red color
+        //     MessageLog.color = Color.red;
+        // }
+        // else {
+        //     // update message log
+        //     MessageLog.color = Color.black;
+        // }
+        // // MessageLog.text = _bciGameItf.GetLogMessage();
+        // MessageLog.text = Utils.GetLogPath();
 
 
         // get detected headset lists
@@ -330,24 +351,24 @@ public class SimpleExample : MonoBehaviour
         #endif
 
         
-        Button AuthenticateBtn = GameObject.Find("SessionPart").transform.Find("AuthenticateBtn").GetComponent<Button>();
-        if (!_bciGameItf.IsAuthorized()) {
-            // get cortex connection state
-            ConnectToCortexStates connectionState =  _bciGameItf.GetConnectToCortexState();
-            if (connectionState == ConnectToCortexStates.Login_notYet) {
-                MessageLog.text = "Please authenticate first.";
+        // Button AuthenticateBtn = GameObject.Find("SessionPart").transform.Find("AuthenticateBtn").GetComponent<Button>();
+        // if (!_bciGameItf.IsAuthorized()) {
+        //     // get cortex connection state
+        //     ConnectToCortexStates connectionState =  _bciGameItf.GetConnectToCortexState();
+        //     if (connectionState == ConnectToCortexStates.Login_notYet) {
+        //         MessageLog.text = "Please authenticate first.";
                 
-                if (!AuthenticateBtn.interactable)
-                {
-                    AuthenticateBtn.interactable = true;
-                }
-            }
-            return;
-        }
-        else if (AuthenticateBtn.interactable)
-        {
-            AuthenticateBtn.interactable = false;
-        }
+        //         if (!AuthenticateBtn.interactable)
+        //         {
+        //             AuthenticateBtn.interactable = true;
+        //         }
+        //     }
+        //     return;
+        // }
+        // else if (AuthenticateBtn.interactable)
+        // {
+        //     AuthenticateBtn.interactable = false;
+        // }
         
 
         // check connect headset state
@@ -614,8 +635,7 @@ public class SimpleExample : MonoBehaviour
         Button startTrainingBtn = GameObject.Find("TrainingPart").transform.Find("startTrainingBtn").GetComponent<Button>();
         Button stopRecordBtn = GameObject.Find("RecordPart").transform.Find("stopRecordBtn").GetComponent<Button>();
         Button injectMarkerBtn = GameObject.Find("RecordPart").transform.Find("injectMarkerBtn").GetComponent<Button>();
-        //authenticate button
-        Button authenticateBtn = GameObject.Find("AuthenticationPart").transform.Find("authenticateBtn").GetComponent<Button>();
+
 
         startRecordBtn.interactable = _eItf.IsSessionCreated;
         subscribeBtn.interactable = _eItf.IsSessionCreated;
