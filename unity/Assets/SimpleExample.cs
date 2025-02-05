@@ -9,6 +9,16 @@ using System.Threading.Tasks;
 #if UNITY_ANDROID
 using UnityEngine.Android;
 #endif
+
+#if USE_EMBEDDED_LIB_WIN
+using Cdm.Authentication.Browser;
+using Cdm.Authentication.OAuth2;
+using System.Threading;
+using System.Security.Cryptography;
+using System.Text;
+using Cdm.Authentication.Clients;
+using Newtonsoft.Json;
+#endif
 public class SimpleExample : MonoBehaviour
 {
     // Please fill clientId and clientSecret of your application in AppConfig.cs before starting
@@ -140,6 +150,130 @@ public class SimpleExample : MonoBehaviour
         }
     }
     #endif
+
+    #if USE_EMBEDDED_LIB_WIN
+    private CrossPlatformBrowser _crossPlatformBrowser;
+    private AuthenticationSession _authenticationSession;
+    private CancellationTokenSource _cancellationTokenSource;
+    private static readonly char[] HEX_ARRAY = "0123456789abcdef".ToCharArray();
+
+    private string BytesToHex(byte[] bytes)
+    {
+        char[] hexChars = new char[bytes.Length * 2];
+        for (int j = 0; j < bytes.Length; ++j)
+        {
+            int v = bytes[j] & 0xFF;
+            hexChars[j * 2] = HEX_ARRAY[v >> 4];
+            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+        }
+        return new string(hexChars);
+    }
+
+    private string Md5(string s)
+    {
+        try
+        {
+            using (var md5 = MD5.Create())
+            {
+                byte[] inputBytes = Encoding.UTF8.GetBytes(s);
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+                return BytesToHex(hashBytes);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError(e);
+            return string.Empty;
+        }
+    }
+
+    private void InitForAuthentication()
+    {
+        new RegistryConfig("xxxx-yyyyyy").Configure();
+
+        _crossPlatformBrowser = new CrossPlatformBrowser();
+        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsEditor, new DeepLinkBrowser());
+        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsPlayer, new DeepLinkBrowser());
+        // uwp
+        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WSAPlayerX64, new DeepLinkBrowser());
+
+        string server = "cerebrum.emotivcloud.com";
+        string hash = Md5(AppConfig.ClientId);
+        string redirectUrl = "emotiv-" + hash + "://authorize";
+        string serverUrl = $"https://{server}";
+
+        var configuration = new AuthorizationCodeFlow.Configuration()
+        {
+            clientId = AppConfig.ClientId,
+            clientSecret = AppConfig.ClientSecret,
+            redirectUri = redirectUrl,
+            scope = ""
+        };
+        var auth = new MockServerAuth(configuration, serverUrl);
+        _authenticationSession = new AuthenticationSession(auth, _crossPlatformBrowser);
+        _authenticationSession.loginTimeout = TimeSpan.FromSeconds(600);
+    }
+
+    private async Task AuthenticateAsyncWin()
+    {
+        if (_authenticationSession != null)
+        {
+            // print log
+            _cancellationTokenSource?.Dispose();
+            _cancellationTokenSource = new CancellationTokenSource();
+            try
+            {
+                var accessTokenResponse =
+                    await _authenticationSession.AuthenticateAsync(_cancellationTokenSource.Token);
+
+                Debug.Log(
+                    $"Access token response:\n {JsonConvert.SerializeObject(accessTokenResponse, Formatting.Indented)}");
+                // get access token code
+                string accessToken = accessTokenResponse.accessToken;
+                // login with access token
+                // _bciGameItf.LoginWithAuthenticationCode(accessToken);
+
+            }
+            catch (AuthorizationCodeRequestException ex)
+            {
+                Debug.LogError($"{nameof(AuthorizationCodeRequestException)} " +
+                            $"error: {ex.error.code}, description: {ex.error.description}, uri: {ex.error.uri}");
+            }
+            catch (AccessTokenRequestException ex)
+            {
+                Debug.LogError($"{nameof(AccessTokenRequestException)} " +
+                            $"error: {ex.error.code}, description: {ex.error.description}, uri: {ex.error.uri}");
+            }
+            catch (Exception ex)
+            {
+                // log error
+                // print log
+                
+                Debug.LogError( "Exception " + ex.Message);
+                // Debug.LogException(ex);
+            }
+        }
+    }
+
+    #endif
+
+    protected void Awake()
+    {
+        #if USE_EMBEDDED_LIB_WIN
+        Utils.Init();
+        
+        _logger.Init();
+        InitForAuthentication();
+        #endif
+    }
+
+    protected void OnDestroy()
+    {
+        #if USE_EMBEDDED_LIB_WIN
+        _cancellationTokenSource?.Cancel();
+        _authenticationSession?.Dispose();
+        #endif
+    }
     
     void Start()
     {
@@ -147,9 +281,9 @@ public class SimpleExample : MonoBehaviour
             return;
         
         // init utils to create needed directory
-        Utils.Init();
+        // Utils.Init();
         
-        _logger.Init();
+        // _logger.Init();
 
         #if UNITY_ANDROID
             StartEmotivUnityItfForAndroid();
@@ -157,8 +291,9 @@ public class SimpleExample : MonoBehaviour
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios");
         #else
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop");
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, _appName, _appVersion, AppConfig.UserName, AppConfig.Password);
-            _eItf.Start();
+            _bciGameItf.Start(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.UserName, AppConfig.Password);
+            // _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, _appName, _appVersion, AppConfig.UserName, AppConfig.Password);
+            // _eItf.Start();
             _isStarted = true;
         #endif
     }
@@ -179,7 +314,8 @@ public class SimpleExample : MonoBehaviour
             // update message log
             MessageLog.color = Color.black;
         }
-        MessageLog.text = _bciGameItf.GetLogMessage();
+        // MessageLog.text = _bciGameItf.GetLogMessage();
+        MessageLog.text = Utils.GetLogPath();
 
 
         // get detected headset lists
@@ -293,9 +429,9 @@ public class SimpleExample : MonoBehaviour
     
             ConnectToCortexStates connectionState =  _bciGameItf.GetConnectToCortexState();
             Debug.Log("onAuthenticateBtnClick" + connectionState);
-            if (connectionState == ConnectToCortexStates.Login_notYet) {
-                await AuthenticateAsync();
-            }
+            // if (connectionState == ConnectToCortexStates.Login_notYet) {
+                await AuthenticateAsyncWin();
+            // }
         }
 
 
