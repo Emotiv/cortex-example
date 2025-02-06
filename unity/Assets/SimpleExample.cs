@@ -153,7 +153,6 @@ public class SimpleExample : MonoBehaviour
 
     #if USE_EMBEDDED_LIB_WIN
 
-    private string _redirectUrl = "";
     private CrossPlatformBrowser _crossPlatformBrowser;
     private AuthenticationSession _authenticationSession;
     private CancellationTokenSource _cancellationTokenSource;
@@ -258,29 +257,6 @@ public class SimpleExample : MonoBehaviour
 
     #endif
 
-    protected async Task Awake()
-    {
-        #if USE_EMBEDDED_LIB_WIN
-        Utils.Init();
-        _logger.Init();
-
-        string[] args = Environment.GetCommandLineArgs();
-        if (args.Length > 1)
-        {
-            // Call ProcessCallback with the first argument
-            MessageLog.text = "Processing callback";
-            await WindowsSystemBrowser.ProcessCallback(args[1]);
-            _redirectUrl = args[1];
-        }
-        else {
-            
-            InitForAuthentication();
-        }
-
-        
-        #endif
-    }
-
     protected void OnDestroy()
     {
         #if USE_EMBEDDED_LIB_WIN
@@ -291,13 +267,24 @@ public class SimpleExample : MonoBehaviour
     
     void Start()
     {
-        if (_isStarted)
-            return;
-        
         // init utils to create needed directory
-        // Utils.Init();
-        
-        // _logger.Init();
+        Utils.Init(); 
+        _logger.Init();
+
+        #if USE_EMBEDDED_LIB_WIN
+        string[] args = Environment.GetCommandLineArgs();
+        if (args.Length > 1)
+        {
+            // Call ProcessCallback with the first argument
+            MessageLog.text = "Processing callback";
+            WindowsSystemBrowser.ProcessCallback(args[1]);
+            return;
+        }
+        else {
+            
+            InitForAuthentication();
+        }
+        #endif
 
         #if UNITY_ANDROID
             StartEmotivUnityItfForAndroid();
@@ -306,10 +293,9 @@ public class SimpleExample : MonoBehaviour
         #else
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop");
             _bciGameItf.Start(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.UserName, AppConfig.Password);
-            // _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, _appName, _appVersion, AppConfig.UserName, AppConfig.Password);
-            // _eItf.Start();
-            _isStarted = true;
+            
         #endif
+        _isStarted = true;
     }
 
     // Update is called once per frame
@@ -319,13 +305,6 @@ public class SimpleExample : MonoBehaviour
         if (_timerDataUpdate < TIME_UPDATE_DATA) 
             return;
         _timerDataUpdate -= TIME_UPDATE_DATA;
-
-
-        if (_redirectUrl != "")
-        {
-            // quite app
-            Application.Quit();
-        }
 
         if ( _bciGameItf.GetLogMessage().Contains("Get Error:")) {
             // show error in red color
@@ -604,7 +583,8 @@ public class SimpleExample : MonoBehaviour
     void OnApplicationQuit()
     {
         Debug.Log("Application ending after " + Time.time + " seconds");
-        _bciGameItf.Stop();
+        if (_isStarted)
+            _bciGameItf.Stop();
     }
 
     private void CheckButtonsInteractable()
