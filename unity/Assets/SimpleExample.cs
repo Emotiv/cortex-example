@@ -327,21 +327,18 @@ public class SimpleExample : MonoBehaviour
             Application.Quit();
         }
 
-        // if ( _bciGameItf.GetLogMessage().Contains("Get Error:")) {
-        //     // show error in red color
-        //     MessageLog.color = Color.red;
-        // }
-        // else {
-        //     // update message log
-        //     MessageLog.color = Color.black;
-        // }
-        // // MessageLog.text = _bciGameItf.GetLogMessage();
-        // MessageLog.text = Utils.GetLogPath();
-
+        if ( _bciGameItf.GetLogMessage().Contains("Get Error:")) {
+            // show error in red color
+            MessageLog.color = Color.red;
+        }
+        else {
+            // update message log
+            MessageLog.color = Color.black;
+        }
+        MessageLog.text = _bciGameItf.GetLogMessage();
 
         // get detected headset lists
         // List<Headset> detectedHeadsets = _bciGameItf.GetDetectedHeadsets();
-
 
         #if UNITY_ANDROID
         // check all permissions are granted
@@ -432,10 +429,10 @@ public class SimpleExample : MonoBehaviour
 
     }
 
-    private async Task AuthenticateAsync()
-    {
-        // Authenticate
-        await _bciGameItf.AuthenticateAsync();
+    // sign out button
+    public void onSignOutBtnClick() {
+        Debug.Log("onSignOutBtnClick");
+        _bciGameItf.Logout();
     }
 
     /// <summary>
@@ -446,13 +443,13 @@ public class SimpleExample : MonoBehaviour
         _bciGameItf.QueryHeadsets();
     }
 
-    public async void onAuthenticateBtnClick() {
+    public async void onSignInBtnClick() {
     
             ConnectToCortexStates connectionState =  _bciGameItf.GetConnectToCortexState();
-            Debug.Log("onAuthenticateBtnClick" + connectionState);
-            // if (connectionState == ConnectToCortexStates.Login_notYet) {
+            Debug.Log("onSignInBtnClick" + connectionState);
+            if (connectionState == ConnectToCortexStates.Login_notYet) {
                 await AuthenticateAsyncWin();
-            // }
+            }
         }
 
 
@@ -612,7 +609,19 @@ public class SimpleExample : MonoBehaviour
 
     private void CheckButtonsInteractable()
     {
-        if (!_eItf.IsAuthorizedOK)
+        Button signInBtn = GameObject.Find("SessionPart").transform.Find("signInBtn").GetComponent<Button>();
+        Button signOutBtn = GameObject.Find("SessionPart").transform.Find("signOutBtn").GetComponent<Button>();
+        #if USE_EMBEDDED_LIB_WIN
+        ConnectToCortexStates connectionState =  _bciGameItf.GetConnectToCortexState();
+        signInBtn.interactable = (connectionState == ConnectToCortexStates.Login_notYet);
+        signOutBtn.interactable = (connectionState > ConnectToCortexStates.Login_notYet);
+        #else
+        signInBtn.interactable = false;
+        signOutBtn.interactable = false;
+        #endif
+
+        
+        if (!_bciGameItf.IsAuthorized())
             return;
 
         Button createSessionBtn = GameObject.Find("SessionPart").transform.Find("createSessionBtn").GetComponent<Button>();
