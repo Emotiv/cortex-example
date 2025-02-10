@@ -16,8 +16,8 @@ public class ConnectToCortex : MonoBehaviour
     {
         // set Application configuration
         _dataStream.SetAppConfig(AppConfig.ClientId, AppConfig.ClientSecret,
-                                 AppConfig.AppVersion, AppConfig.AppName, AppConfig.UserName, AppConfig.Password,
-                                 AppConfig.AppName, AppConfig.AppUrl,
+                                 AppConfig.AppVersion, AppConfig.AppName, "", "",
+                                 AppConfig.AppName, "",
                                  EmotivAppslicationPath());
         
         // Init logger

@@ -21,15 +21,11 @@ using Newtonsoft.Json;
 #endif
 public class SimpleExample : MonoBehaviour
 {
-    // Please fill clientId and clientSecret of your application in AppConfig.cs before starting
-    private string _appName = "UnityApp";
-    private string _appVersion = "3.3.0";
-    private bool _isStarted = false;
-
+    private bool _isEmotivUnityItfInitialized = false; // the flag to check if EmotivUnityItf is initialized and start connecting to Cortex or not
+    private bool _isDataBufferUsing = true; // Set false if you want to display data directly to MessageLog without storing in Data Buffer
     Logger _logger = Logger.Instance;
 
     EmotivUnityItf _eItf = EmotivUnityItf.Instance;
-    BCIGameItf _bciGameItf = BCIGameItf.Instance;
     float _timerDataUpdate = 0;
     const float TIME_UPDATE_DATA = 1f;
 
@@ -60,7 +56,6 @@ public class SimpleExample : MonoBehaviour
     private const string BluetoothScanPermission = "android.permission.BLUETOOTH_SCAN";
     private const string BluetoothConnectPermission = "android.permission.BLUETOOTH_CONNECT";
     private const string BluetoothPermission = "android.permission.BLUETOOTH";
-
 
     private bool HasAllPermissions()
     {
@@ -124,8 +119,9 @@ public class SimpleExample : MonoBehaviour
         if (HasAllPermissions()) {
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-            _bciGameItf.Start(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.UserName, AppConfig.Password, currentActivity);
-            _isStarted = true;
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, AppConfig.UserName, AppConfig.Password, _isDataBufferUsing);
+            _eItf.Start(currentActivity);
+            _isEmotivUnityItfInitialized = true;
         }
         else {
             StartCoroutine(RequestPermissions());
@@ -152,7 +148,6 @@ public class SimpleExample : MonoBehaviour
     #endif
 
     #if USE_EMBEDDED_LIB_WIN
-
     private CrossPlatformBrowser _crossPlatformBrowser;
     private AuthenticationSession _authenticationSession;
     private CancellationTokenSource _cancellationTokenSource;
@@ -226,13 +221,7 @@ public class SimpleExample : MonoBehaviour
                 var accessTokenResponse =
                     await _authenticationSession.AuthenticateAsync(_cancellationTokenSource.Token);
 
-                Debug.Log(
-                    $"Access token response:\n {JsonConvert.SerializeObject(accessTokenResponse, Formatting.Indented)}");
-                // get access token code
-                string accessToken = accessTokenResponse.accessToken;
-                // login with access token
-                _bciGameItf.LoginWithAuthenticationCode(accessToken);
-
+                _eItf.LoginWithAuthenticationCode(accessTokenResponse.accessToken);
             }
             catch (AuthorizationCodeRequestException ex)
             {
@@ -246,11 +235,7 @@ public class SimpleExample : MonoBehaviour
             }
             catch (Exception ex)
             {
-                // log error
-                // print log
-                
                 Debug.LogError( "Exception " + ex.Message);
-                // Debug.LogException(ex);
             }
         }
     }
@@ -267,21 +252,18 @@ public class SimpleExample : MonoBehaviour
     
     void Start()
     {
-        // init utils to create needed directory
-        Utils.Init(); 
-        _logger.Init();
+        Utils.Init(); // init utils to create app directory and log directory
+        _logger.Init(); // init logger to save log to file to log directory
 
         #if USE_EMBEDDED_LIB_WIN
         string[] args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
-            // Call ProcessCallback with the first argument
-            MessageLog.text = "Processing callback";
+            MessageLog.text = "Process callback then quit.";
             WindowsSystemBrowser.ProcessCallback(args[1]);
             return;
         }
         else {
-            
             InitForAuthentication();
         }
         #endif
@@ -289,13 +271,13 @@ public class SimpleExample : MonoBehaviour
         #if UNITY_ANDROID
             StartEmotivUnityItfForAndroid();
         # elif UNITY_IOS
-            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios");
+            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios. TODO");
         #else
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop");
-            _bciGameItf.Start(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.UserName, AppConfig.Password);
-            
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, "", "", _isDataBufferUsing);
+            _eItf.Start();
+            _isEmotivUnityItfInitialized = true;
         #endif
-        _isStarted = true;
     }
 
     // Update is called once per frame
@@ -306,150 +288,83 @@ public class SimpleExample : MonoBehaviour
             return;
         _timerDataUpdate -= TIME_UPDATE_DATA;
 
-        if ( _bciGameItf.GetLogMessage().Contains("Get Error:")) {
-            // show error in red color
-            MessageLog.color = Color.red;
-        }
-        else {
-            // update message log
-            MessageLog.color = Color.black;
-        }
-        MessageLog.text = _bciGameItf.GetLogMessage();
-
-        // get detected headset lists
-        // List<Headset> detectedHeadsets = _bciGameItf.GetDetectedHeadsets();
-
         #if UNITY_ANDROID
-        // check all permissions are granted
-        if (!_isStarted) {
+        if (!_isEmotivUnityItfInitialized) {
+            // start EmotivUnityItf for android if not started
             StartEmotivUnityItfForAndroid();
         }
         #endif
 
-        
-        // Button AuthenticateBtn = GameObject.Find("SessionPart").transform.Find("AuthenticateBtn").GetComponent<Button>();
-        // if (!_bciGameItf.IsAuthorized()) {
-        //     // get cortex connection state
-        //     ConnectToCortexStates connectionState =  _bciGameItf.GetConnectToCortexState();
-        //     if (connectionState == ConnectToCortexStates.Login_notYet) {
-        //         MessageLog.text = "Please authenticate first.";
-                
-        //         if (!AuthenticateBtn.interactable)
-        //         {
-        //             AuthenticateBtn.interactable = true;
-        //         }
-        //     }
-        //     return;
-        // }
-        // else if (AuthenticateBtn.interactable)
-        // {
-        //     AuthenticateBtn.interactable = false;
-        // }
-        
-
-        // check connect headset state
-        // ConnectHeadsetStates connectHeadsetState = _bciGameItf.GetConnectHeadsetState();
-        
         // Check buttons interactable
         CheckButtonsInteractable();
+        
+        // Display message log
+        MessageLog.text = _eItf.MessageLog;
 
-        // If save data to Data buffer. You can do the same EEG to get other data streams
-        // Otherwise check output data at OnEEGDataReceived(), OnMotionDataReceived() ..etc..
-        // get contact quality and battery level of the headset
-        if (_bciGameItf.GetNumberCQSamples() > 0) {
-            BatteryInfo batteryInfo = _bciGameItf.GetBattery();
-            UnityEngine.Debug.Log("Battery: " + batteryInfo.overallBattery + ", batteryleft: " + batteryInfo.batteryLeft + ", batteryRight: " + batteryInfo.batteryRight);
+        // Demo how to get detected headset lists
+        // List<Headset> detectedHeadsets = _eItf.GetDetectedHeadsets();
 
-            // get contact quality for channel t7 and t8
-            double cqT7 = _bciGameItf.GetContactQuality(Channel_t.CHAN_T7);
-            double cqT8 = _bciGameItf.GetContactQuality(Channel_t.CHAN_T8);
-            UnityEngine.Debug.Log("CQ T7: " + cqT7 + ", CQ T8: " + cqT8);
+        // Demo how to get subcribed data if use Data Buffer
+        if (_isDataBufferUsing) {
+            // eeg data
+            if (_eItf.GetNumberEEGSamples() > 0) {
+                string eegHeaderStr = "EEG Header: ";
+                string eegDataStr   = "EEG Data: ";
+                foreach (var ele in _eItf.GetEEGChannels()) {
+                    string chanStr  = ChannelStringList.ChannelToString(ele);
+                    double[] data     = _eItf.GetEEGData(ele);
+                    eegHeaderStr    += chanStr + ", ";
+                    if (data != null && data.Length > 0)
+                        eegDataStr      +=  data[0].ToString() + ", ";
+                    else
+                        eegDataStr      +=  "null, "; // for null value
+                }
+                string msgLog = eegHeaderStr + "\n" + eegDataStr;
+                MessageLog.text = msgLog;
+            }
+
+            // Demo how to get cq data
+            // if (_eItf.GetNumberCQSamples() > 0) {
+            //     BatteryInfo batteryInfo = _eItf.GetBattery();
+            //     // get contact quality for channel t7 and t8, similar for other channels
+            //     double cqT7 = _eItf.GetContactQuality(Channel_t.CHAN_T7);
+            //     double cqT8 = _eItf.GetContactQuality(Channel_t.CHAN_T8);
+            //     MessageLog.text = "CQ T7: " + cqT7 + ", CQ T8: " + cqT8;
+            // }
         }
 
-        // if (_bciGameItf.GetNumberEQSamples() > 0) {
-        //     BatteryInfo batteryInfo = _bciGameItf.GetBattery();
-        //     UnityEngine.Debug.Log("qqqq Battery: " + batteryInfo.overallBattery + ", batteryleft: " + batteryInfo.batteryLeft + ", batteryRight: " + batteryInfo.batteryRight);
-
-        //     // get contact quality for channel t7 and t8
-        //     double cqT7 = _bciGameItf.GetEQ(Channel_t.CHAN_T7);
-        //     double cqT8 = _bciGameItf.GetEQ(Channel_t.CHAN_T8);
-        //     UnityEngine.Debug.Log("qqqqqq CQ T7: " + cqT7 + ", CQ T8: " + cqT8);
-        // }
-
-
-        // get training done
-        if (_bciGameItf.IsTrainingCompleted()) {
-            UnityEngine.Debug.Log("Training done" + _bciGameItf.GetMentalCommandActionPower() + " is good mcAction " + _bciGameItf.IsGoodMCAction());
+        // Demo how to check Mentalcommand training completed and get data power
+        if (_eItf.IsMCTrainingCompleted) {
+            UnityEngine.Debug.Log("Training done. Action: " + _eItf.LatestMentalCommand.act + ", power: " + _eItf.LatestMentalCommand.pow);
         }
-
-        // get sensitivity
-        // if (_bciGameItf.GetFirstMCActionSensitivity()  > -1) {
-        //     UnityEngine.Debug.Log("First MC Action Sensitivity: " + _bciGameItf.GetFirstMCActionSensitivity());
-        // }
-
-        // if (_isDataBufferUsing) {
-        //     // get eeg data
-        //     if (_eItf.GetNumberEEGSamples() > 0) {
-        //         string eegHeaderStr = "EEG Header: ";
-        //         string eegDataStr   = "EEG Data: ";
-        //         foreach (var ele in _eItf.GetEEGChannels()) {
-        //             string chanStr  = ChannelStringList.ChannelToString(ele);
-        //             double[] data     = _eItf.GetEEGData(ele);
-        //             eegHeaderStr    += chanStr + ", ";
-        //             if (data != null && data.Length > 0)
-        //                 eegDataStr      +=  data[0].ToString() + ", ";
-        //             else
-        //                 eegDataStr      +=  "null, "; // for null value
-        //         }
-        //         string msgLog = eegHeaderStr + "\n" + eegDataStr;
-        //         MessageLog.text = msgLog;
-        //     }
-        // }
-
     }
 
     // sign out button
     public void onSignOutBtnClick() {
         Debug.Log("onSignOutBtnClick");
-        _bciGameItf.Logout();
+        _eItf.Logout();
     }
 
-    /// <summary>
-    /// create session 
-    /// </summary>
     public void onQueryHeadsetBtnClick() {
         Debug.Log("onQueryHeadsetBtnClick");
-        _bciGameItf.QueryHeadsets();
+        _eItf.QueryHeadsets();
     }
 
     public async void onSignInBtnClick() {
-    
-            ConnectToCortexStates connectionState =  _bciGameItf.GetConnectToCortexState();
-            Debug.Log("onSignInBtnClick" + connectionState);
-            if (connectionState == ConnectToCortexStates.Login_notYet) {
-                await AuthenticateAsyncWin();
-            }
-        }
+        Debug.Log("onSignInBtnClick");
+        await AuthenticateAsyncWin();
+    }
 
-
-    /// <summary>
-    /// create session 
-    /// </summary>
     public void onCreateSessionBtnClick() {
         Debug.Log("onCreateSessionBtnClick");
-        if (!_bciGameItf.IsSessionCreated())
-        {
-            _bciGameItf.StartStreamData(HeadsetId.text);
+        if (!_eItf.IsSessionCreated) {
+            _eItf.CreateSessionWithHeadset(HeadsetId.text);
         }
-        else
-        {
+        else {
             UnityEngine.Debug.LogError("There is a session created.");
         }
     }
 
-    /// <summary>
-    /// start a record 
-    /// </summary>
     public void onStartRecordBtnClick() {
         Debug.Log("onStartRecordBtnClick " + RecordTitle.text + ":" + RecordDescription.text);
         if (_eItf.IsSessionCreated)
@@ -466,17 +381,11 @@ public class SimpleExample : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// start a record 
-    /// </summary>
     public void onStopRecordBtnClick() {
         Debug.Log("onStopRecordBtnClick");
         _eItf.StopRecord();
     }
 
-    /// <summary>
-    /// inject marker
-    /// </summary>
     public void onInjectMarkerBtnClick() {
         Debug.Log("onInjectMarkerBtnClick " + MarkerValue.text + ":" + MarkerLabel.text);
         String markerValue = MarkerValue.text;
@@ -490,9 +399,6 @@ public class SimpleExample : MonoBehaviour
         _eItf.InjectMarker(markerLabel, markerValue);
     }
 
-    /// <summary>
-    /// subscribe data stream
-    /// </summary>
     public void onSubscribeBtnClick() {
         Debug.Log("onSubscribeBtnClick: " + _eItf.IsSessionCreated + ": " + GetStreamsList().Count);
         if (_eItf.IsSessionCreated)
@@ -511,9 +417,6 @@ public class SimpleExample : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// un-subscribe data
-    /// </summary>
     public void onUnsubscribeBtnClick() {
         Debug.Log("onUnsubscribeBtnClick");
         if (GetStreamsList().Count == 0) {
@@ -530,7 +433,7 @@ public class SimpleExample : MonoBehaviour
     /// </summary>
     public void onLoadProfileBtnClick() {
         Debug.Log("onLoadProfileBtnClick " + ProfileName.text);
-        _bciGameItf.CreatePlayer(ProfileName.text);
+        _eItf.LoadProfile(ProfileName.text);
     }
 
     /// <summary>
@@ -553,38 +456,39 @@ public class SimpleExample : MonoBehaviour
     /// start a mental command training action
     /// </summary>
     public void onStartMCTrainingBtnClick() {        
-        
-        _bciGameItf.StartTraining(ActionNameList.captionText.text);
+        Debug.Log("onStartMCTrainingBtnClick " + ActionNameList.captionText.text);
+        _eItf.StartMCTraining(ActionNameList.captionText.text);
     }
 
     /// <summary>
     /// accept a mental command training
     /// </summary>
     public void onAcceptMCTrainingBtnClick() {
-        _bciGameItf.AcceptTraining();
+        Debug.Log("onAcceptMCTrainingBtnClick");
+        _eItf.AcceptMCTraining();
     }
 
     /// <summary>
     /// reject a mental command training
     /// </summary>
     public void onRejectMCTrainingBtnClick() {
-        _bciGameItf.RejectTraining();
+        Debug.Log("onRejectMCTrainingBtnClick");
+        _eItf.RejectMCTraining();
     }
 
     /// <summary>
     /// erase a mental command training
     /// </summary>
     public void onEraseMCTrainingBtnClick() {
-        
-        _bciGameItf.EraseDataForMCTrainingAction(ActionNameList.captionText.text);
+        Debug.Log("onEraseMCTrainingBtnClick");
+        _eItf.EraseMCTraining(ActionNameList.captionText.text);
     }
-
 
     void OnApplicationQuit()
     {
         Debug.Log("Application ending after " + Time.time + " seconds");
-        if (_isStarted)
-            _bciGameItf.Stop();
+        if (_isEmotivUnityItfInitialized)
+            _eItf.Stop();
     }
 
     private void CheckButtonsInteractable()
@@ -592,7 +496,7 @@ public class SimpleExample : MonoBehaviour
         Button signInBtn = GameObject.Find("SessionPart").transform.Find("signInBtn").GetComponent<Button>();
         Button signOutBtn = GameObject.Find("SessionPart").transform.Find("signOutBtn").GetComponent<Button>();
         #if USE_EMBEDDED_LIB_WIN
-        ConnectToCortexStates connectionState =  _bciGameItf.GetConnectToCortexState();
+        ConnectToCortexStates connectionState =  _eItf.GetConnectToCortexState();
         signInBtn.interactable = (connectionState == ConnectToCortexStates.Login_notYet);
         signOutBtn.interactable = (connectionState > ConnectToCortexStates.Login_notYet);
         #else
@@ -600,18 +504,9 @@ public class SimpleExample : MonoBehaviour
         signOutBtn.interactable = false;
         #endif
 
-        
-        if (!_bciGameItf.IsAuthorized())
-            return;
-
         Button createSessionBtn = GameObject.Find("SessionPart").transform.Find("createSessionBtn").GetComponent<Button>();
-        if (!createSessionBtn.interactable)
-        {
-            createSessionBtn.interactable = true;
-            return;
-        }
-
-        // make startRecordBtn interactable
+        // query headset button
+        Button queryHeadsetBtn = GameObject.Find("SessionPart").transform.Find("queryHeadset").GetComponent<Button>();
         Button startRecordBtn = GameObject.Find("RecordPart").transform.Find("startRecordBtn").GetComponent<Button>();
         Button subscribeBtn = GameObject.Find("SubscribeDataPart").transform.Find("subscribeBtn").GetComponent<Button>();
         Button unsubscribeBtn = GameObject.Find("SubscribeDataPart").transform.Find("unsubscribeBtn").GetComponent<Button>();
@@ -625,21 +520,20 @@ public class SimpleExample : MonoBehaviour
         Button stopRecordBtn = GameObject.Find("RecordPart").transform.Find("stopRecordBtn").GetComponent<Button>();
         Button injectMarkerBtn = GameObject.Find("RecordPart").transform.Find("injectMarkerBtn").GetComponent<Button>();
 
-
+        createSessionBtn.interactable = _eItf.IsAuthorizedOK;
+        queryHeadsetBtn.interactable = _eItf.IsAuthorizedOK;
         startRecordBtn.interactable = _eItf.IsSessionCreated;
+        stopRecordBtn.interactable = _eItf.IsRecording;
+        injectMarkerBtn.interactable = _eItf.IsRecording;
         subscribeBtn.interactable = _eItf.IsSessionCreated;
         unsubscribeBtn.interactable = _eItf.IsSessionCreated;
         loadProfileBtn.interactable = _eItf.IsSessionCreated;
-
         saveProfileBtn.interactable = _eItf.IsProfileLoaded;
         startTrainingBtn.interactable = _eItf.IsProfileLoaded;
         rejectTrainingBtn.interactable = _eItf.IsProfileLoaded;
         eraseTrainingBtn.interactable = _eItf.IsProfileLoaded;
         acceptTrainingBtn.interactable = _eItf.IsProfileLoaded;
         unloadProfileBtn.interactable = _eItf.IsProfileLoaded;
-
-        stopRecordBtn.interactable = _eItf.IsRecording;
-        injectMarkerBtn.interactable = _eItf.IsRecording;
     }
 
     private List<string> GetStreamsList() {
