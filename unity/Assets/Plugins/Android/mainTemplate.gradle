@@ -42,6 +42,17 @@ android {
         }
         versionCode **VERSIONCODE**
         versionName '**VERSIONNAME**'
+        String client_id = "put_your_client_id_here"
+        if (client_id.isEmpty())
+            System.err << "You need to config value for client_id"
+        else
+        {
+            String value = client_id.md5()
+            manifestPlaceholders = [
+                    'customScheme': 'emotiv-' + value
+            ]
+        }
+
         consumerProguardFiles 'proguard-unity.txt'**USER_PROGUARD**
 **DEFAULT_CONFIG_SETUP**
     }

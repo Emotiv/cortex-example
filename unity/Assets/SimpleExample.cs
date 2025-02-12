@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using UnityEngine.Android;
 #endif
 
-#if USE_EMBEDDED_LIB_WIN
+#if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
 using Cdm.Authentication.Browser;
 using Cdm.Authentication.OAuth2;
 using System.Threading;
@@ -118,7 +118,7 @@ public class SimpleExample : MonoBehaviour
         if (HasAllPermissions()) {
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, AppConfig.UserName, AppConfig.Password, _isDataBufferUsing);
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, AppConfig.UserName, AppConfig.Password, AppConfig.IsDataBufferUsing);
             _eItf.Start(currentActivity);
             _isEmotivUnityItfInitialized = true;
         }
@@ -146,7 +146,7 @@ public class SimpleExample : MonoBehaviour
     }
     #endif
 
-    #if USE_EMBEDDED_LIB_WIN
+    #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
     private CrossPlatformBrowser _crossPlatformBrowser;
     private AuthenticationSession _authenticationSession;
     private CancellationTokenSource _cancellationTokenSource;
@@ -187,6 +187,8 @@ public class SimpleExample : MonoBehaviour
         _crossPlatformBrowser = new CrossPlatformBrowser();
         _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsEditor, new WindowsSystemBrowser());
         _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsPlayer, new WindowsSystemBrowser());
+        // android
+        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.Android, new DeepLinkBrowser());
 
         string server = "cerebrum.emotivcloud.com";
         string hash = Md5(AppConfig.ClientId);
@@ -194,7 +196,10 @@ public class SimpleExample : MonoBehaviour
         string redirectUrl = prefixRedirectUrl + "://authorize";
         string serverUrl = $"https://{server}";
 
+        // windows
+        #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
         new RegistryConfig(prefixRedirectUrl).Configure();
+        #endif
 
         var configuration = new AuthorizationCodeFlow.Configuration()
         {
@@ -208,15 +213,15 @@ public class SimpleExample : MonoBehaviour
         _authenticationSession.loginTimeout = TimeSpan.FromSeconds(600);
     }
 
-    private async Task AuthenticateAsyncWin()
+    private async Task AuthenticateAsync()
     {
         if (_authenticationSession != null)
         {
-            // print log
             _cancellationTokenSource?.Dispose();
             _cancellationTokenSource = new CancellationTokenSource();
             try
             {
+                MessageLog.text = "Starting authentication...";
                 var accessTokenResponse =
                     await _authenticationSession.AuthenticateAsync(_cancellationTokenSource.Token);
 
@@ -243,7 +248,7 @@ public class SimpleExample : MonoBehaviour
 
     protected void OnDestroy()
     {
-        #if USE_EMBEDDED_LIB_WIN
+        #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
         _cancellationTokenSource?.Cancel();
         _authenticationSession?.Dispose();
         #endif
@@ -268,6 +273,7 @@ public class SimpleExample : MonoBehaviour
         #endif
 
         #if UNITY_ANDROID
+            InitForAuthentication();
             StartEmotivUnityItfForAndroid();
         # elif UNITY_IOS
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios. TODO");
@@ -352,7 +358,7 @@ public class SimpleExample : MonoBehaviour
 
     public async void onSignInBtnClick() {
         Debug.Log("onSignInBtnClick");
-        await AuthenticateAsyncWin();
+        await AuthenticateAsync();
     }
 
     public void onCreateSessionBtnClick() {
@@ -495,7 +501,7 @@ public class SimpleExample : MonoBehaviour
     {
         Button signInBtn = GameObject.Find("SessionPart").transform.Find("signInBtn").GetComponent<Button>();
         Button signOutBtn = GameObject.Find("SessionPart").transform.Find("signOutBtn").GetComponent<Button>();
-        #if USE_EMBEDDED_LIB_WIN
+        #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
         ConnectToCortexStates connectionState =  _eItf.GetConnectToCortexState();
         signInBtn.interactable = (connectionState == ConnectToCortexStates.Login_notYet);
         signOutBtn.interactable = (connectionState > ConnectToCortexStates.Login_notYet);

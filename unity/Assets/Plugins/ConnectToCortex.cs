@@ -6,9 +6,6 @@ using System.IO;
 public class ConnectToCortex : MonoBehaviour
 {
     DataStreamManager _dataStream = DataStreamManager.Instance;
-
-    Logger _logger = Logger.Instance;
-
     bool _isLicenseValid           = false;
     bool _isCheckedLicenseValidDay = false;
 
@@ -19,12 +16,6 @@ public class ConnectToCortex : MonoBehaviour
                                  AppConfig.AppVersion, AppConfig.AppName, "", "",
                                  AppConfig.AppName, "",
                                  EmotivAppslicationPath());
-        
-        // Init logger
-        #if !UNITY_ANDROID && !UNITY_IOS && !USE_EMBEDDED_LIB_WIN
-        _logger.Init();
-        #endif
-        
         Debug.Log("Configure BrainViz - PRODUCT SERVER - version: " +AppConfig.AppVersion);
         
         // start App
