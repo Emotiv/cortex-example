@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using UnityEngine.Android;
 #endif
 
-#if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
+#if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID || UNITY_IOS
 using Cdm.Authentication.Browser;
 using Cdm.Authentication.OAuth2;
 using System.Threading;
@@ -146,7 +146,7 @@ public class SimpleExample : MonoBehaviour
     }
     #endif
 
-    #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
+    #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID || UNITY_IOS
     private CrossPlatformBrowser _crossPlatformBrowser;
     private AuthenticationSession _authenticationSession;
     private CancellationTokenSource _cancellationTokenSource;
@@ -187,6 +187,8 @@ public class SimpleExample : MonoBehaviour
         _crossPlatformBrowser = new CrossPlatformBrowser();
         _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsEditor, new WindowsSystemBrowser());
         _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsPlayer, new WindowsSystemBrowser());
+        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.IPhonePlayer, new ASWebAuthenticationSessionBrowser());
+
         // android
         _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.Android, new DeepLinkBrowser());
 
@@ -248,7 +250,7 @@ public class SimpleExample : MonoBehaviour
 
     protected void OnDestroy()
     {
-        #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
+        #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID || UNITY_IOS
         _cancellationTokenSource?.Cancel();
         _authenticationSession?.Dispose();
         #endif
@@ -276,7 +278,10 @@ public class SimpleExample : MonoBehaviour
             InitForAuthentication();
             StartEmotivUnityItfForAndroid();
         # elif UNITY_IOS
-            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios. TODO");
+            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios");
+            InitForAuthentication();
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, "", "", AppConfig.IsDataBufferUsing);
+            _eItf.Start();
         #else
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop");
             _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, "", "", AppConfig.IsDataBufferUsing);
@@ -501,7 +506,7 @@ public class SimpleExample : MonoBehaviour
     {
         Button signInBtn = GameObject.Find("SessionPart").transform.Find("signInBtn").GetComponent<Button>();
         Button signOutBtn = GameObject.Find("SessionPart").transform.Find("signOutBtn").GetComponent<Button>();
-        #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
+        #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID || UNITY_IOS
         ConnectToCortexStates connectionState =  _eItf.GetConnectToCortexState();
         signInBtn.interactable = (connectionState == ConnectToCortexStates.Login_notYet);
         signOutBtn.interactable = (connectionState > ConnectToCortexStates.Login_notYet);
