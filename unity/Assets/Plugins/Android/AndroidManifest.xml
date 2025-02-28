@@ -13,9 +13,11 @@
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
     <application>
         <!--Used when Application Entry is set to Activity, otherwise remove this activity block-->
-        <activity android:name="com.unity3d.player.UnityPlayerActivity"
+        <activity android:name="com.emotiv.unityplugin.CustomUnityPlayerActivity"
                   android:theme="@style/UnityThemeSelector">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,6 +30,15 @@
             <data android:scheme="${customScheme}" android:host="authorize" />
             </intent-filter>
             <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
+            <meta-data android:name="android.app.background_running" android:value="true"/>
         </activity>
+        <service
+		android:name="com.emotiv.unityplugin.BForegroundService"
+		android:foregroundServiceType="specialUse"
+		android:exported="false">
+		<property 
+			android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+            android:value="To keep app running in background."/>
+    </service>
     </application>
 </manifest>
