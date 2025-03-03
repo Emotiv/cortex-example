@@ -22,8 +22,6 @@ using Newtonsoft.Json;
 public class SimpleExample : MonoBehaviour
 {
     private bool _isEmotivUnityItfInitialized = false; // the flag to check if EmotivUnityItf is initialized and start connecting to Cortex or not
-    Logger _logger = Logger.Instance;
-
     EmotivUnityItf _eItf = EmotivUnityItf.Instance;
     float _timerDataUpdate = 0;
     const float TIME_UPDATE_DATA = 1f;
@@ -118,7 +116,7 @@ public class SimpleExample : MonoBehaviour
         if (HasAllPermissions()) {
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, AppConfig.UserName, AppConfig.Password, AppConfig.IsDataBufferUsing);
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, AppConfig.UserName, AppConfig.Password, AppConfig.allowSaveLogToFile, AppConfig.IsDataBufferUsing);
             _eItf.Start(currentActivity);
             _isEmotivUnityItfInitialized = true;
         }
@@ -256,9 +254,6 @@ public class SimpleExample : MonoBehaviour
     
     void Start()
     {
-        Utils.Init(); // init utils to create app directory and log directory
-        _logger.Init(); // init logger to save log to file to log directory
-
         #if USE_EMBEDDED_LIB_WIN
         string[] args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
@@ -574,3 +569,4 @@ public class SimpleExample : MonoBehaviour
         return _streams;
     }
 }
+
