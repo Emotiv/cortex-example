@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using UnityEngine.Android;
 #endif
 
-#if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
+#if USE_EMBEDDED_LIB || UNITY_ANDROID
 using Cdm.Authentication.Browser;
 using Cdm.Authentication.OAuth2;
 using System.Threading;
@@ -144,7 +144,7 @@ public class SimpleExample : MonoBehaviour
     }
     #endif
 
-    #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
+    #if USE_EMBEDDED_LIB || UNITY_ANDROID
     private CrossPlatformBrowser _crossPlatformBrowser;
     private AuthenticationSession _authenticationSession;
     private CancellationTokenSource _cancellationTokenSource;
@@ -246,7 +246,7 @@ public class SimpleExample : MonoBehaviour
 
     protected void OnDestroy()
     {
-        #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
+        #if USE_EMBEDDED_LIB || UNITY_ANDROID
         _cancellationTokenSource?.Cancel();
         _authenticationSession?.Dispose();
         #endif
@@ -254,12 +254,14 @@ public class SimpleExample : MonoBehaviour
     
     void Start()
     {
-        #if USE_EMBEDDED_LIB_WIN
+        #if USE_EMBEDDED_LIB 
         string[] args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
             MessageLog.text = "Process callback then quit.";
+            #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
             WindowsSystemBrowser.ProcessCallback(args[1]);
+            #endif
             return;
         }
         else {
@@ -496,7 +498,7 @@ public class SimpleExample : MonoBehaviour
     {
         Button signInBtn = GameObject.Find("SessionPart").transform.Find("signInBtn").GetComponent<Button>();
         Button signOutBtn = GameObject.Find("SessionPart").transform.Find("signOutBtn").GetComponent<Button>();
-        #if USE_EMBEDDED_LIB_WIN || UNITY_ANDROID
+        #if USE_EMBEDDED_LIB || UNITY_ANDROID
         ConnectToCortexStates connectionState =  _eItf.GetConnectToCortexState();
         signInBtn.interactable = (connectionState == ConnectToCortexStates.Login_notYet);
         signOutBtn.interactable = (connectionState > ConnectToCortexStates.Login_notYet);

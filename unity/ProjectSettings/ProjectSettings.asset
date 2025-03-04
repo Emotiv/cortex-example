@@ -730,7 +730,7 @@ PlayerSettings:
   webGLWebAssemblyBigInt: 0
   webGLCloseOnQuit: 0
   scriptingDefineSymbols:
-    Standalone: USE_EMBEDDED_LIB_WIN
+    Standalone: USE_EMBEDDED_LIB
     Windows Store Apps: USE_EMBEDDED_LIB_WIN
   additionalCompilerArguments: {}
   platformArchitecture:

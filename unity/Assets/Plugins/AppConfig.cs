@@ -13,7 +13,7 @@ public static class AppConfig
     #if UNITY_ANDROID || UNITY_IOS
     public static string UserName            = ""; // for private login
     public static string Password            = "";
-    #elif !USE_EMBEDDED_LIB_WIN
+    #elif !USE_EMBEDDED_LIB
     public static string AppUrl              = "wss://localhost:6868"; // for desktop without embedded cortex
     #endif
     
