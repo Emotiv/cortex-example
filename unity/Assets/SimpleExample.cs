@@ -10,15 +10,6 @@ using System.Threading.Tasks;
 using UnityEngine.Android;
 #endif
 
-#if USE_EMBEDDED_LIB || UNITY_ANDROID
-using Cdm.Authentication.Browser;
-using Cdm.Authentication.OAuth2;
-using System.Threading;
-using System.Security.Cryptography;
-using System.Text;
-using Cdm.Authentication.Clients;
-using Newtonsoft.Json;
-#endif
 public class SimpleExample : MonoBehaviour
 {
     private bool _isEmotivUnityItfInitialized = false; // the flag to check if EmotivUnityItf is initialized and start connecting to Cortex or not
@@ -116,7 +107,7 @@ public class SimpleExample : MonoBehaviour
         if (HasAllPermissions()) {
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, AppConfig.UserName, AppConfig.Password, AppConfig.allowSaveLogToFile, AppConfig.IsDataBufferUsing);
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, AppConfig.UserName, AppConfig.Password, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
             _eItf.Start(currentActivity);
             _isEmotivUnityItfInitialized = true;
         }
@@ -144,133 +135,19 @@ public class SimpleExample : MonoBehaviour
     }
     #endif
 
-    #if USE_EMBEDDED_LIB || UNITY_ANDROID
-    private CrossPlatformBrowser _crossPlatformBrowser;
-    private AuthenticationSession _authenticationSession;
-    private CancellationTokenSource _cancellationTokenSource;
-    private static readonly char[] HEX_ARRAY = "0123456789abcdef".ToCharArray();
-
-    private string BytesToHex(byte[] bytes)
-    {
-        char[] hexChars = new char[bytes.Length * 2];
-        for (int j = 0; j < bytes.Length; ++j)
-        {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_ARRAY[v >> 4];
-            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-        }
-        return new string(hexChars);
-    }
-
-    private string Md5(string s)
-    {
-        try
-        {
-            using (var md5 = MD5.Create())
-            {
-                byte[] inputBytes = Encoding.UTF8.GetBytes(s);
-                byte[] hashBytes = md5.ComputeHash(inputBytes);
-                return BytesToHex(hashBytes);
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e);
-            return string.Empty;
-        }
-    }
-
-    private void InitForAuthentication()
-    {
-        _crossPlatformBrowser = new CrossPlatformBrowser();
-        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsEditor, new WindowsSystemBrowser());
-        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.WindowsPlayer, new WindowsSystemBrowser());
-        // android
-        _crossPlatformBrowser.platformBrowsers.Add(RuntimePlatform.Android, new DeepLinkBrowser());
-
-        string server = "cerebrum.emotivcloud.com";
-        string hash = Md5(AppConfig.ClientId);
-        string prefixRedirectUrl = "emotiv-" + hash;
-        string redirectUrl = prefixRedirectUrl + "://authorize";
-        string serverUrl = $"https://{server}";
-
-        // windows
-        #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-        new RegistryConfig(prefixRedirectUrl).Configure();
-        #endif
-
-        var configuration = new AuthorizationCodeFlow.Configuration()
-        {
-            clientId = AppConfig.ClientId,
-            clientSecret = AppConfig.ClientSecret,
-            redirectUri = redirectUrl,
-            scope = ""
-        };
-        var auth = new MockServerAuth(configuration, serverUrl);
-        _authenticationSession = new AuthenticationSession(auth, _crossPlatformBrowser);
-        _authenticationSession.loginTimeout = TimeSpan.FromSeconds(600);
-    }
-
-    private async Task AuthenticateAsync()
-    {
-        if (_authenticationSession != null)
-        {
-            _cancellationTokenSource?.Dispose();
-            _cancellationTokenSource = new CancellationTokenSource();
-            try
-            {
-                MessageLog.text = "Starting authentication...";
-                var accessTokenResponse =
-                    await _authenticationSession.AuthenticateAsync(_cancellationTokenSource.Token);
-
-                _eItf.LoginWithAuthenticationCode(accessTokenResponse.accessToken);
-            }
-            catch (AuthorizationCodeRequestException ex)
-            {
-                Debug.LogError($"{nameof(AuthorizationCodeRequestException)} " +
-                            $"error: {ex.error.code}, description: {ex.error.description}, uri: {ex.error.uri}");
-            }
-            catch (AccessTokenRequestException ex)
-            {
-                Debug.LogError($"{nameof(AccessTokenRequestException)} " +
-                            $"error: {ex.error.code}, description: {ex.error.description}, uri: {ex.error.uri}");
-            }
-            catch (Exception ex)
-            {
-                Debug.LogError( "Exception " + ex.Message);
-            }
-        }
-    }
-
-    #endif
-
-    protected void OnDestroy()
-    {
-        #if USE_EMBEDDED_LIB || UNITY_ANDROID
-        _cancellationTokenSource?.Cancel();
-        _authenticationSession?.Dispose();
-        #endif
-    }
-    
     void Start()
     {
-        #if USE_EMBEDDED_LIB 
+        #if USE_EMBEDDED_LIB  && (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
         string[] args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
             MessageLog.text = "Process callback then quit.";
-            #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-            WindowsSystemBrowser.ProcessCallback(args[1]);
-            #endif
+            _eItf.ProcessCallback(args[1]);
             return;
-        }
-        else {
-            InitForAuthentication();
         }
         #endif
 
         #if UNITY_ANDROID
-            InitForAuthentication();
             StartEmotivUnityItfForAndroid();
         # elif UNITY_IOS
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios. TODO");
@@ -355,7 +232,7 @@ public class SimpleExample : MonoBehaviour
 
     public async void onSignInBtnClick() {
         Debug.Log("onSignInBtnClick");
-        await AuthenticateAsync();
+        await _eItf.AuthenticateAsync();
     }
 
     public void onCreateSessionBtnClick() {
