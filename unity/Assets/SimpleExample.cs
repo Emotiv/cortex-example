@@ -150,7 +150,9 @@ public class SimpleExample : MonoBehaviour
         #if UNITY_ANDROID
             StartEmotivUnityItfForAndroid();
         # elif UNITY_IOS
-            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios. TODO");
+            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios");
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, "", "", AppConfig.IsDataBufferUsing);
+            _eItf.Start();
         #else
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop");
             _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, "", "", AppConfig.IsDataBufferUsing);
@@ -375,7 +377,7 @@ public class SimpleExample : MonoBehaviour
     {
         Button signInBtn = GameObject.Find("SessionPart").transform.Find("signInBtn").GetComponent<Button>();
         Button signOutBtn = GameObject.Find("SessionPart").transform.Find("signOutBtn").GetComponent<Button>();
-        #if USE_EMBEDDED_LIB || UNITY_ANDROID
+        #if USE_EMBEDDED_LIB || UNITY_ANDROID || UNITY_IOS
         ConnectToCortexStates connectionState =  _eItf.GetConnectToCortexState();
         signInBtn.interactable = (connectionState == ConnectToCortexStates.Login_notYet);
         signOutBtn.interactable = (connectionState > ConnectToCortexStates.Login_notYet);
