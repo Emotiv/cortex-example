@@ -1,25 +1,16 @@
 apply plugin: 'com.android.library'
-**APPLY_PLUGINS**
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.5.1'
-**DEPS**}
+    **DEPS**
+}
 
 buildscript {
     repositories {
         google()
         mavenCentral()
     }
-
-    // dependencies {
-    //     classpath "com.android.tools.build:gradle:4.2.1"
-    // }
-}
-
-repositories {
-    google()
-    mavenCentral()
 }
 
 android {
@@ -42,19 +33,18 @@ android {
         }
         versionCode **VERSIONCODE**
         versionName '**VERSIONNAME**'
-        String client_id = "put_your_client_id_here"
-        if (client_id.isEmpty())
+        String client_id = "your_client_id_here" // Replace with your actual client_id
+        if (client_id.isEmpty()) {
             System.err << "You need to config value for client_id"
-        else
-        {
+        } else {
             String value = client_id.md5()
             manifestPlaceholders = [
-                    'customScheme': 'emotiv-' + value
+                'customScheme': 'emotiv-' + value
             ]
         }
 
-        consumerProguardFiles 'proguard-unity.txt'**USER_PROGUARD**
-**DEFAULT_CONFIG_SETUP**
+        consumerProguardFiles 'proguard-unity.txt' **USER_PROGUARD**
+        **DEFAULT_CONFIG_SETUP**
     }
 
     lintOptions {
@@ -62,10 +52,11 @@ android {
     }
 
     aaptOptions {
-        noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ')
+        noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ') // Unity will replace this placeholder with no-compress settings.
         ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
     }
-	packagingOptions {
+
+    packagingOptions {
         exclude 'META-INF/kotlinx_coroutines_core.version'
         exclude 'META-INF/androidx.lifecycle_lifecycle-livedata-core.version'
         exclude 'kotlin/internal/internal.kotlin_builtins'
@@ -77,9 +68,9 @@ android {
         exclude 'kotlin/collections/*.kotlin_builtins'
         exclude 'kotlin/**/*.kotlin_builtins'
         exclude 'kotlin/*.kotlin_builtins'
+        **PACKAGING_OPTIONS**
     }
-	**PACKAGING_OPTIONS**
+    **IL_CPP_BUILD_SETUP**
+    **SOURCE_BUILD_SETUP**
+    **EXTERNAL_SOURCES** 
 }
-**IL_CPP_BUILD_SETUP**
-**SOURCE_BUILD_SETUP**
-**EXTERNAL_SOURCES**

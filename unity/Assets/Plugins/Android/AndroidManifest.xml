@@ -14,7 +14,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE"/>
     <application>
         <!--Used when Application Entry is set to Activity, otherwise remove this activity block-->
         <activity android:name="com.emotiv.unityplugin.CustomUnityPlayerActivity"
@@ -33,12 +32,9 @@
             <meta-data android:name="android.app.background_running" android:value="true"/>
         </activity>
         <service
-		android:name="com.emotiv.unityplugin.BForegroundService"
-		android:foregroundServiceType="specialUse"
-		android:exported="false">
-		<property 
-			android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-            android:value="To keep app running in background."/>
-    </service>
+        android:name="com.emotiv.unityplugin.BForegroundService"
+        android:foregroundServiceType="connectedDevice"
+        android:exported="false">
+        </service>
     </application>
 </manifest>
