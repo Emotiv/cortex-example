@@ -26,10 +26,23 @@
             <action android:name="android.intent.action.VIEW" />
             <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="${customScheme}" android:host="authorize" />
+            <!-- <data android:scheme="${customScheme}" android:host="authorize" /> -->
             </intent-filter>
             <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
             <meta-data android:name="android.app.background_running" android:value="true"/>
+        </activity>
+        <activity
+            android:name="com.onevcat.uniwebview.UniWebViewAuthenticationActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="${customScheme}" android:host="authorize" />
+            </intent-filter>
         </activity>
         <service
         android:name="com.emotiv.unityplugin.BForegroundService"
