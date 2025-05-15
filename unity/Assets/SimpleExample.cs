@@ -107,7 +107,7 @@ public class SimpleExample : MonoBehaviour
         if (HasAllPermissions()) {
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, AppConfig.UserName, AppConfig.Password, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, "", AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
             _eItf.Start(currentActivity);
             _isEmotivUnityItfInitialized = true;
         }
@@ -138,10 +138,10 @@ public class SimpleExample : MonoBehaviour
     void Start()
     {
         #if USE_EMBEDDED_LIB  && (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
+        // for windows and embedded lib
         string[] args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
-            MessageLog.text = "Process callback then quit.";
             _eItf.ProcessCallback(args[1]);
             return;
         }
@@ -151,11 +151,11 @@ public class SimpleExample : MonoBehaviour
             StartEmotivUnityItfForAndroid();
         # elif UNITY_IOS
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios");
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, "", "", AppConfig.IsDataBufferUsing);
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, "", AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
             _eItf.Start();
         #else
-            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop");
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, "", "", AppConfig.IsDataBufferUsing);
+            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop " + AppConfig.AppUrl);
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, AppConfig.AppUrl, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
             _eItf.Start();
             _isEmotivUnityItfInitialized = true;
         #endif
@@ -234,7 +234,9 @@ public class SimpleExample : MonoBehaviour
 
     public async void onSignInBtnClick() {
         Debug.Log("onSignInBtnClick");
+        #if USE_EMBEDDED_LIB || UNITY_ANDROID || UNITY_IOS
         await _eItf.AuthenticateAsync();
+        #endif
     }
 
     public void onCreateSessionBtnClick() {

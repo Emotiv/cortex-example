@@ -7,13 +7,11 @@ public static class AppConfig
     public static string AppName             = "UnityApp";
     public static string ClientId            = "put_your_client_id_here";
     public static string ClientSecret        = "put_your_client_secret_here";
-    public static bool IsDataBufferUsing     = true; // Set false if you want to display data directly to MessageLog without storing in Data Buffer
-    public static bool AllowSaveLogToFile    = true; // Set false if you don't want to save log to file
+    public static bool IsDataBufferUsing     = false; // Set false if you want to display data directly to MessageLog without storing in Data Buffer
+    public static bool AllowSaveLogToFile    = false; // Set true to save log to file and cortex token to local file for next time use
     
-    #if UNITY_ANDROID || UNITY_IOS
-    public static string UserName            = ""; // for private login
-    public static string Password            = "";
-    #elif !USE_EMBEDDED_LIB
+    #if !USE_EMBEDDED_LIB && !UNITY_ANDROID && !UNITY_IOS
+    // only for desktop without embedded cortex
     public static string AppUrl              = "wss://localhost:6868"; // for desktop without embedded cortex
     #endif
     
