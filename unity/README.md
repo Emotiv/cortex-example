@@ -1,83 +1,83 @@
 # Emotiv Unity Example
 
-This example demonstrates how to work with Emotiv Cortex Service (aka Cortex) in Unity.
+This example demonstrates how to work with the Emotiv Cortex Service (Cortex) in Unity.
 
 ## Prerequisites
 
-* Install Unity. You can get it for free at [www.unity3d.com](https://unity3d.com/get-unity/download).
-* Get the latest version of [Emotiv Unity Plugin](https://github.com/Emotiv/unity-plugin) as a submodule.
-```
-       git submodule update --init
-```
-* Install and run the EMOTIV Launcher with Cortex from (https://www.emotiv.com/developer/).
-* Login to the Emotiv website with a valid EmotivID, register an application at https://www.emotiv.com/my-account/cortex-apps/ to a pair of client id and client secret. If you don't have a EmotivID, you can [register here](https://id.emotivcloud.com/eoidc/account/registration/).
-* We have updated our Terms of Use, Privacy Policy and EULA to comply with GDPR. Please login via EMOTIV Launcher to read and accept our latest policies in order to proceed with the following examples.
+* **Install Unity:** You can download it for free at [www.unity3d.com](https://unity3d.com/get-unity/download).
+* **Get the Emotiv Unity Plugin:** Obtain the latest version of the [Emotiv Unity Plugin](https://github.com/Emotiv/unity-plugin) as a submodule:
+    ```
+    git submodule update --init
+    ```
+* **Install and Run EMOTIV Launcher with Cortex:** Download and run the EMOTIV Launcher with Cortex from [https://www.emotiv.com/developer/](https://www.emotiv.com/developer/).
+* **Emotiv Account and Application:**
+    * Log in to the Emotiv website with your valid EmotivID. If you don't have one, you can [register here](https://id.emotivcloud.com/eoidc/account/registration/).
+    * Register an application at [https://www.emotiv.com/my-account/cortex-apps/](https://www.emotiv.com/my-account/cortex-apps/) to obtain your `clientId` and `clientSecret`.
+* **Accept Updated Policies:** Please log in via the EMOTIV Launcher to read and accept our latest Terms of Use, Privacy Policy, and EULA to proceed with the following examples. This is required due to GDPR compliance.
 
+## How to Use
 
-## How to use
-There are 2 examples to demo how to work with Emotiv Cortex on Unity. The first one is EmotivUnityPlugin.unity which aim to demo data subscribing and marker injection. The second one is SimpleExample.unity which has simple UI but demo data subscribing, marker injection and training mentalcommand data.  
+1.  **Open the Example Scene:** Open the **SimpleExample.unity** scene. This scene contains a comprehensive demonstration.
+2.  **Set Credentials:** In the **AppConfig.cs** script, locate and set the `clientId` and `clientSecret` with the values from your registered application before running the scene.
+3.  **Query Headsets:** Run the example. Once authorization is complete, click the **"Query Headset"** button to list available headsets.
+4.  **Create a Session:**
+    * Enter the ID of the desired headset (e.g., "INSIGHT-A12345") in the text field next to the **"Create Session"** button.
+    * If the text field is left empty, the first headset in the queried list will be used by default.
+    * Click the **"Create Session"** button to connect to the headset and establish a session.
+5.  **Interact with Data and Training:** After successfully creating a session, you can perform the following actions:
+    * **Start and Stop Recording:** Enter a title for your recording in the designated field before clicking **"Start Record"**. An optional description can also be added. Use the **"Stop Record"** button to end the recording.
+    * **Inject Marker:** While a recording is active, you can inject instance markers. Enter a **"marker value"** and a **"marker label"** and then click the **"Inject Marker"** button.
+    * **Subscribe and Unsubscribe Data Streams:** Select the desired data streams from the available options before clicking the **"Subscribe Data"** button. The received data will be displayed in the log box. You can unsubscribe by clicking the **"Unsubscribe Data"** button.
+    * **Load Profile and Training:**
+        * Enter a **"profile name"** before clicking **"Load Profile"**. If a profile with that name does not exist, it will be created and then loaded.
+        * **Important:** Subscribe to the **"System Event"** data stream to observe training events.
+        * Select a mental command for training from the dropdown menu and click **"Start Training"**.
+        * You might observe a **"MC\_Succeeded"** event after approximately 8 seconds, indicating a successful training attempt. You can then choose to accept or reject the training.
+        * After training, click **"Save Profile"** to persist the trained data.
+        * **Important:** Before closing the application, click **"Unload Profile"** to release the trained data.
 
-### Example 1: EmotivUnityPlugin.unity
-1. Open **EmotivUnityPlugin.unity** scene.  
-2. Set the clientId, clientSecret of your application in AppConfig.cs before running.  
-3. Running the example. After authorzing process, you will see the Headset list screen. Hit **"Connect"** button to connect to your wanted headset. The unity-plugin will help to connect to headset, create a session and subscribe device information (dev).  
-4. The next screens will show device fitting and contact quality for the headset. The headset should have good contact quality. Hit the **"Done"** button to go to Example Board screen.  
-5. You can choose "Data Subscribers Example" or "Markers Example"  
-	- **"Data Subscribers Example":** demo subscribe and unsubscribe EEG, Motion and Performance metrics data. But you can subscribe other streams with some change at DataSubscriber.cs  
-	- **"Markers Example":** demo create record, inject marker and update the current marker. You must create a record first before injecting marker.
-
-> **Please note that:**
+> **Please Note:**
 >
-> - The subscribed data will be saved to DataBuffer then will be pulled via Update() function at DataSubscriber.cs. Currently, the new data will be shown each 1 second.  
-> - You can click to the Contact Quality indicator at the right top screen to back to Contact Quality screen to able to switch example.  
-> - The **"Update Marker"** will make the instance marker to interval marker which have start and end time.  
+> * **Headset Scanning (Cortex 3.7+):** Starting from Emotiv Cortex 3.7, you need to call RefreshHeadset() to scan bluetooth devices. But the process is proceed automatically after authorization.
+> * **Interface:** This example utilizes **EmotivUnityItf.cs** as an interface to interact with the Emotiv Cortex Service.
+> * **Data Buffering:** By default, subscribed data is not saved to a data buffer and is only displayed in the message log box. You can enable saving data to a buffer by setting `IsDataBufferUsing = true` in the `AppConfig.cs` file.
+> * **Mental Command and Facial Expression:** Ensure you load a trained profile before subscribing to **"Mental Command"** or **"Facial Expression"** data streams; otherwise, you will only observe neutral actions.
 
-### Example 2: SimpleExample.unity 
-1. Open **SimpleExample.unity** scene. It is all in one example.
-2. Set the clientId, clientSecret of your application in SimpleExample.cs before running.
-3. Running the example. After authorizing process you able to create session with a headset. Enter a headset Id before clicking **"Create Session"** button to connect and create a session with the headset. If the text field is empty, the first headset in the headset list will be used.  
-4. After create session successfully, you will be able to start a record, subscribe one ore more data streams and load a profile for training.
-	- **Start and Stop Record:** Enter record title before starting a record, record description is optional field.
-	- **Inject marker:** After start a record you can inject instance marker to the record. Please enter marker value and marker label before injecting marker.
-	- **Subscribe and Unsubscribe data:** Select wanted data streams before subscribing data. The output data wil be shown at log box.
-	- **Load profile and Training:**
-		- Enter a profile name before loading profile. If the profile is not existed, it will be created then loaded.  
-		- Please subscribe the "System Event" data stream before training to see the training event.
-		- Select a mental command training at Dropdown then click "Start Training".
-		- You might see the event "MC_Succeeded" after 8 seconds. You can accept or reject the training.
-		- After traing please click "Save Profile" to save training data.
-		- Please unload the trained data before closing.  
-		
-> **Please note that:**
-> - From Emotiv Cortex 3.7, you need to call ScanHeadsets() at DataStreamManager.cs to start headset scanning. Otherwise your headsets might not appeared in the headset list return from queryHeadsets(). If IsHeadsetScanning = false, you need re-call the ScanHeadsets() if want to re-scan headsets again but should not call ScanHeadsets() when has a headset connected.
-> - The example will use **EmotivUnityItf.cs** such as a interface to do all things.
-> - The subscribed data will be saved to DataBuffer as default. But you have option use data directly without DataBuffer by set '_isDataBufferUsing = false'. Please check the ouput for subcribed data at functions such as OnDevDataReceived(), OnEEGDataReceived().etc.. in EmotivUnityItf.cs  
-> - Please load a trained profile before subscribing **"Mental Command"** or **"Facial Expression"** data unless you only see the neutral action.
+## Change Log
 
+**[15 March 2024]**
 
-## Change log
+* Stopped support for `EmotivUnityPlugin.unity` and removed obsolete files.
+* Bug fixes.
+* Internal support for working with the embedded Cortex library (internal use only).
 
-[10 Nov 2023]
-- Support new headset scanning flow from Emotiv Cortex 3.7
+**[10 Nov 2023]**
 
-[15 May 2022]
-- Add SimpleExample.unity to demo subscribe data, training , start record and inject marker same time.
-- Remove some unused files and update Unity version to newer version (LTS 2021.3.2f1)
+* Implemented support for the new headset scanning flow introduced in Emotiv Cortex 3.7.
 
-[15 Jan 2022]
-- Support insight 2 for unity examples.
+**[15 May 2022]**
 
-[10 July 2021]
-- Support inject marker and update marker to the EEG data stream.
+* Added `SimpleExample.unity` to demonstrate simultaneous data subscription, training, start recording, and marker injection.
+* Removed some unused files and updated the Unity version to a newer LTS version (2021.3.2f1).
 
-[19 Apr 2021]
-- Support new channel BateryPercent of "dev" stream which introduced from 2.7.0
-- Fix some bugs related to data buffer and cortexclient at unity-plugin
+**[15 Jan 2022]**
 
-[12 May 2020]
-- Subscribe data streams: EEG, Motion, Performance Metric, Device information
-- Supports EPOC, EPOC+, EPOC X and Insight.
+* Added support for Insight 2 headset in the Unity examples.
+
+**[10 July 2021]**
+
+* Implemented support for injecting and updating markers within the EEG data stream.
+
+**[19 Apr 2021]**
+
+* Added support for the new `BateryPercent` channel in the "dev" stream, introduced in version 2.7.0.
+* Fixed several bugs related to the data buffer and Cortex client within the `unity-plugin`.
+
+**[12 May 2020]**
+
+* Implemented subscription for the following data streams: EEG, Motion, Performance Metric, Device information.
+* Added support for EPOC, EPOC+, EPOC X, and Insight headsets.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/Emotiv/cortex-v2-example/blob/master/LICENSE) file for details
+This project is licensed under the MIT License - see the [LICENSE.md](https://github.com/Emotiv/cortex-v2-example/blob/master/LICENSE) file for details.
