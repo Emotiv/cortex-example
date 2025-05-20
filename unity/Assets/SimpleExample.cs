@@ -107,7 +107,7 @@ public class SimpleExample : MonoBehaviour
         if (HasAllPermissions()) {
             AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, "", AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
             _eItf.Start(currentActivity);
             _isEmotivUnityItfInitialized = true;
         }
@@ -151,11 +151,11 @@ public class SimpleExample : MonoBehaviour
             StartEmotivUnityItfForAndroid();
         # elif UNITY_IOS
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios");
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, "", AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
             _eItf.Start();
         #else
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop " + AppConfig.AppUrl);
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AppVersion, AppConfig.AppUrl, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
+            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing, AppConfig.AppUrl);
             _eItf.Start();
             _isEmotivUnityItfInitialized = true;
         #endif
