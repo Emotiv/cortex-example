@@ -1,0 +1,76 @@
+apply plugin: 'com.android.library'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.5.1'
+    **DEPS**
+}
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+android {
+    ndkPath "**NDKPATH**"
+    namespace "com.unity3d.player"
+
+    compileSdkVersion **APIVERSION**
+    buildToolsVersion '**BUILDTOOLS**'
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        minSdkVersion 24
+        targetSdkVersion **TARGETSDKVERSION**
+        ndk {
+            abiFilters **ABIFILTERS**
+        }
+        versionCode **VERSIONCODE**
+        versionName '**VERSIONNAME**'
+        String client_id = "your_client_id_here" // Replace with your actual client_id
+        if (client_id.isEmpty()) {
+            System.err << "You need to config value for client_id"
+        } else {
+            String value = client_id.md5()
+            manifestPlaceholders = [
+                'customScheme': 'emotiv-' + value
+            ]
+        }
+
+        consumerProguardFiles 'proguard-unity.txt' **USER_PROGUARD**
+        **DEFAULT_CONFIG_SETUP**
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    aaptOptions {
+        noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ') // Unity will replace this placeholder with no-compress settings.
+        ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }
+
+    packagingOptions {
+        exclude 'META-INF/kotlinx_coroutines_core.version'
+        exclude 'META-INF/androidx.lifecycle_lifecycle-livedata-core.version'
+        exclude 'kotlin/internal/internal.kotlin_builtins'
+        exclude 'META-INF/androidx.lifecycle_lifecycle-viewmodel-savedstate.version'
+        exclude 'META-INF/androidx.appcompat_appcompat.version'
+        exclude 'kotlin/reflect/reflect.kotlin_builtins'
+        exclude 'META-INF/*.version'
+        exclude 'DebugProbesKt.bin'
+        exclude 'kotlin/collections/*.kotlin_builtins'
+        exclude 'kotlin/**/*.kotlin_builtins'
+        exclude 'kotlin/*.kotlin_builtins'
+        **PACKAGING_OPTIONS**
+    }
+    **IL_CPP_BUILD_SETUP**
+    **SOURCE_BUILD_SETUP**
+    **EXTERNAL_SOURCES** 
+}
