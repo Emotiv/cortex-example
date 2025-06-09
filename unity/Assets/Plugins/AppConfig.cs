@@ -13,6 +13,8 @@ public static class AppConfig
     #if !USE_EMBEDDED_LIB && !UNITY_ANDROID && !UNITY_IOS
     // only for desktop without embedded cortex
     public static string AppUrl              = "wss://localhost:6868"; // for desktop without embedded cortex
+    #else
+    public static string AppUrl              = ""; // Don't need AppUrl for mobile and embedded cortex
     #endif
-    
+
 }

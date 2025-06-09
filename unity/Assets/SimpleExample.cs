@@ -137,15 +137,20 @@ public class SimpleExample : MonoBehaviour
 
     void Start()
     {
-        #if USE_EMBEDDED_LIB  && (UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN)
-        // for windows and embedded lib
+    #if USE_EMBEDDED_LIB
+    #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
         string[] args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
             _eItf.ProcessCallback(args[1]);
             return;
         }
-        #endif
+    #else
+        // Only for desktop with embedded cortex library for standalone windows
+        UnityEngine.Debug.Log("Only support embedded lib for for standalone windows.");
+        return;
+    #endif
+    #endif
 
         #if UNITY_ANDROID
             StartEmotivUnityItfForAndroid();
