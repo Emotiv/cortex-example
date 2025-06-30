@@ -44,7 +44,7 @@ class Subcribe():
         self.c.bind(new_pow_data=self.on_new_pow_data)
         self.c.bind(inform_error=self.on_inform_error)
 
-    def start(self, streams, headsetId=''):
+    def start(self, streams, headset_id=''):
         """
         To start data subscribing process as below workflow
         (1)check access right -> authorize -> connect headset->create session
@@ -60,17 +60,17 @@ class Subcribe():
         ----------
         streams : list, required
             list of streams. For example, ['eeg', 'mot']
-        headsetId: string , optional
+        headset_id: string , optional
              id of wanted headet which you want to work with it.
-             If the headsetId is empty, the first headset in list will be set as wanted headset
+             If the headset_id is empty, the first headset in list will be set as wanted headset
         Returns
         -------
         None
         """
         self.streams = streams
 
-        if headsetId != '':
-            self.c.set_wanted_headset(headsetId)
+        if headset_id != '':
+            self.c.set_wanted_headset(headset_id)
 
         self.c.open()
 
