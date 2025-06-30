@@ -1,57 +1,86 @@
-# Python Example
 
-## Requirement
-- This example works with Python >= 3.7
-- Install websocket client via  `pip install websocket-client`
-- Install python-dispatch via `pip install python-dispatch`
+# Emotiv Cortex API Python Examples
 
-## Before you start
+This repository provides a set of Python examples to help you get started with the [Emotiv Cortex API](https://emotiv.gitbook.io/cortex-api). Each script demonstrates a specific workflow, making it easier to understand and integrate Cortex API features into your own projects.
 
-To run the existing example you will need to do a few things.
 
-1. You will need an EMOTIV headset.  You can purchase a headset in our [online
-   store](https://www.emotiv.com/)
-2. Next, [download and install](https://www.emotiv.com/developer/) the Cortex
-   service.  Please note that currently, the Cortex service is only available
-   for Windows and macOS.
-3. We have updated our Terms of Use, Privacy Policy and EULA to comply with
-   GDPR. Please login via the EMOTIV Launcher to read and accept our latest policies
-   in order to proceed using the following examples.
-4. Next, to get a client id and a client secret, you must connect to your
-   Emotiv account on
-   [emotiv.com](https://www.emotiv.com/my-account/cortex-apps/) and create a
-   Cortex app. If you don't have a EmotivID, you can [register
-   here](https://id.emotivcloud.com/eoidc/account/registration/).
-5. Then, if you have not already, you will need to login with your Emotiv id in
-   the EMOTIV Launcher.
-6. Finally, the first time you run these examples, you also need to authorize
-   them in the EMOTIV Launcher.
+## Requirements
 
-This code is purely an example of how to work with Cortex.  We strongly
-recommend adjusting the code to your purposes.
+- Python 2.7+ or Python 3.4+
+- Install dependencies:
+  - `pip install websocket-client`
+  - `pip install python-dispatch`
 
-## Cortex Library
-- [`cortex.py`](./cortex.py) - the wrapper lib around EMOTIV Cortex API.
 
-## Susbcribe Data
-- [`sub_data.py`](./sub_data.py) shows data streaming from Cortex: EEG, motion, band power and Performance Metrics.
-- For more details https://emotiv.gitbook.io/cortex-api/data-subscription
+## Getting Started
 
-## BCI
-- [`mental_command_train.py`](./mental_command_train.py) shows Mental Command training.
-- [`facial_expression_train.py`](./facial_expression_train.py) shows facial expression training.
-- For more details https://emotiv.gitbook.io/cortex-api/bci
+Before running the examples, please ensure you have completed the following steps:
 
-## Advanced BCI
-- [`live_advance.py`](./live_advance.py) shows the ability to get and set sensitivity of mental command action in live mode.
-- For more details https://emotiv.gitbook.io/cortex-api/advanced-bci
+1. **Download and Install EMOTIV Launcher**: Download from [here](https://www.emotiv.com/products/emotiv-launcher). Log in with your Emotiv ID and accept the latest Terms of Use, Privacy Policy, and EULA in the Launcher.
+2. **Accept Policies**: If prompted, accept any additional policies in the EMOTIV Launcher.
+3. **Obtain an EMOTIV Headset or Create a Virtual Device**:
+   - Purchase a headset from the [EMOTIV online store](https://www.emotiv.com/), **or**
+   - Use a virtual headset in the EMOTIV Launcher by following [these instructions](https://emotiv.gitbook.io/emotiv-launcher/devices-setting-up-virtual-brainwear-r/creating-a-virtual-brainwear-device).
+4. **Get Client ID & Secret**: Log in to your Emotiv account at [emotiv.com](https://www.emotiv.com/my-account/cortex-apps/) and create a Cortex app. [Register here](https://id.emotivcloud.com/eoidc/account/registration/) if you don't have an account. 
+5. **Authorize Examples**: The first time you run these examples, you may need to grant permission for your application to work with Emotiv Cortex.
 
-## Create record and export to file
-- [`record.py`](./record.py) shows how to create record and export data to CSV or EDF format.
-- For more details https://emotiv.gitbook.io/cortex-api/records
+---
 
-## Inject marker while recording
-- [`marker.py`](./marker.py) shows how to inject marker during a recording.
-- For more details https://emotiv.gitbook.io/cortex-api/markers
+## Example Scripts Overview
+
+### 1. `cortex.py` — Cortex API Wrapper
+Central wrapper class for the Cortex API. Handles:
+- Opening and managing the websocket connection
+- Buidling JSON-RPC requests
+- Handling responses, errors, and emitting events to corresponding classes
+- Parsing and dispatching data to workflow scripts
+
+### 2. `sub_data.py` — Subscribe to Data Streams
+Demonstrates how to:
+- Subscribe to data streams (EEG, motion, performance metrics, etc.)
+- Print or process incoming data
+See: [Data Subscription](https://emotiv.gitbook.io/cortex-api/data-subscription)
+
+### 3. `record.py` — Record and Export Data
+Demonstrates how to:
+- Create a new record
+- Stop a record
+- Export recorded data to CSV or EDF
+See: [Records](https://emotiv.gitbook.io/cortex-api/records)
+
+### 4. `marker.py` — Inject Markers
+Demonstrates how to:
+- Inject markers into a record during data collection
+- Export records with marker information
+See: [Markers](https://emotiv.gitbook.io/cortex-api/markers)
+
+
+### 5. `mental_command_train.py` — Mental Command Training
+Demonstrates how to:
+- Load or create a training profile
+- Train mental command actions (e.g., neutral, push, pull)
+See: [BCI](https://emotiv.gitbook.io/cortex-api/bci)
+
+
+### 6. `facial_expression_train.py` — Facial Expression Training
+Demonstrates how to:
+- Load or create a training profile
+- Train facial expression actions (e.g., neutral, surprise, smile)
+See: [BCI](https://emotiv.gitbook.io/cortex-api/bci)
+
+### 7. `live_advance.py` — Advanced Live Data & Sensitivity
+Demonstrates how to:
+- Load a trained profile
+- Subscribe to the 'com' stream for live mental command data
+- (Optionally) Subscribe to the 'fac' stream for live facial expression data
+- Get and set sensitivity for mental command actions in live mode
+See: [Advanced BCI](https://emotiv.gitbook.io/cortex-api/advanced-bci)
+
+---
+
+## Tips
+- Each script is self-contained and demonstrates a specific workflow.
+- Adjust the code as needed for your own applications.
+- For more details, refer to the [official Cortex API documentation](https://emotiv.gitbook.io/cortex-api/).
 
 

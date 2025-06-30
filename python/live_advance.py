@@ -37,7 +37,7 @@ class LiveAdvance():
         self.c.bind(mc_action_sensitivity_done=self.on_mc_action_sensitivity_done)
         self.c.bind(inform_error=self.on_inform_error)
 
-    def start(self, profile_name, headsetId=''):
+    def start(self, profile_name, headset_id=''):
         """
         To start live process as below workflow
         (1) check access right -> authorize -> connect headset->create session
@@ -48,9 +48,9 @@ class LiveAdvance():
         ----------
         profile_name : string, required
             name of profile
-        headsetId: string , optional
+        headset_id: string , optional
              id of wanted headet which you want to work with it.
-             If the headsetId is empty, the first headset in list will be set as wanted headset
+             If the headset_id is empty, the first headset in list will be set as wanted headset
         Returns
         -------
         None
@@ -61,8 +61,8 @@ class LiveAdvance():
         self.profile_name = profile_name
         self.c.set_wanted_profile(profile_name)
 
-        if headsetId != '':
-            self.c.set_wanted_headset(headsetId)
+        if headset_id != '':
+            self.c.set_wanted_headset(headset_id)
 
         self.c.open()
 

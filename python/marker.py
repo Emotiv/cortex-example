@@ -96,7 +96,7 @@ class Marker():
         """
         self.c.inject_marker_request(time, value, label, **kwargs)
 
-    def update_marker(self, markerId, time, **kwargs):
+    def update_marker(self, marker_id, time, **kwargs):
         """
         To update a marker that was previously created by inject_marker
         Parameters
@@ -106,7 +106,7 @@ class Marker():
         -------
         None
         """
-        self.c.update_marker_request(markerId, time, **kwargs)
+        self.c.update_marker_request(marker_id, time, **kwargs)
 
     # callbacks functions
     def on_create_session_done(self, *args, **kwargs):
