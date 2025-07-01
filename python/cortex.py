@@ -1,13 +1,31 @@
-import websocket #'pip install websocket-client' for install
-from datetime import datetime
-import json
+import sys
+import warnings
+# --- BEGIN: Simplified environment checks ---
+# 1. Check Python version
+if sys.version_info < (2, 7) or (3, 0) <= sys.version_info < (3, 4):
+    print(f"[ERROR] Python 2.7+ or 3.4+ is required. You are using Python {sys.version_info.major}.{sys.version_info.minor}.", file=sys.stderr)
+    sys.exit(1)
+
+# 2. Check websocket-client
+try:
+    import websocket
+except ImportError:
+    print(f"[ERROR] Required library 'websocket-client' is not installed. Please run: {sys.executable} -m pip install websocket-client", file=sys.stderr)
+    sys.exit(1)
+
+# 3. Check python-dispatch
+try:
+    from pydispatch import Dispatcher  # needed for class inheritance
+except ImportError:
+    print(f"[ERROR] Required library 'python-dispatch' is not installed. Please run: {sys.executable} -m pip install python-dispatch", file=sys.stderr)
+    sys.exit(1)
+# --- END: Simplified environment checks ---
+
+import threading
 import ssl
 import time
-import sys
-from pydispatch import Dispatcher
-import warnings
-import threading
-
+import json
+from datetime import datetime
 
 # define request id
 QUERY_HEADSET_ID                    =   1
@@ -92,7 +110,7 @@ class Cortex(Dispatcher):
             if key == 'license':
                 self.license = value
             elif key == 'debit':
-                self.debit == value
+                self.debit = value
             elif  key == 'headset_id':
                 self.headset_id = value
 
@@ -104,24 +122,24 @@ class Cortex(Dispatcher):
                                         on_open = self.on_open,
                                         on_error=self.on_error,
                                         on_close=self.on_close)
-        threadName = "WebsockThread:-{:%Y%m%d%H%M%S}".format(datetime.utcnow())
+        thread_name = "WebsockThread:-{:%Y%m%d%H%M%S}".format(datetime.now())
         
         # As default, a Emotiv self-signed certificate is required.
         # If you don't want to use the certificate, please replace by the below line  by sslopt={"cert_reqs": ssl.CERT_NONE}
         sslopt = {'ca_certs': "../certificates/rootCA.pem", "cert_reqs": ssl.CERT_REQUIRED}
 
-        self.websock_thread  = threading.Thread(target=self.ws.run_forever, args=(None, sslopt), name=threadName)
+        self.websock_thread  = threading.Thread(target=self.ws.run_forever, args=(None, sslopt), name=thread_name)
         self.websock_thread .start()
         self.websock_thread.join()
 
     def close(self):
         self.ws.close()
 
-    def set_wanted_headset(self, headsetId):
-        self.headset_id = headsetId
+    def set_wanted_headset(self, headset_id):
+        self.headset_id = headset_id
 
-    def set_wanted_profile(self, profileName):
-        self.profile_name = profileName
+    def set_wanted_profile(self, profile_name):
+        self.profile_name = profile_name
 
     def on_open(self, *args, **kwargs):
         print("websocket opened")
@@ -305,7 +323,7 @@ class Cortex(Dispatcher):
             self.emit('export_record_done', data=success_export)
         elif req_id == INJECT_MARKER_REQUEST_ID:
             self.emit('inject_marker_done', data=result_dic['marker'])
-        elif req_id == INJECT_MARKER_REQUEST_ID:
+        elif req_id == UPDATE_MARKER_REQUEST_ID:
             self.emit('update_marker_done', data=result_dic['marker'])
         else:
             print('No handling for response of request ' + str(req_id))
@@ -784,11 +802,11 @@ class Cortex(Dispatcher):
             print('inject marker request \n', json.dumps(inject_marker_request, indent=4))
         self.ws.send(json.dumps(inject_marker_request))
 
-    def update_marker_request(self, markerId, time, **kwargs):
+    def update_marker_request(self, marker_id, time, **kwargs):
         print('update marker --------------------------------')
         params_val = {"cortexToken": self.auth, 
                       "session": self.session_id,
-                      "markerId": markerId,
+                      "markerId": marker_id,
                       "time": time}
 
         for key, value in kwargs.items():

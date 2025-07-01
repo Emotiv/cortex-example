@@ -50,7 +50,7 @@ class Train():
         self.c.bind(new_sys_data=self.on_new_sys_data)
         self.c.bind(inform_error=self.on_inform_error)
 
-    def start(self, profile_name, actions, headsetId=''):
+    def start(self, profile_name, actions, headset_id=''):
         """
         To start training process as below workflow
         (1) check access right -> authorize -> connect headset->create session
@@ -62,9 +62,9 @@ class Train():
             name of profile
         actions : list, required
             list of actions which will be trained
-        headsetId: string , optional
+        headset_id: string , optional
              id of wanted headet which you want to work with it.
-             If the headsetId is empty, the first headset in list will be set as wanted headset
+             If the headset_id is empty, the first headset in list will be set as wanted headset
         Returns
         -------
         None
@@ -78,8 +78,8 @@ class Train():
 
         self.c.set_wanted_profile(profile_name)
 
-        if headsetId != '':
-            self.c.set_wanted_headset(headsetId)
+        if headset_id != '':
+            self.c.set_wanted_headset(headset_id)
 
         self.c.open()
 
@@ -154,7 +154,7 @@ class Train():
     def get_command_brain_map(self, profile_name):
         self.c.get_mental_command_brain_map(profile_name)
 
-    def get_training_threshold(self):
+    def get_training_threshold(self, profile_name):
         self.c.get_mental_command_training_threshold(profile_name)
 
     def train_mc_action(self, status):

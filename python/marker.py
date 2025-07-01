@@ -8,12 +8,12 @@ class Marker():
         self.c.bind(create_session_done=self.on_create_session_done)
         self.c.bind(create_record_done=self.on_create_record_done)
         self.c.bind(stop_record_done=self.on_stop_record_done)
-        self.c.bind(warn_cortex_stop_all_sub=self.on_warn_cortex_stop_all_sub)
         self.c.bind(inject_marker_done=self.on_inject_marker_done)
         self.c.bind(export_record_done=self.on_export_record_done)
         self.c.bind(inform_error=self.on_inform_error)
+        self.c.bind(warn_record_post_processing_done=self.on_warn_record_post_processing_done)
 
-    def start(self, number_markers=10, headsetId=''):
+    def start(self, number_markers=10, headset_id=''):
         """
         To start data recording and inject marker process as below workflow
         (1) check access right -> authorize -> connect headset->create session
@@ -23,9 +23,9 @@ class Marker():
         number_markers: int, required
             number of markers
 
-        headsetId: string , optional
+        headset_id: string , optional
              id of wanted headet which you want to work with it.
-             If the headsetId is empty, the first headset in list will be set as wanted headset
+             If the headset_id is empty, the first headset in list will be set as wanted headset
         Returns
         -------
         None
@@ -33,8 +33,8 @@ class Marker():
         self.number_markers = number_markers
         self.marker_idx = 0
 
-        if headsetId != '':
-            self.c.set_wanted_headset(headsetId)
+        if headset_id != '':
+            self.c.set_wanted_headset(headset_id)
 
         self.c.open()
 
@@ -96,7 +96,7 @@ class Marker():
         """
         self.c.inject_marker_request(time, value, label, **kwargs)
 
-    def update_marker(self, markerId, time, **kwargs):
+    def update_marker(self, marker_id, time, **kwargs):
         """
         To update a marker that was previously created by inject_marker
         Parameters
@@ -106,7 +106,7 @@ class Marker():
         -------
         None
         """
-        self.c.update_marker_request(markerId, time, **kwargs)
+        self.c.update_marker_request(marker_id, time, **kwargs)
 
     # callbacks functions
     def on_create_session_done(self, *args, **kwargs):
@@ -136,12 +136,7 @@ class Marker():
         title = data['title']
         print('on_stop_record_done: recordId: {0}, title: {1}, startTime: {2}, endTime: {3}'.format(record_id, title, start_time, end_time))
 
-        # disconnect headset to export record
-        print('on_stop_record_done: Disconnect the headset to export record')
-        self.c.disconnect_headset()
-
     def on_inject_marker_done(self, *args, **kwargs):
-        
         data = kwargs.get('data')
         marker_id = data['uuid']
         start_time = data['startDatetime']
@@ -153,14 +148,6 @@ class Marker():
             # stop record
             self.stop_record()
 
-    def on_warn_cortex_stop_all_sub(self, *args, **kwargs):
-        print('on_warn_cortex_stop_all_sub')
-        # cortex has closed session. Wait some seconds before exporting record
-        time.sleep(3)
-
-        self.export_record(self.record_export_folder, self.record_export_data_types,
-                           self.record_export_format, [self.record_id], self.record_export_version)
-
     def on_export_record_done(self, *args, **kwargs):
         print('on_export_record_done')
         data = kwargs.get('data')
@@ -170,6 +157,15 @@ class Marker():
     def on_inform_error(self, *args, **kwargs):
         error_data = kwargs.get('error_data')
         print(error_data)
+
+    def on_warn_record_post_processing_done(self, *args, **kwargs):
+        record_id = kwargs.get('data')
+        print('on_warn_record_post_processing_done: The record ', record_id, 'has been post-processed. Now, you can export the record')
+
+        # you must stop the record before you can export it. 
+        # if you want to export a record immediately after you stop it then you must  wait for the warning 30 before you try to export.
+        self.export_record(self.record_export_folder, self.record_export_data_types,
+                           self.record_export_format, [record_id], self.record_export_version)
         
 
 # -----------------------------------------------------------
