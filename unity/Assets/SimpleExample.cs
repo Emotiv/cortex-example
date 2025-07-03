@@ -147,8 +147,8 @@ public class SimpleExample : MonoBehaviour
         }
     #else
         // Only for desktop with embedded cortex library for standalone windows
-        UnityEngine.Debug.Log("Only support embedded lib for for standalone windows.");
-        return;
+        // UnityEngine.Debug.Log("Only support embedded lib for for standalone windows.");
+        // return;
     #endif
     #endif
 
