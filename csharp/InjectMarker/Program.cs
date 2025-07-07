@@ -81,7 +81,7 @@ namespace InjectMarker
             }
             else
             {
-                Console.WriteLine("The preparation for injecting marker is unsuccessful. Please try again");
+                Console.WriteLine("Failed to prepare for marker injection. Please ensure a headset is available for connection and try again.");
             }
         }
         private static void OnSessionCreatedOk(object sender, bool isOk)
