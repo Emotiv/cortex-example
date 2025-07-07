@@ -30,9 +30,14 @@ namespace CortexAccess
 
         public event EventHandler<JObject> informMarkerResult;
         public event EventHandler<bool> sessionCreateOk;
+        public event EventHandler<string> DataPostProcessingFinished
+        {
+            add { _ctxClient.DataPostProcessingFinished += value; }
+            remove { _ctxClient.DataPostProcessingFinished -= value; }
+        }
 
         // Constructor
-        public RecordManager ()
+        public RecordManager()
         {
             _authorizer = new Authorizer();
             _headsetFinder = new HeadsetFinder();
@@ -52,6 +57,8 @@ namespace CortexAccess
             _ctxClient.OnInjectMarker += OnInjectMarkerOK;
             _ctxClient.OnUpdateMarker += OnUpdateMarkerOK;
             _ctxClient.OnErrorMsgReceived += MessageErrorRecieved;
+            // data post processing finished
+            _ctxClient.DataPostProcessingFinished += OnDataPostProcessingFinished;
 
             _authorizer.OnAuthorized += AuthorizedOK;
             _headsetFinder.OnHeadsetConnected += HeadsetConnectedOK;
@@ -219,6 +226,35 @@ namespace CortexAccess
         public void DeleteRecords(List<string> records)
         {
             _ctxClient.DeleteRecord(_authorizer.CortexToken, records);
+        }
+
+
+        /// <summary>
+        /// Export one or more records to a specified folder with customizable options.
+        /// </summary>
+        /// <param name="records">List of record IDs to export. Each ID must be a valid record UUID.</param>
+        /// <param name="folderPath">Absolute path to the folder where exported files will be saved.</param>
+        /// <param name="streamTypes">List of stream types to include in the export (e.g., "EEG", "MOTION").</param>
+        /// <param name="format">Export file format. Supported values: "EDF", "EDFPLUS", "BDFPLUS" or "CSV".</param>
+        /// <param name="version">Optional. If the format is "EDF", then you must omit this parameter. If the format is "CSV", then this parameter must be "V1" or "V2"..</param>
+        /// <param name="licenseIds">Optional. license ID of other applications in order to export the records created by these applications.</param>
+        /// <param name="includeDemographics">If true, includes demographic information in the export.</param>
+        /// <param name="includeMarkerExtraInfos">If true, includes extra information about markers in the export.</param>
+        /// <param name="includeSurvey">If true, includes survey data in the export.</param>
+        /// <param name="includeDeprecatedPM">If true then deprecated performance metrics (i.e. Focus) will be exported.</param>
+        /// <remarks>
+        /// For more details, see: https://emotiv.gitbook.io/cortex-api/records/exportrecord
+        /// </remarks>
+        public void ExportRecord(List<string> records, string folderPath,
+                                 List<string> streamTypes, string format, string version = null,
+                                 List<string> licenseIds = null, bool includeDemographics = false,
+                                 bool includeMarkerExtraInfos = false, bool includeSurvey = false,
+                                 bool includeDeprecatedPM = false)
+        {
+            _ctxClient.ExportRecord(_authorizer.CortexToken, records, folderPath,
+                                    streamTypes, format, version, licenseIds,
+                                    includeDemographics, includeMarkerExtraInfos,
+                                    includeSurvey, includeDeprecatedPM);
         }
 
         /// <summary>

@@ -38,6 +38,7 @@
         public const int UserLoginOnAnotherOsUser = 16;
         public const int EULAAccepted = 17;
         public const int StreamWritingClosed = 18;
+        public const int DataPostProcessingFinished = 30;
         public const int HeadsetWrongInformation = 100;
         public const int HeadsetCannotConnected = 101;
         public const int HeadsetConnectingTimeout = 102;
