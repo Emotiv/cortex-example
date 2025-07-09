@@ -137,29 +137,24 @@ public class SimpleExample : MonoBehaviour
 
     void Start()
     {
-    #if USE_EMBEDDED_LIB
-    #if UNITY_STANDALONE_WIN && !UNITY_EDITOR
+        
+    #if USE_EMBEDDED_LIB && UNITY_STANDALONE_WIN && !UNITY_EDITOR
         string[] args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
             _eItf.ProcessCallback(args[1]);
             return;
         }
-    #else
-        // Only for desktop with embedded cortex library for standalone windows
-        UnityEngine.Debug.Log("Only support embedded lib for for standalone windows.");
-        return;
-    #endif
-    #endif
+#endif
 
-        #if UNITY_ANDROID
+#if UNITY_ANDROID
             StartEmotivUnityItfForAndroid();
-        # elif UNITY_IOS
+#elif UNITY_IOS
             UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios");
             _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
             _eItf.Start();
-        #else
-            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop " + AppConfig.AppUrl);
+#else
+        UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop " + AppConfig.AppUrl);
             _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing, AppConfig.AppUrl);
             _eItf.Start();
             _isEmotivUnityItfInitialized = true;
