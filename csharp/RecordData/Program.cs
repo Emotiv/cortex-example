@@ -24,6 +24,7 @@ namespace RecordData
             _recordManager = new RecordManager();
             _recordManager.sessionCreateOk += OnSessionCreatedOk;
             _recordManager.DataPostProcessingFinished += OnDataPostProcessingFinished;
+            _recordManager.ExportRecordsFinished += onExportRecordsFinished;
 
             Console.WriteLine("Prepare to record Data");
             // Start
@@ -35,7 +36,7 @@ namespace RecordData
                 Console.WriteLine("Press S to stop record");
                 Console.WriteLine("Press Q to query record");
                 Console.WriteLine("Press D to delete first record Id from recording list");
-                Console.WriteLine("Press E to export record");
+                Console.WriteLine("Press E to export the most recently stopped record.");
                 Console.WriteLine("Press U to update record");
                 Console.WriteLine("Press H to show all commands");
                 Console.WriteLine("Press Esc to quit");
@@ -133,7 +134,7 @@ namespace RecordData
                         Console.WriteLine("Press Q to query record");
                         Console.WriteLine("Press D to delete record");
                         Console.WriteLine("Press U to update record");
-                        Console.WriteLine("Press E to export record");
+                        Console.WriteLine("Press E to export the most recently stopped record");
                         Console.WriteLine("Press H to show all commands");
                         Console.WriteLine("Press Esc to quit");
                     }
@@ -158,6 +159,36 @@ namespace RecordData
             {
                 Console.WriteLine("The preparation for injecting marker is unsuccessful. Please try again");
             }
+        }
+
+        private static void onExportRecordsFinished(object sender, MultipleResultEventArgs e)
+        {
+            // extract the result from e.Result
+            // get successful list
+            JArray successfulList = e.SuccessList;
+            // check _recentRecordId is in the successful list
+            bool isExportedSuccess = false;
+            if (successfulList != null && successfulList.Count > 0)
+            {
+                foreach (var record in successfulList)
+                {
+                    if (record is JObject recordObj && recordObj["recordId"]?.ToString() == _recentRecordId)
+                    {
+                        isExportedSuccess = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!isExportedSuccess)
+            {
+                Console.WriteLine("Export failed for record with ID: " + _recentRecordId);
+            }
+            else
+            {
+                Console.WriteLine("Export finished for record with ID: " + _recentRecordId);
+            }
+
         }
 
         private static void OnSessionCreatedOk(object sender, bool isOK)

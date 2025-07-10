@@ -36,6 +36,12 @@ namespace CortexAccess
             remove { _ctxClient.DataPostProcessingFinished -= value; }
         }
 
+        public event EventHandler<MultipleResultEventArgs> ExportRecordsFinished
+        {
+            add { _ctxClient.ExportRecordsFinished += value; }
+            remove { _ctxClient.ExportRecordsFinished -= value; }
+        }
+
         // Constructor
         public RecordManager()
         {
@@ -57,8 +63,6 @@ namespace CortexAccess
             _ctxClient.OnInjectMarker += OnInjectMarkerOK;
             _ctxClient.OnUpdateMarker += OnUpdateMarkerOK;
             _ctxClient.OnErrorMsgReceived += MessageErrorRecieved;
-            // data post processing finished
-            _ctxClient.DataPostProcessingFinished += OnDataPostProcessingFinished;
 
             _authorizer.OnAuthorized += AuthorizedOK;
             _headsetFinder.OnHeadsetConnected += HeadsetConnectedOK;

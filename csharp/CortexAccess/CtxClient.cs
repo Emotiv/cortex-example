@@ -117,6 +117,7 @@ namespace CortexAccess
         public event EventHandler<Record> OnUpdateRecord;
         public event EventHandler<List<Record>> OnQueryRecords;
         public event EventHandler<MultipleResultEventArgs> OnDeleteRecords;
+        public event EventHandler<MultipleResultEventArgs> ExportRecordsFinished;
         public event EventHandler<JObject> OnInjectMarker;
         public event EventHandler<JObject> OnUpdateMarker;
         public event EventHandler<JObject> OnGetDetectionInfo;
@@ -425,6 +426,13 @@ namespace CortexAccess
             else if (method == "getTrainingTime")
             {
                 OnGetTrainingTime(this, (double)data["time"]);
+            }
+            // export record
+            else if (method == "exportRecord")
+            {
+                JArray successList = (JArray)data["success"];
+                JArray failList = (JArray)data["failure"];
+                ExportRecordsFinished(this, new MultipleResultEventArgs(successList, failList));
             }
 
         }
