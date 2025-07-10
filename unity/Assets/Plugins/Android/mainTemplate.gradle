@@ -1,10 +1,12 @@
 apply plugin: 'com.android.library'
+apply from: '../shared/keepUnitySymbols.gradle'
+**APPLY_PLUGINS**
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.5.1'
-    **DEPS**
-}
+    implementation(name: 'EmotivCortexLib', ext:'aar')
+**DEPS**}
 
 buildscript {
     repositories {
@@ -13,11 +15,17 @@ buildscript {
     }
 }
 
+repositories {
+    google()
+    mavenCentral()
+}
+
 android {
+    ndkVersion "**NDKVERSION**"
     ndkPath "**NDKPATH**"
     namespace "com.unity3d.player"
 
-    compileSdkVersion **APIVERSION**
+    compileSdk **APIVERSION**
     buildToolsVersion '**BUILDTOOLS**'
 
     compileOptions {
@@ -26,37 +34,59 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 24
-        targetSdkVersion **TARGETSDKVERSION**
+        minSdk 24
+        targetSdk **TARGETSDK**
         ndk {
+            debugSymbolLevel **DEBUGSYMBOLLEVEL**
             abiFilters **ABIFILTERS**
         }
         versionCode **VERSIONCODE**
         versionName '**VERSIONNAME**'
-        String client_id = "your_client_id_here" // Replace with your actual client_id
-        if (client_id.isEmpty()) {
-            System.err << "You need to config value for client_id"
-        } else {
-            String value = client_id.md5()
-            manifestPlaceholders = [
-                'customScheme': 'emotiv-' + value
-            ]
-        }
-
-        consumerProguardFiles 'proguard-unity.txt' **USER_PROGUARD**
-        **DEFAULT_CONFIG_SETUP**
+        consumerProguardFiles 'proguard-unity.txt'**USER_PROGUARD**
+**DEFAULT_CONFIG_SETUP**
     }
 
-    lintOptions {
+    buildTypes {
+        debug {
+            // Set client_id for development environment
+            String client_id = "put-your-client-id-for-dev-here"
+			if (client_id.isEmpty()) {
+				System.err << "You need to config value for client_id"
+			}
+			else {
+				String value = client_id.md5()
+				manifestPlaceholders = [
+						'customScheme': 'emotiv-' + value,
+						"appAuthRedirectScheme": ""
+				]
+			}
+        }
+        release {
+            // Set client_id for production environment
+			String client_id = "put-your-client-id-for-prod-here"
+			if (client_id.isEmpty()) {
+				System.err << "You need to config value for client_id"
+			}
+			else {
+				String value = client_id.md5()
+				manifestPlaceholders = [
+						'customScheme': 'emotiv-' + value,
+						"appAuthRedirectScheme": ""
+				]
+			}
+            minifyEnabled true
+        }
+    }
+
+    lint {
         abortOnError false
     }
 
-    aaptOptions {
-        noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ') // Unity will replace this placeholder with no-compress settings.
+    androidResources {
+        noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ')
         ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
     }
-
-    packagingOptions {
+    packaging {
         exclude 'META-INF/kotlinx_coroutines_core.version'
         exclude 'META-INF/androidx.lifecycle_lifecycle-livedata-core.version'
         exclude 'kotlin/internal/internal.kotlin_builtins'
@@ -68,9 +98,9 @@ android {
         exclude 'kotlin/collections/*.kotlin_builtins'
         exclude 'kotlin/**/*.kotlin_builtins'
         exclude 'kotlin/*.kotlin_builtins'
-        **PACKAGING_OPTIONS**
     }
-    **IL_CPP_BUILD_SETUP**
-    **SOURCE_BUILD_SETUP**
-    **EXTERNAL_SOURCES** 
+    **PACKAGING**
 }
+**IL_CPP_BUILD_SETUP**
+**SOURCE_BUILD_SETUP**
+**EXTERNAL_SOURCES**
