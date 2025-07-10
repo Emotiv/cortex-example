@@ -1,14 +1,17 @@
 apply plugin: 'com.android.application'
+apply from: 'setupSymbols.gradle'
+apply from: '../shared/keepUnitySymbols.gradle'
 
 dependencies {
     implementation project(':unityLibrary')
     }
 
 android {
+    ndkVersion "**NDKVERSION**"
     ndkPath "**NDKPATH**"
     namespace "**NAMESPACE**"
 
-    compileSdkVersion **APIVERSION**
+    compileSdk **APIVERSION**
     buildToolsVersion '**BUILDTOOLS**'
 
     compileOptions {
@@ -17,37 +20,49 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 24
-        targetSdkVersion **TARGETSDKVERSION**
+        minSdk 24
+        targetSdk **TARGETSDK**
         applicationId '**APPLICATIONID**'
         ndk {
+            debugSymbolLevel **DEBUGSYMBOLLEVEL**
             abiFilters **ABIFILTERS**
         }
-        versionCode **VERSIONCODE**
-        versionName '**VERSIONNAME**'
+        
+        String env_versionCode = System.getenv("VERSION_CODE")
+        String env_versionName = System.getenv("VERSION_NUMBER")
+        if(env_versionCode == null || env_versionName == null)
+        {
+            versionCode 1
+            versionName "1.0"
+        }
+        else
+        {
+            versionCode Integer.parseInt(env_versionCode)
+            versionName env_versionName
+        }
     }
 
-    aaptOptions {
+    androidResources {
         noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ')
         ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
-    }**SIGN**
+    }
 
-    lintOptions {
+    lint {
         abortOnError false
     }
 
     buildTypes {
         debug {
             minifyEnabled **MINIFY_DEBUG**
-            proguardFiles getDefaultProguardFile('proguard-android.txt')**SIGNCONFIG**
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
             jniDebuggable true
         }
         release {
             minifyEnabled **MINIFY_RELEASE**
-            proguardFiles getDefaultProguardFile('proguard-android.txt')**SIGNCONFIG**
+            proguardFiles getDefaultProguardFile('proguard-android.txt')
         }
     }
-	packagingOptions {
+    packaging {
         exclude 'META-INF/kotlinx_coroutines_core.version'
         exclude 'META-INF/androidx.lifecycle_lifecycle-livedata-core.version'
         exclude 'kotlin/internal/internal.kotlin_builtins'
@@ -60,7 +75,7 @@ android {
         exclude 'kotlin/**/*.kotlin_builtins'
         exclude 'kotlin/*.kotlin_builtins'
     }
-	**PACKAGING_OPTIONS****PLAY_ASSET_PACKS****SPLITS**
+    **PACKAGING****PLAY_ASSET_PACKS****SPLITS**
 **BUILT_APK_LOCATION**
     bundle {
         language {
@@ -77,5 +92,5 @@ android {
         }
     }
 
-	**GOOGLE_PLAY_DEPENDENCIES**
+    **GOOGLE_PLAY_DEPENDENCIES**
 }**SPLITS_VERSION_CODE****LAUNCHER_SOURCE_BUILD_SETUP**
