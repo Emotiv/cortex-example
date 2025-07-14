@@ -1,6 +1,4 @@
 apply plugin: 'com.android.library'
-apply from: '../shared/keepUnitySymbols.gradle'
-**APPLY_PLUGINS**
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -42,43 +40,22 @@ android {
         }
         versionCode **VERSIONCODE**
         versionName '**VERSIONNAME**'
+        String client_id = "put_your_application_client_id_for_here"
+			if (client_id.isEmpty()) {
+				System.err << "You need to config value for client_id"
+			}
+			else {
+				String value = client_id.md5()
+				manifestPlaceholders = [
+						'customScheme': 'emotiv-' + value,
+						"appAuthRedirectScheme": ""
+				]
+			}
         consumerProguardFiles 'proguard-unity.txt'**USER_PROGUARD**
 **DEFAULT_CONFIG_SETUP**
     }
 
-    buildTypes {
-        debug {
-            // Set client_id for development environment
-            String client_id = "put-your-client-id-for-dev-here"
-			if (client_id.isEmpty()) {
-				System.err << "You need to config value for client_id"
-			}
-			else {
-				String value = client_id.md5()
-				manifestPlaceholders = [
-						'customScheme': 'emotiv-' + value,
-						"appAuthRedirectScheme": ""
-				]
-			}
-        }
-        release {
-            // Set client_id for production environment
-			String client_id = "put-your-client-id-for-prod-here"
-			if (client_id.isEmpty()) {
-				System.err << "You need to config value for client_id"
-			}
-			else {
-				String value = client_id.md5()
-				manifestPlaceholders = [
-						'customScheme': 'emotiv-' + value,
-						"appAuthRedirectScheme": ""
-				]
-			}
-            minifyEnabled true
-        }
-    }
-
-    lint {
+    lintOptions {
         abortOnError false
     }
 
@@ -86,7 +63,7 @@ android {
         noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ')
         ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
     }
-    packaging {
+    packagingOptions {
         exclude 'META-INF/kotlinx_coroutines_core.version'
         exclude 'META-INF/androidx.lifecycle_lifecycle-livedata-core.version'
         exclude 'kotlin/internal/internal.kotlin_builtins'

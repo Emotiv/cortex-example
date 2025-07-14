@@ -1,6 +1,4 @@
 apply plugin: 'com.android.application'
-apply from: 'setupSymbols.gradle'
-apply from: '../shared/keepUnitySymbols.gradle'
 
 dependencies {
     implementation project(':unityLibrary')
@@ -27,27 +25,13 @@ android {
             debugSymbolLevel **DEBUGSYMBOLLEVEL**
             abiFilters **ABIFILTERS**
         }
-        
-        String env_versionCode = System.getenv("VERSION_CODE")
-        String env_versionName = System.getenv("VERSION_NUMBER")
-        if(env_versionCode == null || env_versionName == null)
-        {
-            versionCode 1
-            versionName "1.0"
-        }
-        else
-        {
-            versionCode Integer.parseInt(env_versionCode)
-            versionName env_versionName
-        }
     }
 
     androidResources {
         noCompress = **BUILTIN_NOCOMPRESS** + unityStreamingAssets.tokenize(', ')
         ignoreAssetsPattern = "!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~"
     }
-
-    lint {
+    lintOptions {
         abortOnError false
     }
 
@@ -62,7 +46,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt')
         }
     }
-    packaging {
+    packagingOptions {
         exclude 'META-INF/kotlinx_coroutines_core.version'
         exclude 'META-INF/androidx.lifecycle_lifecycle-livedata-core.version'
         exclude 'kotlin/internal/internal.kotlin_builtins'
