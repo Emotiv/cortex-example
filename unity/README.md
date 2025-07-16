@@ -5,6 +5,7 @@ This example demonstrates how to work with the Emotiv Cortex Service (Cortex) in
 ## Prerequisites
 
 * **Install Unity:** You can download it for free at [www.unity3d.com](https://unity3d.com/get-unity/download).
+* **** We tested with Unity 6 (also recommended by Unity: https://docs.unity.com/ugs/manual/devops/manual/build-automation/reference/available-xcode-versions)
 * **Get the Emotiv Unity Plugin:** Obtain the latest version of the [Emotiv Unity Plugin](https://github.com/Emotiv/unity-plugin) as a submodule:
     ```
     git submodule update --init
