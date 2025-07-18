@@ -13,20 +13,18 @@ This example demonstrates how to work with the Emotiv Cortex Service (Cortex) an
   - Supported via Emotiv Embedded Library.
   - You must request Bluetooth and Location permissions at runtime.
   - See [Unity Android Permissions](https://docs.unity3d.com/Manual/android-RequestingPermissions.html).
-  - **Gradle Plugin:** The default `baseProjectTemplate.gradle` uses version 7.4.2 (best for Unity 2021). If your Unity version is higher, update the Gradle plugin version via Android Studio after first build.
-  - **mainTemplate.gradle:** After setting your clientId in `AppConfig.cs`, also add it to `mainTemplate.gradle` as required by your build process.
+  
 - **iOS:**
   - Supported via Emotiv Embedded Library.
   - After building, export to Xcode and ensure Bluetooth permissions are set in `Info.plist`.
-  - The Emotiv Embedded `.xcframework` must be included in your Xcode project.
+  - The Emotiv Embedded Library `EmotivCortexLib.xcframework` must be included in your Xcode project.
   - **Xcode Version:** Use an Xcode version compatible with your Unity version. For example, Unity 6.0 (6000.0) generally requires Xcode 15+ or Xcode 16+ for iOS builds.
 
-**Note:**
-- For **desktop**, you must install and run the EMOTIV Launcher (Cortex Service). This is not required for mobile platforms. And do not need UniWebview submodule so only pull unity-plugin submodule as below
+- For **desktop**, ensure the EMOTIV Launcher (Cortex Service) is installed and running. But the UniWebView submodule is not required for desktop, so you only need to pull the `unity-plugin` submodule as shown below:
     ```
       git submodule update --init
     ```
-- For **mobile (Android/iOS)**, you do **not** need the EMOTIV Launcher, but you must pull the UniWebView submodule. UniWebView is a private repository used to open a webview for login on mobile. Please contact Emotiv to get access.
+- For **mobile (Android/iOS)**, you do **not** need the EMOTIV Launcher, but you must pull the UniWebView submodule. The UniWebView submodule is a private repository used to open a webview for login on mobile. Please contact Emotiv to get access.
     - To pull all submodules (including UniWebView), use:
       ```
       git submodule update --init --recursive
@@ -43,8 +41,35 @@ Open the **SimpleExample.unity** scene. This scene demonstrates all major featur
 In **AppConfig.cs**, set your `clientId` and `clientSecret` from your Emotiv Cortex App registration.
 
 ### 3. Platform-Specific Setup
-- **Android:** Ensure your app requests Bluetooth and Location permissions at runtime. Unity 2021+ supports this via the `Android.Permission` API.
-- **iOS:** After exporting to Xcode, add Bluetooth permissions to `Info.plist` and ensure the Emotiv `.xcframework` is included.
+
+#### Android Setup
+- **Get the Embedded Library:** Contact Emotiv to obtain `EmotivCortexLib.aar` and place it in `./Assets/Plugins/Emotiv-Unity-Plugin/Src/AndroidPlugin/EmotivCortexLib/`.
+- **Permissions:** Ensure your app requests Bluetooth and Location permissions at runtime. Unity 2021+ supports this via the `Android.Permission` API.
+- **Update clientId:** Edit `mainTemplate.gradle` to set your `client_Id` for webview redirect URI.
+- **Gradle Plugin:** The default `baseProjectTemplate.gradle` uses Gradle version 7.4.2, which is optimal for Unity 2021. If you are using a newer Unity version (such as Unity 2022 or later), you may need to update the Gradle plugin version to ensure compatibility with the Android build tools and SDKs required by your Unity version. On your first build in Android Studio, you might see a prompt to update the Gradle version—click **Yes** to proceed. Updating ensures your project builds successfully and takes advantage of the latest Android features and security updates.
+
+#### iOS Setup
+- **Get the Embedded Library:** Contact Emotiv to obtain `EmotivCortexLib.xcframework` and place it in `./Assets/Plugins/Emotiv-Unity-Plugin/Src/IosPlugin/EmotivCortexLib/`.
+- **Build Settings:** In Unity, select iOS platform and click Build. Unity will generate an Xcode project (`.xcodeproj`).
+- **Xcode Configuration:**
+  - **Embed Framework:**
+    - Open `.xcodeproj` in Xcode.
+    - Go to Project > General > Frameworks, Libraries, and Embedded Content.
+    - Add `EmotivCortexLib.xcframework` and set to Embed & Sign.
+  - **Set Signing Team:**
+    - Go to Signing & Capabilities.
+    - Choose your Apple Developer Team before building.
+  - **Bluetooth Permission (Info.plist):**
+    - Add:
+      ```xml
+      <key>NSBluetoothAlwaysUsageDescription</key>
+      <string>This app uses Bluetooth to discover, connect, and transfer data between devices.</string>
+      ```
+  - **Link Framework:**
+    - Go to Build Phases > Link Binary with Libraries.
+    - Add `EmotivCortexLib.xcframework` if not already listed.
+- **Build and Run:** Build the app and run it on a physical iOS device.
+
 - **Desktop:** Make sure EMOTIV Launcher is running and `USE_EMBEDDED_LIB` is **not** defined.
 
 ### 4. Run and Interact
