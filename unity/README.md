@@ -1,48 +1,78 @@
+
 # Emotiv Unity Example
 
-This example demonstrates how to work with the Emotiv Cortex Service (Cortex) in Unity.
+This example demonstrates how to work with the Emotiv Cortex Service (Cortex) and Emotiv Embedded Library in Unity, supporting Desktop (Windows/macOS), Android, and iOS platforms.
 
-## Prerequisites
+## Platform Support, Requirements & Prerequisites
 
-* **Install Unity:** You can download it for free at [www.unity3d.com](https://unity3d.com/get-unity/download).
-* **** We tested with Unity 6 (also recommended by Unity: https://docs.unity.com/ugs/manual/devops/manual/build-automation/reference/available-xcode-versions)
-* **Get the Emotiv Unity Plugin:** Obtain the latest version of the [Emotiv Unity Plugin](https://github.com/Emotiv/unity-plugin) as a submodule:
+- **Desktop (Windows/macOS):**
+  - Works with Emotiv Cortex Service via EMOTIV Launcher.
+  - Ensure `USE_EMBEDDED_LIB` is **not** defined in your Unity project.
+  - **Embedded Library for Desktop is under development and not ready for production.**
+- **Android:**
+  - Supported via Emotiv Embedded Library.
+  - You must request Bluetooth and Location permissions at runtime.
+  - See [Unity Android Permissions](https://docs.unity3d.com/Manual/android-RequestingPermissions.html).
+  - **Gradle Plugin:** The default `baseProjectTemplate.gradle` uses version 7.4.2 (best for Unity 2021). If your Unity version is higher, update the Gradle plugin version via Android Studio after first build.
+  - **mainTemplate.gradle:** After setting your clientId in `AppConfig.cs`, also add it to `mainTemplate.gradle` as required by your build process.
+- **iOS:**
+  - Supported via Emotiv Embedded Library.
+  - After building, export to Xcode and ensure Bluetooth permissions are set in `Info.plist`.
+  - The Emotiv Embedded `.xcframework` must be included in your Xcode project.
+  - **Xcode Version:** Use an Xcode version compatible with your Unity version. For example, Unity 6.0 (6000.0) generally requires Xcode 15+ or Xcode 16+ for iOS builds.
+
+**Note:**
+- For **desktop**, you must install and run the EMOTIV Launcher (Cortex Service). This is not required for mobile platforms. And do not need UniWebview submodule so only pull unity-plugin submodule as below
     ```
-    git submodule update --init
+      git submodule update --init
     ```
-* **Install and Run EMOTIV Launcher with Cortex:** Download and run the EMOTIV Launcher with Cortex from [https://www.emotiv.com/developer/](https://www.emotiv.com/developer/).
-* **Emotiv Account and Application:**
-    * Log in to the Emotiv website with your valid EmotivID. If you don't have one, you can [register here](https://id.emotivcloud.com/eoidc/account/registration/).
-    * Register an application at [https://www.emotiv.com/my-account/cortex-apps/](https://www.emotiv.com/my-account/cortex-apps/) to obtain your `clientId` and `clientSecret`.
-* **Accept Updated Policies:** Please log in via the EMOTIV Launcher to read and accept our latest Terms of Use, Privacy Policy, and EULA to proceed with the following examples. This is required due to GDPR compliance.
+- For **mobile (Android/iOS)**, you do **not** need the EMOTIV Launcher, but you must pull the UniWebView submodule. UniWebView is a private repository used to open a webview for login on mobile. Please contact Emotiv to get access.
+    - To pull all submodules (including UniWebView), use:
+      ```
+      git submodule update --init --recursive
+      ```
+    - UniWebView is a submodule inside the unity-plugin directory.
+
 
 ## How to Use
 
-1.  **Open the Example Scene:** Open the **SimpleExample.unity** scene. This scene contains a comprehensive demonstration.
-2.  **Set Credentials:** In the **AppConfig.cs** script, locate and set the `clientId` and `clientSecret` with the values from your registered application before running the scene.
-3.  **Query Headsets:** Run the example. Once authorization is complete, click the **"Query Headset"** button to list available headsets.
-4.  **Create a Session:**
-    * Enter the ID of the desired headset (e.g., "INSIGHT-A12345") in the text field next to the **"Create Session"** button.
-    * If the text field is left empty, the first headset in the queried list will be used by default.
-    * Click the **"Create Session"** button to connect to the headset and establish a session.
-5.  **Interact with Data and Training:** After successfully creating a session, you can perform the following actions:
-    * **Start and Stop Recording:** Enter a title for your recording in the designated field before clicking **"Start Record"**. An optional description can also be added. Use the **"Stop Record"** button to end the recording.
-    * **Inject Marker:** While a recording is active, you can inject instance markers. Enter a **"marker value"** and a **"marker label"** and then click the **"Inject Marker"** button.
-    * **Subscribe and Unsubscribe Data Streams:** Select the desired data streams from the available options before clicking the **"Subscribe Data"** button. The received data will be displayed in the log box. You can unsubscribe by clicking the **"Unsubscribe Data"** button.
-    * **Load Profile and Training:**
-        * Enter a **"profile name"** before clicking **"Load Profile"**. If a profile with that name does not exist, it will be created and then loaded.
-        * **Important:** Subscribe to the **"System Event"** data stream to observe training events.
-        * Select a mental command for training from the dropdown menu and click **"Start Training"**.
-        * You might observe a **"MC\_Succeeded"** event after approximately 8 seconds, indicating a successful training attempt. You can then choose to accept or reject the training.
-        * After training, click **"Save Profile"** to persist the trained data.
-        * **Important:** Before closing the application, click **"Unload Profile"** to release the trained data.
+### 1. Open the Example Scene
+Open the **SimpleExample.unity** scene. This scene demonstrates all major features and works on Desktop, Android, and iOS.
+
+### 2. Set Credentials
+In **AppConfig.cs**, set your `clientId` and `clientSecret` from your Emotiv Cortex App registration.
+
+### 3. Platform-Specific Setup
+- **Android:** Ensure your app requests Bluetooth and Location permissions at runtime. Unity 2021+ supports this via the `Android.Permission` API.
+- **iOS:** After exporting to Xcode, add Bluetooth permissions to `Info.plist` and ensure the Emotiv `.xcframework` is included.
+- **Desktop:** Make sure EMOTIV Launcher is running and `USE_EMBEDDED_LIB` is **not** defined.
+
+### 4. Run and Interact
+1. Run the scene in the Unity Editor or on your target device.
+2. Click **"Query Headset"** to list available headsets after authorization.
+3. Enter a headset ID (or leave blank to use the first found) and click **"Create Session"**.
+4. You can now:
+   - **Subscribe/Unsubscribe Data Streams:** Select streams and click **"Subscribe Data"** or **"Unsubscribe Data"**.
+   - **Start/Stop Recording:** Enter a title and click **"Start Record"**/**"Stop Record"**.
+   - **Inject Marker:** Enter a label/value and click **"Inject Marker"** while recording.
+> The UI and workflow are almost the same for Desktop, Android, and iOS.
+> 
+> **For Emotiv Embedded Library:**  
+> - If you are not logged in with your EmotivID, the **Sign In** button will be active. Clicking **Sign In** opens a webview for authentication.  
+> - After successful login, authorization is handled automatically.  
+> - Once you see "Authorize done" in the message box on the UI, you can proceed to query headsets, create sessions, and use other features as described above.  
+> - On mobile, ensure all required permissions are granted.
 
 > **Please Note:**
 >
-> * **Headset Scanning (Cortex 3.7+):** Starting from Emotiv Cortex 3.7, you need to call RefreshHeadset() to scan bluetooth devices. But the process is proceed automatically after authorization.
-> * **Interface:** This example utilizes **EmotivUnityItf.cs** as an interface to interact with the Emotiv Cortex Service.
-> * **Data Buffering:** By default, subscribed data is not saved to a data buffer and is only displayed in the message log box. You can enable saving data to a buffer by setting `IsDataBufferUsing = true` in the `AppConfig.cs` file.
-> * **Mental Command and Facial Expression:** Ensure you load a trained profile before subscribing to **"Mental Command"** or **"Facial Expression"** data streams; otherwise, you will only observe neutral actions.
+> * **Headset Scanning (Cortex 3.7+):** Headset scanning is automatic after authorization. Manual `RefreshHeadset()` is not required in most cases.
+> * **Interface:** The example uses **EmotivUnityItf.cs** for all Cortex API operations.
+> * **Data Buffering:** To save data to a buffer for later access, set `IsDataBufferUsing = true` in `AppConfig.cs`.
+> * **Mental Command/Facial Expression:** Always load a trained profile before subscribing to these streams, or only neutral actions will be received.
+> * **Permissions:**
+>   - **Android:** Request Bluetooth and Location permissions at runtime.
+>   - **iOS:** Add Bluetooth permissions to `Info.plist` and ensure `.xcframework` is present in Xcode.
+>   - **Desktop:** No special permissions, but EMOTIV Launcher must be running.
 
 ## Change Log
 
