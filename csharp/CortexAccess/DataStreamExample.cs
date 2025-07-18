@@ -194,7 +194,12 @@ namespace CortexAccess
             Console.WriteLine("MessageErrorRecieved :code " + e.Code + " message " + e.MessageError);
         }
 
-        // set Streams
+        /// <summary>
+        /// Add a data stream to the subscription list. 
+        /// Call this before Start().
+        /// Example: AddStreams("eeg"), AddStreams("mot"), etc.
+        /// </summary>
+        /// <param name="stream">Stream name (e.g., "eeg", "mot", "pow", "met")</param>
         public void AddStreams(string stream)
         {
             if (!_streams.Contains(stream))
@@ -202,7 +207,13 @@ namespace CortexAccess
                 _streams.Add(stream);
             }
         }
-        // start
+        /// <summary>
+        /// Start the workflow: authorization, headset finding, session creation, and data stream subscription.
+        /// You must call AddStreams() for each stream you want to subscribe before calling Start().
+        /// </summary>
+        /// <param name="licenseID">(Obsolete) This parameter is kept for backward compatibility. Always set to empty string "".</param>
+        /// <param name="activeSession">True to use a license-required session (needed for EEG, high performance metrics, etc.)</param>
+        /// <param name="wantedHeadsetId">Specify headset ID to connect (default: first headset found)</param>
         public void Start(string licenseID="", bool activeSession = false, string wantedHeadsetId = "")
         {
             _wantedHeadsetId = wantedHeadsetId;
@@ -210,7 +221,10 @@ namespace CortexAccess
             _authorizer.Start(licenseID);
         }
 
-        // Unsubscribe
+        /// <summary>
+        /// Unsubscribe from data streams. If no streams are specified, unsubscribes from all currently subscribed streams.
+        /// </summary>
+        /// <param name="streams">List of stream names to unsubscribe (optional)</param>
         public void UnSubscribe(List<string> streams = null)
         {
             if (streams == null)

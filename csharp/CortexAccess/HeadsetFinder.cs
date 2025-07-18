@@ -6,6 +6,10 @@ using System.Timers;
 
 namespace CortexAccess
 {
+    /// <summary>
+    /// HeadsetFinder is a utility class for scanning, querying, and connecting to Emotiv headsets.
+    /// Use FindHeadset(headsetId) to start a timer to query headset and set desired headset. The class starts a timer to repeatedly query headsets until a connection is established.
+    /// </summary>
     public class HeadsetFinder
     {
         private CortexClient _ctxClient;

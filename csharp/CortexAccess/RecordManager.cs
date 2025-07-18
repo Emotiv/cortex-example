@@ -7,7 +7,9 @@ using System.Collections.Generic;
 namespace CortexAccess
 {
     /// <summary>
-    /// Reponsible for managing and handling records and markers.
+    /// RecordManager is a utility class for managing Cortex records and markers.
+    /// It handles authorization, headset selection, session management, record creation, stopping, updating, querying, deleting, exporting, and marker injection/updating.
+    /// Use Start() to begin authorization and session setup. Then use the other methods to manage records and markers.
     /// </summary>
     public class RecordManager
     {
@@ -30,9 +32,20 @@ namespace CortexAccess
 
         public event EventHandler<JObject> informMarkerResult;
         public event EventHandler<bool> sessionCreateOk;
+        public event EventHandler<string> DataPostProcessingFinished
+        {
+            add { _ctxClient.DataPostProcessingFinished += value; }
+            remove { _ctxClient.DataPostProcessingFinished -= value; }
+        }
+
+        public event EventHandler<MultipleResultEventArgs> ExportRecordsFinished
+        {
+            add { _ctxClient.ExportRecordsFinished += value; }
+            remove { _ctxClient.ExportRecordsFinished -= value; }
+        }
 
         // Constructor
-        public RecordManager ()
+        public RecordManager()
         {
             _authorizer = new Authorizer();
             _headsetFinder = new HeadsetFinder();
@@ -164,16 +177,19 @@ namespace CortexAccess
 
 
         /// <summary>
-        /// start a record manager with a license ID and a wanted headset ID.
+        /// Start the record manager workflow: authorization, headset selection, and session creation.
+        /// Call this before performing any record or marker operations.
         /// </summary>
-        public void Start( string wantedHeadsetId = "", string licenseID = "")
+        /// <param name="wantedHeadsetId">Optional headset ID to use (default: first headset found)</param>
+        /// <param name="licenseID">(Obsolete) This parameter is kept for backward compatibility. Always set to empty string ""</param>
+        public void Start(string wantedHeadsetId = "", string licenseID = "")
         {
             _wantedHeadsetId = wantedHeadsetId;
             _authorizer.Start(licenseID);
         }
 
         /// <summary>
-        /// stop a record manager
+        /// Stop the record manager and close the current session. Clears record state.
         /// </summary>
         public void Stop()
         {
@@ -185,62 +201,103 @@ namespace CortexAccess
         /// <summary>
         /// Create a new record.
         /// </summary>
+        /// <param name="title">Title for the record</param>
+        /// <param name="description">Optional description</param>
+        /// <param name="subjectName">Optional subject name</param>
+        /// <param name="tags">Optional list of tags</param>
         public void StartRecord(string title, JToken description = null,
-                                JToken subjectName = null, List<string> tags= null)
+                                JToken subjectName = null, List<string> tags = null)
         {
             // start record
             _sessionCreator.StartRecord(_authorizer.CortexToken, title, description, subjectName, tags);
         }
 
         /// <summary>
-        /// Stop a record that was previously started by StartRecord
+        /// Stop the current record that was previously started by StartRecord().
         /// </summary>
         public void StopRecord()
         {
             _sessionCreator.StopRecord(_authorizer.CortexToken);
         }
         /// <summary>
-        /// Update for record has uuid is recordId
+        /// Update an existing record with a new description and/or tags.
         /// </summary>
-        public void UpdateRecord(string recordId , string description = null, List<string> tags = null)
+        /// <param name="recordId">Record UUID to update</param>
+        /// <param name="description">Optional new description</param>
+        /// <param name="tags">Optional new tags</param>
+        public void UpdateRecord(string recordId, string description = null, List<string> tags = null)
         {
             _sessionCreator.UpdateRecord(_authorizer.CortexToken, recordId, description, tags);
         }
         /// <summary>
-        /// Query records
+        /// Query records with custom filters, ordering, and pagination.
         /// </summary>
+        /// <param name="queryObj">Query filters as a JObject</param>
+        /// <param name="orderBy">Order by fields as a JArray</param>
+        /// <param name="limit">Maximum number of records to return</param>
+        /// <param name="offset">Offset for pagination</param>
         public void QueryRecords(JObject queryObj, JArray orderBy, int limit, int offset)
         {
             queryObj.Add("applicationId", _sessionCreator.ApplicationId);
-
             _ctxClient.QueryRecord(_authorizer.CortexToken, queryObj, orderBy, offset, limit);
         }
 
+        /// <summary>
+        /// Delete one or more records by their UUIDs.
+        /// </summary>
+        /// <param name="records">List of record UUIDs to delete</param>
         public void DeleteRecords(List<string> records)
         {
             _ctxClient.DeleteRecord(_authorizer.CortexToken, records);
         }
 
+
         /// <summary>
-        /// inject marker
+        /// Export one or more records to a specified folder with customizable options.
         /// </summary>
+        /// <param name="records">List of record UUIDs to export</param>
+        /// <param name="folderPath">Absolute path to the folder for exported files</param>
+        /// <param name="streamTypes">List of stream types to include (e.g., "EEG", "MOTION")</param>
+        /// <param name="format">Export file format ("EDF", "EDFPLUS", "BDFPLUS", "CSV")</param>
+        /// <param name="version">Optional. For "CSV" format, use "V1" or "V2"</param>
+        /// <param name="licenseIds">Optional. License IDs for exporting records from other apps</param>
+        /// <param name="includeDemographics">Include demographic info</param>
+        /// <param name="includeMarkerExtraInfos">Include extra marker info</param>
+        /// <param name="includeSurvey">Include survey data</param>
+        /// <param name="includeDeprecatedPM">Include deprecated performance metrics</param>
+        /// <remarks>See https://emotiv.gitbook.io/cortex-api/records/exportrecord for details</remarks>
+        public void ExportRecord(List<string> records, string folderPath,
+                                 List<string> streamTypes, string format, string version = null,
+                                 List<string> licenseIds = null, bool includeDemographics = false,
+                                 bool includeMarkerExtraInfos = false, bool includeSurvey = false,
+                                 bool includeDeprecatedPM = false)
+        {
+            _ctxClient.ExportRecord(_authorizer.CortexToken, records, folderPath,
+                                    streamTypes, format, version, licenseIds,
+                                    includeDemographics, includeMarkerExtraInfos,
+                                    includeSurvey, includeDeprecatedPM);
+        }
+
+        /// <summary>
+        /// Inject a marker into the current record.
+        /// </summary>
+        /// <param name="markerLabel">Label for the marker</param>
+        /// <param name="markerValue">Value for the marker</param>
         public void InjectMarker(string markerLabel, string markerValue)
         {
             string cortexToken = _authorizer.CortexToken;
             string sessionId = _sessionCreator.SessionId;
-
             // inject marker
             _ctxClient.InjectMarker(cortexToken, sessionId, markerLabel, markerValue, Utils.GetEpochTimeNow());
         }
 
         /// <summary>
-        /// update marker to set the end date time of a marker, turning an "instance" marker into an "interval" marker
+        /// Update the current marker to set its end time, converting it from an "instance" to an "interval" marker.
         /// </summary>
         public void UpdateMarker()
         {
             string cortexToken = _authorizer.CortexToken;
             string sessionId = _sessionCreator.SessionId;
-
             // update marker
             _ctxClient.UpdateMarker(cortexToken, sessionId, _currMarkerId, Utils.GetEpochTimeNow());
         }

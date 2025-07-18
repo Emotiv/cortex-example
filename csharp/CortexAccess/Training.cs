@@ -4,9 +4,13 @@ using Newtonsoft.Json.Linq;
 
 namespace CortexAccess
 {
+    /// <summary>
+    /// Training is a helper class for handling profile management and training workflows with Emotiv Cortex.
+    /// It manages authorization, headset selection, detection type, profile creation/loading/unloading, and training actions.
+    /// Call Start() to begin authorization and set detection/headset. After authorization, it will get detection info and query available profiles.
+    /// </summary>
     public class Training
     {
-
         private CortexClient _ctxClient;
         private string _profileName; // must not existed
         private string _cortexToken;
@@ -101,7 +105,7 @@ namespace CortexAccess
 
         private void StreamDataReceived(object sender, StreamDataEventArgs e)
         {
-            
+
             if (e.StreamName == "sys")
             {
                 List<string> data = e.Data.ToObject<List<string>>();
@@ -207,7 +211,7 @@ namespace CortexAccess
             // subscribe
             _sessionId = sessionId;
             // Subscribe sys
-            List<string> stream = new List<string>() { "sys"};
+            List<string> stream = new List<string>() { "sys" };
             _ctxClient.Subscribe(_cortexToken, _sessionId, stream);
         }
 
@@ -235,6 +239,12 @@ namespace CortexAccess
             Console.WriteLine("MessageErrorRecieved :code " + e.Code + " message " + e.MessageError);
         }
 
+        /// <summary>
+        /// Start authorization and set detection type and desired headset.
+        /// After authorization, will get detection info and query available profiles.
+        /// </summary>
+        /// <param name="detection">Detection type: "mentalCommand" or "facialExpression"</param>
+        /// <param name="wantedHeadsetId">Optional headset ID to use</param>
         public void Start(string detection, string wantedHeadsetId = "")
         {
             if (detection == "mentalCommand" ||
@@ -247,9 +257,15 @@ namespace CortexAccess
             else
             {
                 Console.WriteLine("Unsupported detection. Only mentalCommand or facialExpression supported.");
-            } 
+            }
         }
 
+        /// <summary>
+        /// Start training for a specific action and status (e.g., "start", "accept", "reject").
+        /// The profile must be loaded and the action must be available in detection info.
+        /// </summary>
+        /// <param name="action">Action to train (e.g., "neutral", "push", "pull")</param>
+        /// <param name="status">Training status ("start", "accept", "reject")</param>
         public void DoTraining(string action, string status)
         {
             Console.WriteLine(status + " " + action + " training.");
@@ -269,6 +285,10 @@ namespace CortexAccess
             }
         }
 
+        /// <summary>
+        /// Create a new training profile for the current headset.
+        /// </summary>
+        /// <param name="profileName">Profile name (must not already exist)</param>
         public void CreateProfile(string profileName)
         {
             if (_profileLists.Contains(profileName))
@@ -279,6 +299,10 @@ namespace CortexAccess
             _ctxClient.SetupProfile(_cortexToken, profileName, "create", _headsetId);
         }
 
+        /// <summary>
+        /// Load an existing training profile for the current headset.
+        /// </summary>
+        /// <param name="profileName">Profile name to load</param>
         public void LoadProfile(string profileName)
         {
             if (_profileLists.Contains(profileName))
@@ -287,6 +311,10 @@ namespace CortexAccess
                 Console.WriteLine("The profile can not be loaded. The name " + profileName + " has not existed.");
         }
 
+        /// <summary>
+        /// Unload a training profile for the current headset.
+        /// </summary>
+        /// <param name="profileName">Profile name to unload</param>
         public void UnLoadProfile(string profileName)
         {
             if (_profileLists.Contains(profileName))

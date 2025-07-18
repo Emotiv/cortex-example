@@ -14,7 +14,6 @@ namespace MotionLogger
     {
         // init constants before running
         const string OutFilePath = @"MotionLogger.csv";
-        const string LicenseID = ""; // Should be put empty string. Emotiv Cloud will choose the license automatically
         const string WantedHeadsetId = ""; // if you want to connect to specific headset, put headset id here. For example: "EPOCX-71D833AC"
 
         private static FileStream OutFileStream;
@@ -37,7 +36,7 @@ namespace MotionLogger
             dse.OnSubscribed += SubscribedOK;
             dse.OnMotionDataReceived += OnMotionDataReceived;
 
-            dse.Start(LicenseID, false, WantedHeadsetId);
+            dse.Start("", false, WantedHeadsetId);
 
             Console.WriteLine("Press Esc to flush data to file and exit");
             while (Console.ReadKey().Key != ConsoleKey.Escape) { }
