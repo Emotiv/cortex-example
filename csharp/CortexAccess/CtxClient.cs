@@ -117,6 +117,7 @@ namespace CortexAccess
         public event EventHandler<Record> OnUpdateRecord;
         public event EventHandler<List<Record>> OnQueryRecords;
         public event EventHandler<MultipleResultEventArgs> OnDeleteRecords;
+        public event EventHandler<MultipleResultEventArgs> ExportRecordsFinished;
         public event EventHandler<JObject> OnInjectMarker;
         public event EventHandler<JObject> OnUpdateMarker;
         public event EventHandler<JObject> OnGetDetectionInfo;
@@ -133,6 +134,7 @@ namespace CortexAccess
         public event EventHandler<string> SessionClosedNotify;
         public event EventHandler<HeadsetConnectEventArgs> HeadsetConnectNotify;
         public event EventHandler<string> HeadsetScanFinished;
+        public event EventHandler<string> DataPostProcessingFinished;
 
         // Constructor
         static CortexClient()
@@ -425,6 +427,13 @@ namespace CortexAccess
             {
                 OnGetTrainingTime(this, (double)data["time"]);
             }
+            // export record
+            else if (method == "exportRecord")
+            {
+                JArray successList = (JArray)data["success"];
+                JArray failList = (JArray)data["failure"];
+                ExportRecordsFinished(this, new MultipleResultEventArgs(successList, failList));
+            }
 
         }
 
@@ -432,65 +441,58 @@ namespace CortexAccess
         private void HandleWarning(int code, JToken messageData)
         {
             Console.WriteLine("handleWarning: " + code);
-            if (code == WarningCode.AccessRightGranted)
+            switch (code)
             {
-                // granted access right
+            case WarningCode.AccessRightGranted:
                 OnAccessRightGranted(this, true);
-            }
-            else if (code == WarningCode.AccessRightRejected)
-            {
+                break;
+            case WarningCode.AccessRightRejected:
                 OnAccessRightGranted(this, false);
-            }
-            else if (code == WarningCode.EULAAccepted)
-            {
+                break;
+            case WarningCode.EULAAccepted:
                 OnEULAAccepted(this, true);
-            }
-            else if (code == WarningCode.UserLogin)
-            {
-                string message = messageData.ToString();
-                OnUserLogin(this, message);
-            }
-            else if (code == WarningCode.UserLogout)
-            {
-                string message = messageData.ToString();
-                OnUserLogout(this, message);
-            }
-            else if (code == WarningCode.HeadsetScanFinished)
-            {
-                string message = messageData["behavior"].ToString();
-                HeadsetScanFinished(this, message);
-            }
-            else if (code == WarningCode.StreamStop)
-            {
-                string sessionId = messageData["sessionId"].ToString();
-                SessionClosedNotify(this, sessionId);
-            }
-            else if (code == WarningCode.SessionAutoClosed)
-            {
-                string sessionId = messageData["sessionId"].ToString();
-                SessionClosedNotify(this, sessionId);
-            }
-            else if (code == WarningCode.HeadsetConnected)
-            {
+                break;
+            case WarningCode.UserLogin:
+                OnUserLogin(this, messageData.ToString());
+                break;
+            case WarningCode.UserLogout:
+                OnUserLogout(this, messageData.ToString());
+                break;
+            case WarningCode.HeadsetScanFinished:
+                HeadsetScanFinished(this, messageData["behavior"].ToString());
+                break;
+            case WarningCode.StreamStop:
+            case WarningCode.SessionAutoClosed:
+                SessionClosedNotify(this, messageData["sessionId"].ToString());
+                break;
+            case WarningCode.HeadsetConnected:
+                {
                 string headsetId = messageData["headsetId"].ToString();
                 string message = messageData["behavior"].ToString();
                 Console.WriteLine("handleWarning:" + message);
                 HeadsetConnectNotify(this, new HeadsetConnectEventArgs(true, message, headsetId));
-            }
-            else if (code == WarningCode.HeadsetWrongInformation ||
-                     code == WarningCode.HeadsetCannotConnected ||
-                     code == WarningCode.HeadsetConnectingTimeout)
-            {
+                break;
+                }
+            case WarningCode.HeadsetWrongInformation:
+            case WarningCode.HeadsetCannotConnected:
+            case WarningCode.HeadsetConnectingTimeout:
+                {
                 string headsetId = messageData["headsetId"].ToString();
                 string message = messageData["behavior"].ToString();
                 HeadsetConnectNotify(this, new HeadsetConnectEventArgs(false, message, headsetId));
-            }
-            else if (code == WarningCode.CortexAutoUnloadProfile)
-            {
-                // the current profile is unloaded automatically
+                break;
+                }
+            case WarningCode.CortexAutoUnloadProfile:
                 OnUnloadProfile(this, true);
+                break;
+            case WarningCode.DataPostProcessingFinished:
+                Console.WriteLine("Data post processing finished");
+                DataPostProcessingFinished(this, messageData["recordId"].ToString());
+                break;
+            default:
+                Console.WriteLine("Warning code: " + code + ", message: " + messageData.ToString());
+                break;
             }
-
         }
         private void WebSocketClient_Closed(object sender, EventArgs e)
         {
@@ -724,6 +726,52 @@ namespace CortexAccess
             param.Add("records", JArray.FromObject(records));
             param.Add("cortexToken", cortexToken);
             SendTextMessage(param, "deleteRecord", true);
+        }
+
+        // Export Records
+        // Required params: cortexToken, records, folderPath, streamTypes, format
+        public void ExportRecord(string cortexToken, List<string> records, string folderPath,
+                                 List<string> streamTypes, string format, string version = null,
+                                 List<string> licenseIds = null, bool includeDemographics = false,
+                                 bool includeMarkerExtraInfos = false, bool includeSurvey = false,
+                                 bool includeDeprecatedPM = false)
+        {
+            JObject param = new JObject();
+            param.Add("recordIds", JArray.FromObject(records));
+            param.Add("cortexToken", cortexToken);
+            param.Add("folder", folderPath);
+            param.Add("streamTypes", JArray.FromObject(streamTypes));
+            param.Add("format", format); // EDF, CSV, EDFPLUS, BDFPLUS
+            
+            // If the format is "EDF", then you must omit version parameter. 
+            // If the format is "CSV", then version parameter must be "V1" or "V2".
+            if (version != null)
+            {
+                param.Add("version", version);
+            }
+            if (licenseIds != null)
+            {
+                param.Add("licenseIds", JArray.FromObject(licenseIds));
+            }
+
+            if (includeDemographics)
+            {
+                param.Add("includeDemographics", includeDemographics);
+            }
+            if (includeMarkerExtraInfos)
+            {
+                param.Add("includeMarkerExtraInfos", includeMarkerExtraInfos);
+            }
+            if (includeSurvey)
+            {
+                param.Add("includeSurvey", includeSurvey);
+            }
+            if (includeDeprecatedPM)
+            {
+                param.Add("includeDeprecatedPM", includeDeprecatedPM);
+            }
+
+            SendTextMessage(param, "exportRecord", true);
         }
 
         // InjectMarker
