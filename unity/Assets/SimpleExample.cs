@@ -270,7 +270,35 @@ public class SimpleExample : MonoBehaviour
         _eItf.StopRecord();
     }
 
-    public void onInjectMarkerBtnClick() {
+    // export record to desktop
+    public void onExportRecordBtnClick()
+    {
+        Debug.Log("onExportRecordBtnClick");
+        string _recordId = _eItf.RecentRecord?.Uuid;
+        if (string.IsNullOrEmpty(_recordId))
+        {
+            UnityEngine.Debug.Log("The recordId is empty. Please export with a valid recordId.");
+            return;
+        }
+
+        // Determine the folder path for export. Default to Desktop folder (or persistent data path on mobile)
+        string folderPath;
+    #if UNITY_ANDROID || UNITY_IOS
+        // On mobile, use persistent data path
+        folderPath = Application.persistentDataPath;
+    #else
+        // On desktop, use Desktop folder
+        folderPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+    #endif
+        List<string> recordsToExport = new List<string> { _recordId };
+        List<string> streamTypes = new List<string> { "EEG", "MOTION" }; // Specify the stream types you want to export
+        string format = "CSV"; // or "CSV", "EDFPLUS", "BDFPLUS"
+        string version = "V2"; // Optional, specify if needed
+        _eItf.ExportRecord(recordsToExport, folderPath, streamTypes, format, version);
+    }   
+
+    public void onInjectMarkerBtnClick()
+    {
         Debug.Log("onInjectMarkerBtnClick " + MarkerValue.text + ":" + MarkerLabel.text);
         String markerValue = MarkerValue.text;
         String markerLabel = MarkerLabel.text;
@@ -377,8 +405,8 @@ public class SimpleExample : MonoBehaviour
 
     private void CheckButtonsInteractable()
     {
-        Button signInBtn = GameObject.Find("SessionPart").transform.Find("signInBtn").GetComponent<Button>();
-        Button signOutBtn = GameObject.Find("SessionPart").transform.Find("signOutBtn").GetComponent<Button>();
+        Button signInBtn = GameObject.Find("AuthenPart").transform.Find("signInBtn").GetComponent<Button>();
+        Button signOutBtn = GameObject.Find("AuthenPart").transform.Find("signOutBtn").GetComponent<Button>();
         #if USE_EMBEDDED_LIB || UNITY_ANDROID || UNITY_IOS
         ConnectToCortexStates connectionState =  _eItf.GetConnectToCortexState();
         signInBtn.interactable = (connectionState == ConnectToCortexStates.Login_notYet);
@@ -403,11 +431,13 @@ public class SimpleExample : MonoBehaviour
         Button startTrainingBtn = GameObject.Find("TrainingPart").transform.Find("startTrainingBtn").GetComponent<Button>();
         Button stopRecordBtn = GameObject.Find("RecordPart").transform.Find("stopRecordBtn").GetComponent<Button>();
         Button injectMarkerBtn = GameObject.Find("RecordPart").transform.Find("injectMarkerBtn").GetComponent<Button>();
+        Button exportRecordBtn = GameObject.Find("RecordPart").transform.Find("exportRecordBtn").GetComponent<Button>();
 
         createSessionBtn.interactable = _eItf.IsAuthorizedOK;
         queryHeadsetBtn.interactable = _eItf.IsAuthorizedOK;
         startRecordBtn.interactable = _eItf.IsSessionCreated;
         stopRecordBtn.interactable = _eItf.IsRecording;
+        exportRecordBtn.interactable = _eItf.IsAuthorizedOK && !_eItf.IsRecording;
         injectMarkerBtn.interactable = _eItf.IsRecording;
         subscribeBtn.interactable = _eItf.IsSessionCreated;
         unsubscribeBtn.interactable = _eItf.IsSessionCreated;

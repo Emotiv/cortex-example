@@ -79,6 +79,7 @@ In **AppConfig.cs**, set your `clientId` and `clientSecret` from your Emotiv Cor
 4. You can now:
    - **Subscribe/Unsubscribe Data Streams:** Select streams and click **"Subscribe Data"** or **"Unsubscribe Data"**.
    - **Start/Stop Recording:** Enter a title and click **"Start Record"**/**"Stop Record"**.
+   - **Export Record:** After stopping a recording, wait until you see `WarningCode = 30` or the message "Data post processing finished for record " in the message log box. Then, click the **"Export Record"** button to export the most recent record. Default to Desktop folder (or persistent data path on mobile)
    - **Inject Marker:** Enter a label/value and click **"Inject Marker"** while recording.
 > The UI and workflow are almost the same for Desktop, Android, and iOS.
 > 
