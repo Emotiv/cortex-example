@@ -38,6 +38,15 @@ public class SimpleExample : MonoBehaviour
 
     [SerializeField] public Text MessageLog;
 
+    // Enable horizontal wrapping for MessageLog
+    private void Awake()
+    {
+        if (MessageLog != null)
+        {
+            MessageLog.horizontalOverflow = HorizontalWrapMode.Wrap;
+        }
+    }
+
     // for android
     #if UNITY_ANDROID
     private const string FineLocationPermission = "android.permission.ACCESS_FINE_LOCATION";
