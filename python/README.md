@@ -46,6 +46,7 @@ Demonstrates how to:
 - Create a new record
 - Stop a record
 - Export recorded data to CSV or EDF
+- Query records and request to download record data
 See: [Records](https://emotiv.gitbook.io/cortex-api/records)
 
 ### 4. `marker.py` — Inject Markers

@@ -26,6 +26,7 @@ import ssl
 import time
 import json
 from datetime import datetime
+from pathlib import Path
 
 # define request id
 QUERY_HEADSET_ID                    =   1
@@ -53,6 +54,8 @@ GET_CORTEX_INFO_ID                  =   22
 UPDATE_MARKER_REQUEST_ID            =   23
 UNSUB_REQUEST_ID                    =   24
 REFRESH_HEADSET_LIST_ID             =   25
+QUERY_RECORDS_ID                    =   26
+REQUEST_DOWNLOAD_RECORDS_ID         =   27
 
 #define error_code
 ERR_PROFILE_ACCESS_DENIED = -32046
@@ -80,13 +83,31 @@ HEADSET_SCANNING_FINISHED = 142
 
 class Cortex(Dispatcher):
 
-    _events_ = ['inform_error','create_session_done', 'query_profile_done', 'load_unload_profile_done', 
+    _events_ = ['inform_error', 'authorize_done', 'create_session_done', 'query_profile_done', 'load_unload_profile_done', 
                 'save_profile_done', 'get_mc_active_action_done','mc_brainmap_done', 'mc_action_sensitivity_done', 
-                'mc_training_threshold_done', 'create_record_done', 'stop_record_done','warn_cortex_stop_all_sub', 'warn_record_post_processing_done',
+                'mc_training_threshold_done', 'create_record_done', 'stop_record_done','warn_cortex_stop_all_sub', 
+                'warn_record_post_processing_done', 'query_records_done', 'request_download_records_done',
                 'inject_marker_done', 'update_marker_done', 'export_record_done', 'new_data_labels', 
                 'new_com_data', 'new_fe_data', 'new_eeg_data', 'new_mot_data', 'new_dev_data', 
                 'new_met_data', 'new_pow_data', 'new_sys_data']
     def __init__(self, client_id, client_secret, debug_mode=False, **kwargs):
+        """
+        Initialize a Cortex instance with authentication and configuration options.
+        Args:
+            client_id (str): The client ID for authentication. Must not be empty.
+            client_secret (str): The client secret for authentication. Must not be empty.
+            debug_mode (bool, optional): Enable debug mode. Defaults to False.
+            **kwargs: Additional configuration options.
+                license (str, optional): (Obsolete) This parameter is kept for backward compatibility. Always set to empty string
+                debit (int, optional): Debit value for usage.
+                headset_id (str, optional): ID of the headset to connect.
+                auto_create_session (bool, optional): Automatically create session if True. For export and query records, don't need to create session.
+        Raises:
+            ValueError: If client_id or client_secret is empty.
+        Description:
+            This constructor sets up the Cortex instance with required authentication credentials and optional configuration parameters.
+            It validates the presence of client_id and client_secret, and allows further customization via keyword arguments.
+        """
         
         self.session_id = ''
         self.headset_id = ''
@@ -94,6 +115,7 @@ class Cortex(Dispatcher):
         self.debit = 10
         self.license = ''
         self.isHeadsetConnected = False
+        self.auto_create_session = True
 
         if client_id == '':
             raise ValueError('Empty your_app_client_id. Please fill in your_app_client_id before running the example.')
@@ -113,6 +135,8 @@ class Cortex(Dispatcher):
                 self.debit = value
             elif  key == 'headset_id':
                 self.headset_id = value
+            elif  key == 'auto_create_session':
+                self.auto_create_session = value
 
     def open(self):
         url = "wss://localhost:6868"
@@ -126,7 +150,11 @@ class Cortex(Dispatcher):
         
         # As default, a Emotiv self-signed certificate is required.
         # If you don't want to use the certificate, please replace by the below line  by sslopt={"cert_reqs": ssl.CERT_NONE}
-        sslopt = {'ca_certs': "../certificates/rootCA.pem", "cert_reqs": ssl.CERT_REQUIRED}
+        file_dir_path = Path(__file__).resolve().parent
+        parent_dir_path = file_dir_path.parent
+        
+        certificate_path = Path(parent_dir_path, 'certificates', 'rootCA.pem')
+        sslopt = {'ca_certs': str(certificate_path), "cert_reqs": ssl.CERT_REQUIRED}
 
         self.websock_thread  = threading.Thread(target=self.ws.run_forever, args=(None, sslopt), name=thread_name)
         self.websock_thread .start()
@@ -160,173 +188,237 @@ class Cortex(Dispatcher):
         req_id = recv_dic['id']
         result_dic = recv_dic['result']
 
-        if req_id == HAS_ACCESS_RIGHT_ID:
-            access_granted = result_dic['accessGranted']
-            if access_granted == True:
-                # authorize
-                self.authorize()
-            else:
-                # request access
-                self.request_access()
-        elif req_id == REQUEST_ACCESS_ID:
-            access_granted = result_dic['accessGranted']
+        # Dictionary dispatch pattern for better readability and performance
+        handler = self._get_result_handler(req_id)
+        if handler:
+            handler(result_dic)
+        else:
+            print('No handling for response of request ' + str(req_id))
 
-            if access_granted == True:
-                # authorize
-                self.authorize()
-            else:
-                # wait approve from Emotiv Launcher
-                msg = result_dic['message']
-                warnings.warn(msg)
-        elif req_id == AUTHORIZE_ID:
-            print("Authorize successfully.")
-            self.auth = result_dic['cortexToken']
+    def _get_result_handler(self, req_id):
+        """Return the appropriate handler function for the given request ID."""
+        handlers = {
+            HAS_ACCESS_RIGHT_ID: self._handle_has_access_right,
+            REQUEST_ACCESS_ID: self._handle_request_access,
+            AUTHORIZE_ID: self._handle_authorize,
+            QUERY_HEADSET_ID: self._handle_query_headset,
+            CREATE_SESSION_ID: self._handle_create_session,
+            SUB_REQUEST_ID: self._handle_sub_request,
+            UNSUB_REQUEST_ID: self._handle_unsub_request,
+            QUERY_PROFILE_ID: self._handle_query_profile,
+            SETUP_PROFILE_ID: self._handle_setup_profile,
+            GET_CURRENT_PROFILE_ID: self._handle_get_current_profile,
+            DISCONNECT_HEADSET_ID: self._handle_disconnect_headset,
+            MENTAL_COMMAND_ACTIVE_ACTION_ID: self._handle_mental_command_active_action,
+            MENTAL_COMMAND_TRAINING_THRESHOLD: self._handle_mental_command_training_threshold,
+            MENTAL_COMMAND_BRAIN_MAP_ID: self._handle_mental_command_brain_map,
+            SENSITIVITY_REQUEST_ID: self._handle_sensitivity_request,
+            QUERY_RECORDS_ID: self._handle_query_records,
+            REQUEST_DOWNLOAD_RECORDS_ID: self._handle_request_download_records,
+            CREATE_RECORD_REQUEST_ID: self._handle_create_record_request,
+            STOP_RECORD_REQUEST_ID: self._handle_stop_record_request,
+            EXPORT_RECORD_ID: self._handle_export_record,
+            INJECT_MARKER_REQUEST_ID: self._handle_inject_marker_request,
+            UPDATE_MARKER_REQUEST_ID: self._handle_update_marker_request,
+        }
+        return handlers.get(req_id)
+
+    def _handle_has_access_right(self, result_dic):
+        access_granted = result_dic['accessGranted']
+        if access_granted == True:
+            # authorize
+            self.authorize()
+        else:
+            # request access
+            self.request_access()
+
+    def _handle_request_access(self, result_dic):
+        access_granted = result_dic['accessGranted']
+
+        if access_granted == True:
+            # authorize
+            self.authorize()
+        else:
+            # wait approve from Emotiv Launcher
+            msg = result_dic['message']
+            warnings.warn(msg)
+
+    def _handle_authorize(self, result_dic):
+        print("Authorize successfully.")
+        self.auth = result_dic['cortexToken']
+        if self.auto_create_session:
             #After successful authorization, the app will call the API refresh headset list for the first time
             self.refresh_headset_list()
             # query headsets
             self.query_headset()
-        elif req_id == QUERY_HEADSET_ID:
-            self.headset_list = result_dic
-            found_headset = False
-            headset_status = ''
-            for ele in self.headset_list:
-                hs_id = ele['id']
-                status = ele['status']
-                connected_by = ele['connectedBy']
-                print('headsetId: {0}, status: {1}, connected_by: {2}'.format(hs_id, status, connected_by))
-                if self.headset_id != '' and self.headset_id == hs_id:
-                    found_headset = True
-                    headset_status = status
-
-            if len(self.headset_list) == 0:
-                self.isHeadsetConnected = False
-                warnings.warn("No headset available. Please turn on a headset.")
-            elif self.headset_id == '':
-                # set first headset is default headset
-                self.headset_id = self.headset_list[0]['id']
-                # call query headet again
-                self.query_headset()
-            elif found_headset == False:
-                warnings.warn("Can not found the headset " + self.headset_id + ". Please make sure the id is correct.")
-            elif found_headset == True:
-                if headset_status == 'connected':
-                    self.isHeadsetConnected = True
-                    # create session with the headset
-                    self.create_session()
-                elif headset_status == 'discovered':
-                    self.connect_headset(self.headset_id)
-                elif headset_status == 'connecting':
-                    # wait 3 seconds and query headset again
-                    time.sleep(3)
-                    self.query_headset()
-                else:
-                    warnings.warn('query_headset resp: Invalid connection status ' + headset_status)
-        elif req_id == CREATE_SESSION_ID:
-            self.session_id = result_dic['id']
-            print("The session " + self.session_id + " is created successfully.")
-            self.emit('create_session_done', data=self.session_id)
-        elif req_id == SUB_REQUEST_ID:
-            # handle data label
-            for stream in result_dic['success']:
-                stream_name = stream['streamName']
-                stream_labels = stream['cols']
-                print('The data stream '+ stream_name + ' is subscribed successfully.')
-                # ignore com, fac and sys data label because they are handled in on_new_data
-                if stream_name != 'com' and stream_name != 'fac':
-                    self.extract_data_labels(stream_name, stream_labels)
-
-            for stream in result_dic['failure']:
-                stream_name = stream['streamName']
-                stream_msg = stream['message']
-                print('The data stream '+ stream_name + ' is subscribed unsuccessfully. Because: ' + stream_msg)
-        elif req_id == UNSUB_REQUEST_ID:
-            for stream in result_dic['success']:
-                stream_name = stream['streamName']
-                print('The data stream '+ stream_name + ' is unsubscribed successfully.')
-
-            for stream in result_dic['failure']:
-                stream_name = stream['streamName']
-                stream_msg = stream['message']
-                print('The data stream '+ stream_name + ' is unsubscribed unsuccessfully. Because: ' + stream_msg)
-
-        elif req_id == QUERY_PROFILE_ID:
-            profile_list = []
-            for ele in result_dic:
-                if 'name' in ele:
-                    profile_name = str(ele['name'])
-                    read_only = ele['readOnly']
-                    print('profile name :', profile_name, " readonly :", read_only)
-                    profile_list.append(profile_name)
-                else:
-                    print('Result does not contain name field.')
-
-            self.emit('query_profile_done', data=profile_list)
-        elif req_id == SETUP_PROFILE_ID:
-            action = result_dic['action']
-            if action == 'create':
-                profile_name = result_dic['name']
-                if profile_name == self.profile_name:
-                    # load profile
-                    self.setup_profile(profile_name, 'load')
-            elif action == 'load':
-                print('load profile successfully')
-                self.emit('load_unload_profile_done', isLoaded=True)
-            elif action == 'unload':
-                self.emit('load_unload_profile_done', isLoaded=False)
-            elif action == 'save':
-                self.emit('save_profile_done')
-        elif req_id == GET_CURRENT_PROFILE_ID:
-            print(result_dic)
-            name = result_dic['name']
-            if name is None:
-                # no profile loaded with the headset
-                print('get_current_profile: no profile loaded with the headset ' + self.headset_id)
-                self.setup_profile(self.profile_name, 'load')
-            else:
-                loaded_by_this_app = result_dic['loadedByThisApp']
-                print('get current profile rsp: ' + name + ", loadedByThisApp: " + str(loaded_by_this_app))
-                if name != self.profile_name:
-                    warnings.warn("There is profile " + name + " is loaded for headset " + self.headset_id)
-                elif loaded_by_this_app == True:
-                    self.emit('load_unload_profile_done', isLoaded=True)
-                else:
-                    self.setup_profile(self.profile_name, 'unload')
-                    # warnings.warn("The profile " + name + " is loaded by other applications")
-        elif req_id == DISCONNECT_HEADSET_ID:
-            print("Disconnect headset " + self.headset_id)
-            self.headset_id = ''
-        elif req_id == MENTAL_COMMAND_ACTIVE_ACTION_ID:
-            self.emit('get_mc_active_action_done', data=result_dic)
-        elif req_id == MENTAL_COMMAND_TRAINING_THRESHOLD:
-            self.emit('mc_training_threshold_done', data=result_dic)
-        elif req_id == MENTAL_COMMAND_BRAIN_MAP_ID:
-            self.emit('mc_brainmap_done', data=result_dic)
-        elif req_id == SENSITIVITY_REQUEST_ID:
-            self.emit('mc_action_sensitivity_done', data=result_dic)
-        elif req_id == CREATE_RECORD_REQUEST_ID:
-            self.record_id = result_dic['record']['uuid']
-            self.emit('create_record_done', data=result_dic['record'])
-        elif req_id == STOP_RECORD_REQUEST_ID:
-            self.emit('stop_record_done', data=result_dic['record'])
-        elif req_id == EXPORT_RECORD_ID:
-            # handle data lable
-            success_export = []
-            for record in result_dic['success']:
-                record_id = record['recordId']
-                success_export.append(record_id)
-
-            for record in result_dic['failure']:
-                record_id = record['recordId']
-                failure_msg = record['message']
-                print('export_record resp failure cases: '+ record_id + ":" + failure_msg)
-
-            self.emit('export_record_done', data=success_export)
-        elif req_id == INJECT_MARKER_REQUEST_ID:
-            self.emit('inject_marker_done', data=result_dic['marker'])
-        elif req_id == UPDATE_MARKER_REQUEST_ID:
-            self.emit('update_marker_done', data=result_dic['marker'])
         else:
-            print('No handling for response of request ' + str(req_id))
+            self.emit('authorize_done')
+
+    def _handle_query_headset(self, result_dic):
+        self.headset_list = result_dic
+        found_headset = False
+        headset_status = ''
+        for ele in self.headset_list:
+            hs_id = ele['id']
+            status = ele['status']
+            connected_by = ele['connectedBy']
+            print('headsetId: {0}, status: {1}, connected_by: {2}'.format(hs_id, status, connected_by))
+            if self.headset_id != '' and self.headset_id == hs_id:
+                found_headset = True
+                headset_status = status
+
+        if len(self.headset_list) == 0:
+            self.isHeadsetConnected = False
+            warnings.warn("No headset available. Please turn on a headset.")
+        elif self.headset_id == '':
+            # set first headset is default headset
+            self.headset_id = self.headset_list[0]['id']
+            # call query headet again
+            self.query_headset()
+        elif found_headset == False:
+            warnings.warn("Can not found the headset " + self.headset_id + ". Please make sure the id is correct.")
+        elif found_headset == True:
+            if headset_status == 'connected':
+                self.isHeadsetConnected = True
+                # create session with the headset
+                self.create_session()
+            elif headset_status == 'discovered':
+                self.connect_headset(self.headset_id)
+            elif headset_status == 'connecting':
+                # wait 3 seconds and query headset again
+                time.sleep(3)
+                self.query_headset()
+            else:
+                warnings.warn('query_headset resp: Invalid connection status ' + headset_status)
+
+    def _handle_create_session(self, result_dic):
+        self.session_id = result_dic['id']
+        print("The session " + self.session_id + " is created successfully.")
+        self.emit('create_session_done', data=self.session_id)
+
+    def _handle_sub_request(self, result_dic):
+        # handle data label
+        for stream in result_dic['success']:
+            stream_name = stream['streamName']
+            stream_labels = stream['cols']
+            print('The data stream '+ stream_name + ' is subscribed successfully.')
+            # ignore com, fac and sys data label because they are handled in on_new_data
+            if stream_name != 'com' and stream_name != 'fac':
+                self.extract_data_labels(stream_name, stream_labels)
+
+        for stream in result_dic['failure']:
+            stream_name = stream['streamName']
+            stream_msg = stream['message']
+            print('The data stream '+ stream_name + ' is subscribed unsuccessfully. Because: ' + stream_msg)
+
+    def _handle_unsub_request(self, result_dic):
+        for stream in result_dic['success']:
+            stream_name = stream['streamName']
+            print('The data stream '+ stream_name + ' is unsubscribed successfully.')
+
+        for stream in result_dic['failure']:
+            stream_name = stream['streamName']
+            stream_msg = stream['message']
+            print('The data stream '+ stream_name + ' is unsubscribed unsuccessfully. Because: ' + stream_msg)
+
+    def _handle_query_profile(self, result_dic):
+        profile_list = []
+        for ele in result_dic:
+            if 'name' in ele:
+                profile_name = str(ele['name'])
+                read_only = ele['readOnly']
+                print('profile name :', profile_name, " readonly :", read_only)
+                profile_list.append(profile_name)
+            else:
+                print('Result does not contain name field.')
+
+        self.emit('query_profile_done', data=profile_list)
+
+    def _handle_setup_profile(self, result_dic):
+        action = result_dic['action']
+        if action == 'create':
+            profile_name = result_dic['name']
+            if profile_name == self.profile_name:
+                # load profile
+                self.setup_profile(profile_name, 'load')
+        elif action == 'load':
+            print('load profile successfully')
+            self.emit('load_unload_profile_done', isLoaded=True)
+        elif action == 'unload':
+            self.emit('load_unload_profile_done', isLoaded=False)
+        elif action == 'save':
+            self.emit('save_profile_done')
+
+    def _handle_get_current_profile(self, result_dic):
+        print(result_dic)
+        name = result_dic['name']
+        if name is None:
+            # no profile loaded with the headset
+            print('get_current_profile: no profile loaded with the headset ' + self.headset_id)
+            self.setup_profile(self.profile_name, 'load')
+        else:
+            loaded_by_this_app = result_dic['loadedByThisApp']
+            print('get current profile rsp: ' + name + ", loadedByThisApp: " + str(loaded_by_this_app))
+            if name != self.profile_name:
+                warnings.warn("There is profile " + name + " is loaded for headset " + self.headset_id)
+            elif loaded_by_this_app == True:
+                self.emit('load_unload_profile_done', isLoaded=True)
+            else:
+                self.setup_profile(self.profile_name, 'unload')
+                # warnings.warn("The profile " + name + " is loaded by other applications")
+
+    def _handle_disconnect_headset(self, result_dic):
+        print("Disconnect headset " + self.headset_id)
+        self.headset_id = ''
+
+    def _handle_mental_command_active_action(self, result_dic):
+        self.emit('get_mc_active_action_done', data=result_dic)
+
+    def _handle_mental_command_training_threshold(self, result_dic):
+        self.emit('mc_training_threshold_done', data=result_dic)
+
+    def _handle_mental_command_brain_map(self, result_dic):
+        self.emit('mc_brainmap_done', data=result_dic)
+
+    def _handle_sensitivity_request(self, result_dic):
+        self.emit('mc_action_sensitivity_done', data=result_dic)
+
+    def _handle_query_records(self, result_dic):
+        record_num = result_dic['count']
+        limit_num = result_dic['limit']
+        offset_num = result_dic['offset']
+        records = result_dic['records']
+        self.emit('query_records_done', data=records, count=record_num, limit=limit_num, offset=offset_num)
+
+    def _handle_request_download_records(self, result_dic):
+        self.emit('request_download_records_done', data=result_dic)
+
+    def _handle_create_record_request(self, result_dic):
+        self.record_id = result_dic['record']['uuid']
+        self.emit('create_record_done', data=result_dic['record'])
+
+    def _handle_stop_record_request(self, result_dic):
+        self.emit('stop_record_done', data=result_dic['record'])
+
+    def _handle_export_record(self, result_dic):
+        # handle data lable
+        success_export = []
+        for record in result_dic['success']:
+            record_id = record['recordId']
+            success_export.append(record_id)
+
+        for record in result_dic['failure']:
+            record_id = record['recordId']
+            failure_msg = record['message']
+            print('export_record resp failure cases: '+ record_id + ":" + failure_msg)
+
+        self.emit('export_record_done', data=success_export)
+
+    def _handle_inject_marker_request(self, result_dic):
+        self.emit('inject_marker_done', data=result_dic['marker'])
+
+    def _handle_update_marker_request(self, result_dic):
+        self.emit('update_marker_done', data=result_dic['marker'])
 
     def handle_error(self, recv_dic):
         req_id = recv_dic['id']
@@ -334,33 +426,57 @@ class Cortex(Dispatcher):
         self.emit('inform_error', error_data=recv_dic['error'])
     
     def handle_warning(self, warning_dic):
-
         if self.debug:
             print(warning_dic)
+        
         warning_code = warning_dic['code']
         warning_msg = warning_dic['message']
-        if warning_code == ACCESS_RIGHT_GRANTED:
-            # call authorize again
-            self.authorize()
-        elif warning_code == HEADSET_CONNECTED:
-            # query headset again then create session
-            self.query_headset()
-        elif warning_code == CORTEX_AUTO_UNLOAD_PROFILE:
-            self.profile_name = ''
-        elif  warning_code == CORTEX_STOP_ALL_STREAMS:
-            # print(warning_msg['behavior'])
-            session_id = warning_msg['sessionId']
-            if session_id == self.session_id:
-                self.emit('warn_cortex_stop_all_sub', data=session_id)
-                self.session_id = ''
-        elif warning_code == CORTEX_RECORD_POST_PROCESSING_DONE:
-                record_id = warning_msg['recordId']
-                self.emit('warn_record_post_processing_done', data=record_id)
-        elif  warning_code == HEADSET_SCANNING_FINISHED:
-            # After headset scanning finishes, if no headset is connected yet, the app should call the controlDevice("refresh") again
-            # We recommend the app should NOT call controlDevice("refresh") when a headset is connected, to have the best data stream quality.
-            if (self.isHeadsetConnected == False):
-                self.refresh_headset_list()
+        
+        # Dictionary dispatch pattern for better readability and performance
+        handler = self._get_warning_handler(warning_code)
+        if handler:
+            handler(warning_msg)
+        # Note: No else clause needed as some warning codes may not require handling
+
+    def _get_warning_handler(self, warning_code):
+        """Return the appropriate handler function for the given warning code."""
+        handlers = {
+            ACCESS_RIGHT_GRANTED: self._handle_access_right_granted,
+            HEADSET_CONNECTED: self._handle_headset_connected,
+            CORTEX_AUTO_UNLOAD_PROFILE: self._handle_cortex_auto_unload_profile,
+            CORTEX_STOP_ALL_STREAMS: self._handle_cortex_stop_all_streams,
+            CORTEX_RECORD_POST_PROCESSING_DONE: self._handle_cortex_record_post_processing_done,
+            HEADSET_SCANNING_FINISHED: self._handle_headset_scanning_finished,
+        }
+        return handlers.get(warning_code)
+
+    def _handle_access_right_granted(self, warning_msg):
+        # call authorize again
+        self.authorize()
+
+    def _handle_headset_connected(self, warning_msg):
+        # query headset again then create session
+        self.query_headset()
+
+    def _handle_cortex_auto_unload_profile(self, warning_msg):
+        self.profile_name = ''
+
+    def _handle_cortex_stop_all_streams(self, warning_msg):
+        # print(warning_msg['behavior'])
+        session_id = warning_msg['sessionId']
+        if session_id == self.session_id:
+            self.emit('warn_cortex_stop_all_sub', data=session_id)
+            self.session_id = ''
+
+    def _handle_cortex_record_post_processing_done(self, warning_msg):
+        record_id = warning_msg['recordId']
+        self.emit('warn_record_post_processing_done', data=record_id)
+
+    def _handle_headset_scanning_finished(self, warning_msg):
+        # After headset scanning finishes, if no headset is connected yet, the app should call the controlDevice("refresh") again
+        # We recommend the app should NOT call controlDevice("refresh") when a headset is connected, to have the best data stream quality.
+        if (self.isHeadsetConnected == False):
+            self.refresh_headset_list()
 
     def handle_stream_data(self, result_dic):
         if result_dic.get('com') != None:
@@ -704,6 +820,41 @@ class Cortex(Dispatcher):
             print('\n')
 
         self.ws.send(json.dumps(train_request_json))
+
+    def query_records(self, query_params):
+        print('query records --------------------------------')
+
+        params_val = {"cortexToken": self.auth}
+
+        for key, value in query_params.items():
+            params_val.update({key: value})
+
+        query_records_request = {
+            "jsonrpc": "2.0", 
+            "method": "queryRecords",
+            "params": params_val, 
+            "id": QUERY_RECORDS_ID
+        }
+        if self.debug:
+            print('query records request:\n', json.dumps(query_records_request, indent=4))
+
+        self.ws.send(json.dumps(query_records_request))
+    
+    def request_download_records(self, recordIds):
+        print('request to download records --------------------------------')
+
+        params_val = {"cortexToken": self.auth, 'recordIds': recordIds}
+
+        download_records_request = {
+            "jsonrpc": "2.0", 
+            "method": "requestToDownloadRecordData",
+            "params": params_val, 
+            "id": REQUEST_DOWNLOAD_RECORDS_ID
+        }
+        if self.debug:
+            print('requestToDownloadRecordData request:\n', json.dumps(download_records_request, indent=4))
+
+        self.ws.send(json.dumps(download_records_request))
 
     def create_record(self, title, **kwargs):
         print('create record --------------------------------')
