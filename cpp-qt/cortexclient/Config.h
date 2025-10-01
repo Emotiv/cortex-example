@@ -18,9 +18,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>
 #include <QJsonObject>
 
 /*
- * To get a client id and a client secret, you must connect to your Emotiv
- * account on emotiv.com and create a Cortex app.
- * https://www.emotiv.com/my-account/cortex-apps/
+ * Enter your application Client ID and Client Secret below.
+ * You can obtain these credentials after registering your App ID with the Cortex SDK for development.
+ * For instructions, visit: https://emotiv.gitbook.io/cortex-api#create-a-cortex-app
  */
 static const QString ClientId = "The client id of your Cortex app goes here";
 static const QString ClientSecret = "The client secret of your Cortex app goes here";

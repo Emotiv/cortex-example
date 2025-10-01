@@ -217,7 +217,6 @@ class Subcribe():
 #   - Please reference to https://emotiv.gitbook.io/cortex-api/ first.
 #   - Connect your headset with dongle or bluetooth. You can see the headset via Emotiv Launcher
 #   - Please make sure the your_app_client_id and your_app_client_secret are set before starting running.
-#   - In the case you borrow license from others, you need to add license = "xxx-yyy-zzz" as init parameter
 # RESULT
 #   - the data labels will be retrieved at on_new_data_labels
 #   - the data will be retreived at on_new_[dataStream]_data
@@ -226,7 +225,9 @@ class Subcribe():
 
 def main():
 
-    # Please fill your application clientId and clientSecret before running script
+    # Enter your application Client ID and Client Secret below.
+    # You can obtain these credentials after registering your App ID with the Cortex SDK for development.
+    # For instructions, visit: https://emotiv.gitbook.io/cortex-api#create-a-cortex-app
     your_app_client_id = ''
     your_app_client_secret = ''
 
