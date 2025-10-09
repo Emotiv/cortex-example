@@ -272,8 +272,8 @@ def main():
     # Enter your application Client ID and Client Secret below.
     # You can obtain these credentials after registering your App ID with the Cortex SDK for development.
     # For instructions, visit: https://emotiv.gitbook.io/cortex-api#create-a-cortex-app
-    your_app_client_id = ''
-    your_app_client_secret = ''
+    your_app_client_id = 'put_your_app_client_id_here'
+    your_app_client_secret = 'put_your_app_client_secret_here'
 
     # Init Train
     t=Train(your_app_client_id, your_app_client_secret)
