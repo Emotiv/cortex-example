@@ -21,8 +21,7 @@ Before running the examples, please ensure you have completed the following step
 3. **Obtain an EMOTIV Headset or Create a Virtual Device**:
    - Purchase a headset from the [EMOTIV online store](https://www.emotiv.com/), **or**
    - Use a virtual headset in the EMOTIV Launcher by following [these instructions](https://emotiv.gitbook.io/emotiv-launcher/devices-setting-up-virtual-brainwear-r/creating-a-virtual-brainwear-device).
-4. **Get Client ID & Secret**: Log in to your Emotiv account at [emotiv.com](https://www.emotiv.com/my-account/cortex-apps/) and create a Cortex app. [Register here](https://id.emotivcloud.com/eoidc/account/registration/) if you don't have an account. 
-5. **Authorize Examples**: The first time you run these examples, you may need to grant permission for your application to work with Emotiv Cortex.
+4. **Create your Cortex App**: Once you register your Cortex App ID, you will receive a Client ID and Client Secret, which serve as unique identifiers for your software application. For instructions, visit: https://emotiv.gitbook.io/cortex-api#create-a-cortex-app
 
 ---
 
