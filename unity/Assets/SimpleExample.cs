@@ -292,9 +292,13 @@ public class SimpleExample : MonoBehaviour
 
         // Determine the folder path for export. Default to Desktop folder (or persistent data path on mobile)
         string folderPath;
-    #if UNITY_ANDROID || UNITY_IOS
+    #if UNITY_ANDROID
         // On mobile, use persistent data path
         folderPath = Application.persistentDataPath;
+    #elif UNITY_IOS
+        // On iOS do not need to specify the folder.
+        // Cortex exports the data to the "Documents" folder of the current application.
+        folderPath = "";
     #else
         // On desktop, use Desktop folder
         folderPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
