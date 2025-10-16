@@ -298,6 +298,7 @@ public class SimpleExample : MonoBehaviour
     #elif UNITY_IOS
         // On iOS do not need to specify the folder.
         // Cortex exports the data to the "Documents" folder of the current application.
+        // Empty path lets the plugin handle default Documents folder location
         folderPath = "";
     #else
         // On desktop, use Desktop folder

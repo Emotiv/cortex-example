@@ -180,9 +180,11 @@ class Records():
 
 def main():
 
-    # Please fill your application clientId and clientSecret before running script
-    your_app_client_id = ''
-    your_app_client_secret = ''
+    # Enter your application Client ID and Client Secret below.
+    # You can obtain these credentials after registering your App ID with the Cortex SDK for development.
+    # For instructions, visit: https://emotiv.gitbook.io/cortex-api#create-a-cortex-app
+    your_app_client_id = 'put_your_app_client_id_here'
+    your_app_client_secret = 'put_your_app_client_secret_here'
     
     # Don't need to create session in this case
     r = Records(your_app_client_id, your_app_client_secret, auto_create_session= False)
