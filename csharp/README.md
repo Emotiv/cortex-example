@@ -7,7 +7,7 @@ This repository provides C# console applications that demonstrate how to use the
 
 ### Requirements
 - **Visual Studio 2019 or newer** (Community/Professional/Enterprise)
-- **.NET Framework 4.7.2 or newer**
+- **.NET Framework 4.8 or newer**
 - **C# compiler**: Use the default provided by Visual Studio
 - **NuGet Packages** (install via NuGet Package Manager):
   - `Newtonsoft.Json`

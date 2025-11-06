@@ -1,13 +1,81 @@
-*.pro.user
+### OS junk
 .DS_Store
-venv
-cortex_creds
-**__pycache__**
+Thumbs.db
+ehthumbs.db
+Icon?
+
+### General logs
+*.log
+logs/
+
+### Python
+__pycache__/
+**/__pycache__/**
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.env
+.env.*
+.pytest_cache/
+.mypy_cache/
+.coverage
+
+### Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+### Visual Studio /.NET
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+TestResult*/
+*.Cache
+*.ide
+*.pdb
+*.mdb
+*.nupkg
+*.snupkg
+packages/*
+!packages/build/
+!packages/repositories.config
+csharp/packages/
+
+### Qt/C++
+*.pro.user*
+*.qmake.stash
+build-*/
+*.o
+*.obj
+*.dll
+*.lib
+*.exp
+*.ilk
+*.pdb
+Makefile*
+moc_*
+ui_*
+qrc_*
+
+### Unity
 unity/*.sln
 unity/*.csproj
 unity/Library/
 unity/Tmp/
-Temp/
+unity/Temp/
+unity/Obj/
+unity/Build/
+unity/Logs/
+unity/UserSettings/
 unity/*.userprefs
 unity/*.unityproj
+
+### Project-specific
+cortex_creds
 *build-*
