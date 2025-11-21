@@ -3,9 +3,9 @@
     static class Config
     {
         /*
-         * To get a client id and a client secret, you must connect to your Emotiv
-         * account on emotiv.com and create a Cortex app.
-         * https://www.emotiv.com/my-account/cortex-apps/
+         * Enter your application Client ID and Client Secret below.
+         * You can obtain these credentials after registering your App ID with the Cortex SDK for development.
+         * For instructions, visit: https://emotiv.gitbook.io/cortex-api#create-a-cortex-app
          */
         public static string AppClientId = "put_your_application_client_id_here";
         public static string AppClientSecret = "put_your_application_client_secret_here";
