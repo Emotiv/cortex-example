@@ -47,107 +47,9 @@ public class SimpleExample : MonoBehaviour
         }
     }
 
-    // for android
-    #if UNITY_ANDROID
-    private const string FineLocationPermission = "android.permission.ACCESS_FINE_LOCATION";
-    private const string BluetoothScanPermission = "android.permission.BLUETOOTH_SCAN";
-    private const string BluetoothConnectPermission = "android.permission.BLUETOOTH_CONNECT";
-    private const string BluetoothPermission = "android.permission.BLUETOOTH";
-
-    private bool HasAllPermissions()
-    {
-        // check location permission
-        if (!HasPermission(FineLocationPermission))
-        {
-            return false;
-        }
-
-        // check bluetooth permission
-        AndroidJavaClass jc = new AndroidJavaClass("android.os.Build$VERSION");
-        int androidVersion = jc.GetStatic<int>("SDK_INT");
-
-        if (androidVersion >= 31)
-        {
-            // Android 12 or higher. need bluetooth scan and connect permission
-            if (!HasPermission(BluetoothScanPermission) || !HasPermission(BluetoothConnectPermission))
-            {
-                return false;
-            }
-        }
-        else
-        {
-            // Android 11 or lower. need bluetooth permission
-            if (!HasPermission(BluetoothPermission))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private IEnumerator RequestPermissions()
-    {
-        // check android version . if android version >= 31, need bluetooth scan and connect permission otherwise need bluetooth permission only. the location permission is always needed
-        AndroidJavaClass jc = new AndroidJavaClass("android.os.Build$VERSION");
-        int androidVersion = jc.GetStatic<int>("SDK_INT");
-        string[] _permissions;
-
-        if (androidVersion >= 30)
-        {
-            _permissions = new string[] { FineLocationPermission, BluetoothScanPermission, BluetoothConnectPermission };
-        }
-        else
-        {
-            _permissions = new string[] { FineLocationPermission, BluetoothPermission };
-        }
-
-        foreach (var permission in _permissions)
-        {
-            if (!HasPermission(permission))
-            {
-                RequestPermission(permission);
-                yield return new WaitUntil(() => HasPermission(permission));
-            }
-        }
-    }
-
-    // start EmotivUnityItf for android
-    private void StartEmotivUnityItfForAndroid() {
-        if (HasAllPermissions()) {
-            AndroidJavaClass unityPlayer = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
-            AndroidJavaObject currentActivity = unityPlayer.GetStatic<AndroidJavaObject>("currentActivity");
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
-            _eItf.Start(currentActivity);
-            _isEmotivUnityItfInitialized = true;
-        }
-        else {
-            StartCoroutine(RequestPermissions());
-        }
-    }
-
-    private static bool HasPermission(string permissionName)
-    {
-        return Permission.HasUserAuthorizedPermission(permissionName);
-    }
-
-    private static void RequestPermission(string permissionName) {
-        if (Permission.HasUserAuthorizedPermission(permissionName))
-        {
-            Debug.Log("Permission " + permissionName + " is authorized");
-        }
-        else
-        {
-            // We do not have permission to use the microphone.
-            // Ask for permission or proceed without the functionality enabled.
-            Permission.RequestUserPermission(permissionName);
-        }
-    }
-    #endif
-
     void Start()
     {
-        
-    #if USE_EMBEDDED_LIB && UNITY_STANDALONE_WIN && !UNITY_EDITOR
+#if USE_EMBEDDED_LIB && UNITY_STANDALONE_WIN && !UNITY_EDITOR
         string[] args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
         {
@@ -156,18 +58,9 @@ public class SimpleExample : MonoBehaviour
         }
 #endif
 
-#if UNITY_ANDROID
-            StartEmotivUnityItfForAndroid();
-#elif UNITY_IOS
-            UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for ios");
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing);
-            _eItf.Start();
-#else
-        UnityEngine.Debug.Log("SimpleExp: Start EmotivUnityItf for desktop " + AppConfig.AppUrl);
-            _eItf.Init(AppConfig.ClientId, AppConfig.ClientSecret, AppConfig.AppName, AppConfig.AllowSaveLogToFile, AppConfig.IsDataBufferUsing, AppConfig.AppUrl);
-            _eItf.Start();
-            _isEmotivUnityItfInitialized = true;
-        #endif
+        // Initialize and start Emotiv Unity Interface
+        // Configuration is read from EmotivCortexSDKWindow (Tools > Emotiv Cortex SDK)
+        _isEmotivUnityItfInitialized = _eItf.InitializeAndStart();
     }
 
     // Update is called once per frame
@@ -178,12 +71,11 @@ public class SimpleExample : MonoBehaviour
             return;
         _timerDataUpdate -= TIME_UPDATE_DATA;
 
-        #if UNITY_ANDROID
-        if (!_isEmotivUnityItfInitialized) {
-            // start EmotivUnityItf for android if not started
-            StartEmotivUnityItfForAndroid();
+        // Retry initialization if not yet initialized (e.g., waiting for Android permissions)
+        if (!_isEmotivUnityItfInitialized)
+        {
+            _isEmotivUnityItfInitialized = _eItf.InitializeAndStart();
         }
-        #endif
 
         // Check buttons interactable
         CheckButtonsInteractable();
@@ -195,7 +87,8 @@ public class SimpleExample : MonoBehaviour
         // List<Headset> detectedHeadsets = _eItf.GetDetectedHeadsets();
 
         // Demo how to get subcribed data if use Data Buffer
-        if (AppConfig.IsDataBufferUsing) {
+        // Note: IsDataBufferUsing is configured in EmotivCortexSDKWindow
+        if (_eItf.IsAuthorizedOK) {
             // eeg data
             // if (_eItf.GetNumberEEGSamples() > 0) {
             //     string eegHeaderStr = "EEG Header: ";
