@@ -56,6 +56,7 @@ UNSUB_REQUEST_ID                    =   24
 REFRESH_HEADSET_LIST_ID             =   25
 QUERY_RECORDS_ID                    =   26
 REQUEST_DOWNLOAD_RECORDS_ID         =   27
+SYNC_WITH_HEADSET_CLOCK_ID          =   28
 
 #define error_code
 ERR_PROFILE_ACCESS_DENIED = -32046
@@ -89,7 +90,7 @@ class Cortex(Dispatcher):
                 'warn_record_post_processing_done', 'query_records_done', 'request_download_records_done',
                 'inject_marker_done', 'update_marker_done', 'export_record_done', 'new_data_labels', 
                 'new_com_data', 'new_fe_data', 'new_eeg_data', 'new_mot_data', 'new_dev_data', 
-                'new_met_data', 'new_pow_data', 'new_sys_data']
+                'new_met_data', 'new_pow_data', 'new_sys_data', 'sync_with_headset_clock_done']
     def __init__(self, client_id, client_secret, debug_mode=False, **kwargs):
         """
         Initialize a Cortex instance with authentication and configuration options.
@@ -220,6 +221,7 @@ class Cortex(Dispatcher):
             EXPORT_RECORD_ID: self._handle_export_record,
             INJECT_MARKER_REQUEST_ID: self._handle_inject_marker_request,
             UPDATE_MARKER_REQUEST_ID: self._handle_update_marker_request,
+            SYNC_WITH_HEADSET_CLOCK_ID: self._handle_sync_with_headset_clock
         }
         return handlers.get(req_id)
 
@@ -419,6 +421,9 @@ class Cortex(Dispatcher):
 
     def _handle_update_marker_request(self, result_dic):
         self.emit('update_marker_done', data=result_dic['marker'])
+
+    def _handle_sync_with_headset_clock(self, result_dic):
+        self.emit('sync_with_headset_clock_done', data=result_dic)
 
     def handle_error(self, recv_dic):
         req_id = recv_dic['id']
@@ -1090,6 +1095,29 @@ class Cortex(Dispatcher):
             print('controlDevice refresh request \n', json.dumps(refresh_request, indent=4))
 
         self.ws.send(json.dumps(refresh_request, indent=4))
+
+    def sync_with_headset_clock(self, headset_id=None):
+        print('sync with headset clock --------------------------------')
+
+        # Use instance headset_id if not provided
+        if headset_id is None:
+            headset_id = self.headset_id
+
+        sync_request = {
+            "jsonrpc": "2.0",
+            "id": SYNC_WITH_HEADSET_CLOCK_ID,  # Using next available ID
+            "method": "syncWithHeadsetClock",
+            "params": {
+                "headset": headset_id,
+                "systemTime": time.time(),
+                "monotonicTime": time.monotonic()
+            }
+        }
+
+        if self.debug:
+            print('sync with headset clock request \n', json.dumps(sync_request, indent=4))
+
+        self.ws.send(json.dumps(sync_request))
 
 # -------------------------------------------------------------------
 # -------------------------------------------------------------------
