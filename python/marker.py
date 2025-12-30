@@ -13,6 +13,7 @@ class Marker():
         self.c.bind(inform_error=self.on_inform_error)
         self.c.bind(warn_record_post_processing_done=self.on_warn_record_post_processing_done)
         self.c.bind(sync_with_headset_clock_done=self.on_sync_with_headset_clock_done)
+        self.headset_clock_adjustment = 0
 
     def start(self, number_markers=10, headset_id=''):
         """
@@ -74,7 +75,7 @@ class Marker():
     def add_markers(self):
         print('add_markers: ' + str(self.number_markers) + ' markers will be injected each second automatically.')
         for m in range(self.number_markers):
-            marker_time = (time.monotonic() + self.headset_clock_adjustment) *1000
+            marker_time = (time.monotonic() + self.headset_clock_adjustment) * 1000
             print('add marker at : ', marker_time)
             
             # marker_value = "test marker value"
@@ -118,7 +119,7 @@ class Marker():
 
     def on_sync_with_headset_clock_done(self, *args, **kwargs):
         print('on_sync_with_headset_clock_done')
-        data = kwargs.get('data')
+        data = kwargs.get('data') or {}
         self.headset_clock_adjustment = data.get('adjustment', 0)
         print(f'Headset clock adjustment: {self.headset_clock_adjustment} s')
         # create a record
