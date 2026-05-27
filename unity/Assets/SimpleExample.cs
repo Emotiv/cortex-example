@@ -5,6 +5,7 @@ using EmotivUnityPlugin;
 using UnityEngine.UI;
 using System;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 #if UNITY_ANDROID
 using UnityEngine.Android;
@@ -14,6 +15,8 @@ public class SimpleExample : MonoBehaviour
 {
     private bool _isEmotivUnityItfInitialized = false; // the flag to check if EmotivUnityItf is initialized and start connecting to Cortex or not
     EmotivUnityItf _eItf = EmotivUnityItf.Instance;
+
+    BCIGameItf _bciGameItf = BCIGameItf.Instance;
     float _timerDataUpdate = 0;
     const float TIME_UPDATE_DATA = 1f;
 
@@ -26,6 +29,7 @@ public class SimpleExample : MonoBehaviour
 
     [SerializeField] public InputField  MarkerValue;     // marker value
     [SerializeField] public InputField  MarkerLabel;     // marker Label
+    [SerializeField] public InputField  MarkerIdTxt;     // marker Id
     [SerializeField] public Toggle EEGToggle;
     [SerializeField] public Toggle MOTToggle;
     [SerializeField] public Toggle PMToggle;
@@ -145,8 +149,7 @@ public class SimpleExample : MonoBehaviour
     #endif
 
     void Start()
-    {
-        
+    {   
     #if USE_EMBEDDED_LIB && UNITY_STANDALONE_WIN && !UNITY_EDITOR
         string[] args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
@@ -266,8 +269,9 @@ public class SimpleExample : MonoBehaviour
             if (string.IsNullOrEmpty(recordTitle)) {
                 recordTitle = "Record test_" + DateTime.Now.ToString("yyyyMMdd_HHmmss");
             }
+            _bciGameItf.StartRecord(recordTitle, RecordDescription.text);
 
-            _eItf.StartRecord(recordTitle, RecordDescription.text);
+            // _eItf.StartRecord(recordTitle, RecordDescription.text);
         }
         else {
             UnityEngine.Debug.LogError("Can not start a record because there is no active session or record title is empty.");
@@ -276,7 +280,7 @@ public class SimpleExample : MonoBehaviour
 
     public void onStopRecordBtnClick() {
         Debug.Log("onStopRecordBtnClick");
-        _eItf.StopRecord();
+        _bciGameItf.StopRecord();
     }
 
     // export record to desktop
@@ -308,16 +312,58 @@ public class SimpleExample : MonoBehaviour
 
     public void onInjectMarkerBtnClick()
     {
+        if (!_bciGameItf.IsRecording())
+        {
+            UnityEngine.Debug.LogError("Can not inject marker because there is no active record.");
+            return;
+        }
         Debug.Log("onInjectMarkerBtnClick " + MarkerValue.text + ":" + MarkerLabel.text);
+
         String markerValue = MarkerValue.text;
         String markerLabel = MarkerLabel.text;
+        String port = "Software";
+        JObject extras = new JObject();
+        extras["element_type"] = "button";
+        extras["action_info"] = JArray.FromObject(new List<string> { "click", "press" });
+
         if (string.IsNullOrEmpty(markerValue)) {
             markerValue = DateTime.Now.ToString("ss");
         }
         if (string.IsNullOrEmpty(markerLabel)) {
             markerLabel = "Marker_" + markerValue;
         }
-        _eItf.InjectMarker(markerLabel, markerValue);
+        _bciGameItf.InjectMarker(markerLabel, markerValue, port, extras);
+    }
+
+    // update marker
+    public void onUpdateMarkerBtnClick()
+    {
+        Debug.Log("onUpdateMarkerBtnClick ");
+        
+        if (_bciGameItf.GetRecentAddedMarker() != null) {
+            string _markerId = MarkerIdTxt.text;
+            // create extras information for recent added marker
+            JObject extras = new JObject();
+            
+            if (!string.IsNullOrEmpty(_markerId))
+            {
+                extras["element_type"] = "button";
+                extras["action_info"] = JArray.FromObject(new List<string> { "hover", "press" });
+                _bciGameItf.UpdateMarker(_markerId, extras);
+            }
+            else
+            {
+                // update for recent added marker if the input marker id is empty
+                extras["element_type"] = "text";
+                extras["action_info"] = JObject.FromObject(new Dictionary<string, string> { { "update_type", "content_change" } });
+                _bciGameItf.UpdateMarker(_bciGameItf.GetRecentAddedMarker().Uuid, extras);
+            }
+        }
+        else {
+            Debug.LogError("There is no recent added marker to update. Please inject a marker before updating.");
+        }
+        
+
     }
 
     public void onSubscribeBtnClick() {
@@ -405,6 +451,7 @@ public class SimpleExample : MonoBehaviour
         _eItf.EraseMCTraining(ActionNameList.captionText.text);
     }
 
+
     void OnApplicationQuit()
     {
         Debug.Log("Application ending after " + Time.time + " seconds");
@@ -440,6 +487,7 @@ public class SimpleExample : MonoBehaviour
         Button startTrainingBtn = GameObject.Find("TrainingPart").transform.Find("startTrainingBtn").GetComponent<Button>();
         Button stopRecordBtn = GameObject.Find("RecordPart").transform.Find("stopRecordBtn").GetComponent<Button>();
         Button injectMarkerBtn = GameObject.Find("RecordPart").transform.Find("injectMarkerBtn").GetComponent<Button>();
+        Button updateMarkerBtn = GameObject.Find("RecordPart").transform.Find("updateMarkerBtn").GetComponent<Button>();
         Button exportRecordBtn = GameObject.Find("RecordPart").transform.Find("exportRecordBtn").GetComponent<Button>();
 
         createSessionBtn.interactable = _eItf.IsAuthorizedOK;
@@ -448,6 +496,8 @@ public class SimpleExample : MonoBehaviour
         stopRecordBtn.interactable = _eItf.IsRecording;
         exportRecordBtn.interactable = _eItf.IsAuthorizedOK && !_eItf.IsRecording;
         injectMarkerBtn.interactable = _eItf.IsRecording;
+        updateMarkerBtn.interactable = _eItf.IsRecording;
+
         subscribeBtn.interactable = _eItf.IsSessionCreated;
         unsubscribeBtn.interactable = _eItf.IsSessionCreated;
         loadProfileBtn.interactable = _eItf.IsSessionCreated;
