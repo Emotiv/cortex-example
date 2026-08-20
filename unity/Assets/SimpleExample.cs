@@ -5,6 +5,7 @@ using EmotivUnityPlugin;
 using UnityEngine.UI;
 using System;
 using System.Threading.Tasks;
+using Newtonsoft.Json.Linq;
 
 #if UNITY_ANDROID
 using UnityEngine.Android;
@@ -16,6 +17,7 @@ public class SimpleExample : MonoBehaviour
     EmotivUnityItf _eItf = EmotivUnityItf.Instance;
     float _timerDataUpdate = 0;
     const float TIME_UPDATE_DATA = 1f;
+    private string _lastMessageLog = ""; // tracks last displayed _eItf.MessageLog to avoid overwriting manual MessageLog updates
 
     [SerializeField] public InputField  HeadsetId;   // headsetId
     [SerializeField] public InputField  RecordTitle;     // record Title
@@ -36,16 +38,9 @@ public class SimpleExample : MonoBehaviour
     [SerializeField] public Toggle FEToggle;
     [SerializeField] public Toggle SYSToggle;
 
-    [SerializeField] public Text MessageLog;
-
-    // Enable horizontal wrapping for MessageLog
-    private void Awake()
-    {
-        if (MessageLog != null)
-        {
-            MessageLog.horizontalOverflow = HorizontalWrapMode.Wrap;
-        }
-    }
+    [SerializeField] public InputField MessageLog;
+    // recordid for export record
+    [SerializeField] public InputField RecordId;     // record id for export record
 
     // for android
     #if UNITY_ANDROID
@@ -188,8 +183,12 @@ public class SimpleExample : MonoBehaviour
         // Check buttons interactable
         CheckButtonsInteractable();
         
-        // Display message log
-        MessageLog.text = _eItf.MessageLog;
+        // Display message log only when it has changed
+        if (_eItf.MessageLog != _lastMessageLog)
+        {
+            _lastMessageLog = _eItf.MessageLog;
+            MessageLog.text = _eItf.MessageLog;
+        }
 
         // Demo how to get detected headset lists
         // List<Headset> detectedHeadsets = _eItf.GetDetectedHeadsets();
@@ -210,7 +209,7 @@ public class SimpleExample : MonoBehaviour
             //             eegDataStr      +=  "null, "; // for null value
             //     }
             //     string msgLog = eegHeaderStr + "\n" + eegDataStr;
-            //     MessageLog.text = msgLog;
+            //     msgLogTextField.text = msgLog;
             // }
 
             // Demo how to get cq data
@@ -280,13 +279,13 @@ public class SimpleExample : MonoBehaviour
     }
 
     // export record to desktop
-    public void onExportRecordBtnClick()
+    public async void onExportRecordBtnClick()
     {
         Debug.Log("onExportRecordBtnClick");
-        string _recordId = _eItf.RecentRecord?.Uuid;
+        string _recordId = RecordId.text;
         if (string.IsNullOrEmpty(_recordId))
         {
-            UnityEngine.Debug.Log("The recordId is empty. Please export with a valid recordId.");
+            UnityEngine.Debug.LogError("The recordId must not be empty. Please export with a valid recordId.");
             return;
         }
 
@@ -308,8 +307,70 @@ public class SimpleExample : MonoBehaviour
         List<string> streamTypes = new List<string> { "EEG", "MOTION" }; // Specify the stream types you want to export
         string format = "CSV"; // or "CSV", "EDFPLUS", "BDFPLUS"
         string version = "V2"; // Optional, specify if needed
-        _eItf.ExportRecord(recordsToExport, folderPath, streamTypes, format, version);
+
+        try
+        {
+            string licenseId = "licenseid-link-record"; // Replace with your actual license ID
+            ExportRecordResult result = await _eItf.ExportRecordAsync(recordsToExport, folderPath, streamTypes, format, version, new List<string> { licenseId });
+
+            string msgLog = "Export records - success: " + result.SuccessRecordIds.Count + ", failed: " + result.FailedRecords.Count + "\n";
+            foreach (string recordId in result.SuccessRecordIds)
+            {
+                msgLog += "Success: " + recordId + "\n";
+            }
+            foreach (ExportRecordFailure failure in result.FailedRecords)
+            {
+                msgLog += "Failed: " + failure.RecordId + " (code " + failure.Code + "): " + failure.Message + "\n";
+            }
+            MessageLog.text = msgLog;
+        }
+        catch (Exception ex)
+        {
+            UnityEngine.Debug.LogError("onExportRecordBtnClick failed: " + ex.Message);
+            MessageLog.text = "Export records failed: " + ex.Message;
+        }
     }   
+
+    // query records with a startDatetime range
+    public async void onQueryRecordBtnClick()
+    {
+        Debug.Log("onQueryRecordBtnClick");
+        JObject query = new JObject(
+            new JProperty("startDatetime", new JObject(
+                new JProperty("from", "2026-01-06T16:32:50.572490+07:00"),
+                new JProperty("to", "2026-08-06T16:32:50.572490+07:00")
+            ))
+        );
+
+        // demo to query with keywords
+        // JObject query = new JObject(
+        //     new JProperty("keyword", "123abc")
+        // );
+
+        // demo to query by license and application
+        // JObject query = new JObject(
+        //     new JProperty("applicationId", "applicationId-of-app-create-record"), // If you set the licenseId, then you can set this parameter to further filter the records by application.
+        //     new JProperty("licenseId", "licenseid-link-record") // Set this parameter to filter the records by their license.
+        // );
+
+        try
+        {
+            List<Record> records = await _eItf.QueryRecords(query, null, 100, 0, true, true);
+
+            string msgLog = "Query records: found " + records.Count + " record(s).\n";
+            foreach (Record record in records)
+            {
+                msgLog += "RecordId: " + record.Uuid + ", Title: " + record.Title + ", StartTime: " + record.StartDateTime +
+                          ", EndTime: " + record.EndDateTime + ", SyncStatus: " + record.SyncStatus + "\n";
+            }
+            MessageLog.text = msgLog;
+        }
+        catch (Exception ex)
+        {
+            UnityEngine.Debug.LogError("onQueryRecordBtnClick failed: " + ex.Message);
+            MessageLog.text = "Query records failed: " + ex.Message;
+        }
+    }
 
     public void onInjectMarkerBtnClick()
     {
@@ -446,12 +507,14 @@ public class SimpleExample : MonoBehaviour
         Button stopRecordBtn = GameObject.Find("RecordPart").transform.Find("stopRecordBtn").GetComponent<Button>();
         Button injectMarkerBtn = GameObject.Find("RecordPart").transform.Find("injectMarkerBtn").GetComponent<Button>();
         Button exportRecordBtn = GameObject.Find("RecordPart").transform.Find("exportRecordBtn").GetComponent<Button>();
+        Button queryRecordBtn = GameObject.Find("RecordPart").transform.Find("queryRecordBtn").GetComponent<Button>();
 
         createSessionBtn.interactable = _eItf.IsAuthorizedOK;
         queryHeadsetBtn.interactable = _eItf.IsAuthorizedOK;
         startRecordBtn.interactable = _eItf.IsSessionCreated;
         stopRecordBtn.interactable = _eItf.IsRecording;
         exportRecordBtn.interactable = _eItf.IsAuthorizedOK && !_eItf.IsRecording;
+        queryRecordBtn.interactable = _eItf.IsAuthorizedOK;
         injectMarkerBtn.interactable = _eItf.IsRecording;
         subscribeBtn.interactable = _eItf.IsSessionCreated;
         unsubscribeBtn.interactable = _eItf.IsSessionCreated;
