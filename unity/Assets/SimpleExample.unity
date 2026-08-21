@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 14215617}
   - component: {fileID: 14215618}
   m_Layer: 5
-  m_Name: eegToogle
+  m_Name: eegToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2870,7 +2870,7 @@ GameObject:
   - component: {fileID: 619861153}
   - component: {fileID: 619861154}
   m_Layer: 5
-  m_Name: sysToogle
+  m_Name: sysToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3415,7 +3415,7 @@ GameObject:
   - component: {fileID: 689784487}
   - component: {fileID: 689784488}
   m_Layer: 5
-  m_Name: comToogle
+  m_Name: comToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7317,7 +7317,7 @@ GameObject:
   - component: {fileID: 1342805839}
   - component: {fileID: 1342805840}
   m_Layer: 5
-  m_Name: facToogle
+  m_Name: facToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7637,7 +7637,7 @@ GameObject:
   - component: {fileID: 1361979634}
   - component: {fileID: 1361979635}
   m_Layer: 5
-  m_Name: pmToogle
+  m_Name: pmToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7813,7 +7813,7 @@ GameObject:
   - component: {fileID: 1396800669}
   - component: {fileID: 1396800668}
   m_Layer: 5
-  m_Name: cqToogle
+  m_Name: cqToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9366,7 +9366,7 @@ GameObject:
   - component: {fileID: 1597588607}
   - component: {fileID: 1597588608}
   m_Layer: 5
-  m_Name: motionToogle
+  m_Name: motionToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11614,7 +11614,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter recordId for exporting..
+  m_Text: Enter record ID to export
 --- !u!222 &2052277363
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -11713,7 +11713,7 @@ GameObject:
   - component: {fileID: 2083123983}
   - component: {fileID: 2083123984}
   m_Layer: 5
-  m_Name: powToogle
+  m_Name: powToggle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
