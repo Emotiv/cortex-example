@@ -42,6 +42,26 @@ public class SimpleExample : MonoBehaviour
     // recordid for export record
     [SerializeField] public InputField RecordId;     // record id for export record
 
+    // cached button references, populated once in Start() to avoid repeated GameObject.Find calls in Update()
+    private Button _signInBtn;
+    private Button _signOutBtn;
+    private Button _createSessionBtn;
+    private Button _queryHeadsetBtn;
+    private Button _startRecordBtn;
+    private Button _subscribeBtn;
+    private Button _unsubscribeBtn;
+    private Button _loadProfileBtn;
+    private Button _unloadProfileBtn;
+    private Button _saveProfileBtn;
+    private Button _rejectTrainingBtn;
+    private Button _eraseTrainingBtn;
+    private Button _acceptTrainingBtn;
+    private Button _startTrainingBtn;
+    private Button _stopRecordBtn;
+    private Button _injectMarkerBtn;
+    private Button _exportRecordBtn;
+    private Button _queryRecordBtn;
+
     // for android
     #if UNITY_ANDROID
     private const string FineLocationPermission = "android.permission.ACCESS_FINE_LOCATION";
@@ -141,7 +161,8 @@ public class SimpleExample : MonoBehaviour
 
     void Start()
     {
-        
+        CacheButtonReferences();
+
     #if USE_EMBEDDED_LIB && UNITY_STANDALONE_WIN && !UNITY_EDITOR
         string[] args = Environment.GetCommandLineArgs();
         if (args.Length > 1)
@@ -209,7 +230,7 @@ public class SimpleExample : MonoBehaviour
             //             eegDataStr      +=  "null, "; // for null value
             //     }
             //     string msgLog = eegHeaderStr + "\n" + eegDataStr;
-            //     msgLogTextField.text = msgLog;
+            //     MessageLog.text = msgLog;
             // }
 
             // Demo how to get cq data
@@ -310,8 +331,7 @@ public class SimpleExample : MonoBehaviour
 
         try
         {
-            string licenseId = "licenseid-link-record"; // Replace with your actual license ID
-            ExportRecordResult result = await _eItf.ExportRecordAsync(recordsToExport, folderPath, streamTypes, format, version, new List<string> { licenseId });
+            ExportRecordResult result = await _eItf.ExportRecordAsync(recordsToExport, folderPath, streamTypes, format, version);
 
             string msgLog = "Export records - success: " + result.SuccessRecordIds.Count + ", failed: " + result.FailedRecords.Count + "\n";
             foreach (string recordId in result.SuccessRecordIds)
@@ -335,6 +355,7 @@ public class SimpleExample : MonoBehaviour
     public async void onQueryRecordBtnClick()
     {
         Debug.Log("onQueryRecordBtnClick");
+        // demo to query with startDatetime range, the from and to are in ISO 8601 format
         JObject query = new JObject(
             new JProperty("startDatetime", new JObject(
                 new JProperty("from", "2026-01-06T16:32:50.572490+07:00"),
@@ -342,15 +363,17 @@ public class SimpleExample : MonoBehaviour
             ))
         );
 
-        // demo to query with keywords
+        // demo to query with keywords which can be record title or record note
         // JObject query = new JObject(
         //     new JProperty("keyword", "123abc")
         // );
 
-        // demo to query by license and application
+        // If you want to query records of owner but not created by the application,
+        // you can set the licenseId to filter the records.
+        // If you set the licenseId, then you can set this parameter to further filter the records by application.
         // JObject query = new JObject(
-        //     new JProperty("applicationId", "applicationId-of-app-create-record"), // If you set the licenseId, then you can set this parameter to further filter the records by application.
-        //     new JProperty("licenseId", "licenseid-link-record") // Set this parameter to filter the records by their license.
+        //     new JProperty("applicationId", "com.emotivid.appname"),
+        //     new JProperty("licenseId", "xxx--yyy")
         // );
 
         try
@@ -478,53 +501,55 @@ public class SimpleExample : MonoBehaviour
             _eItf.Stop();
     }
 
+    private void CacheButtonReferences()
+    {
+        _signInBtn = GameObject.Find("AuthenPart").transform.Find("signInBtn").GetComponent<Button>();
+        _signOutBtn = GameObject.Find("AuthenPart").transform.Find("signOutBtn").GetComponent<Button>();
+        _createSessionBtn = GameObject.Find("SessionPart").transform.Find("createSessionBtn").GetComponent<Button>();
+        _queryHeadsetBtn = GameObject.Find("SessionPart").transform.Find("queryHeadset").GetComponent<Button>();
+        _startRecordBtn = GameObject.Find("RecordPart").transform.Find("startRecordBtn").GetComponent<Button>();
+        _subscribeBtn = GameObject.Find("SubscribeDataPart").transform.Find("subscribeBtn").GetComponent<Button>();
+        _unsubscribeBtn = GameObject.Find("SubscribeDataPart").transform.Find("unsubscribeBtn").GetComponent<Button>();
+        _loadProfileBtn = GameObject.Find("TrainingPart").transform.Find("loadProfileBtn").GetComponent<Button>();
+        _unloadProfileBtn = GameObject.Find("TrainingPart").transform.Find("unloadProfileBtn").GetComponent<Button>();
+        _saveProfileBtn = GameObject.Find("TrainingPart").transform.Find("saveProfileBtn").GetComponent<Button>();
+        _rejectTrainingBtn = GameObject.Find("TrainingPart").transform.Find("rejectTrainingBtn").GetComponent<Button>();
+        _eraseTrainingBtn = GameObject.Find("TrainingPart").transform.Find("eraseTrainingBtn").GetComponent<Button>();
+        _acceptTrainingBtn = GameObject.Find("TrainingPart").transform.Find("acceptTrainingBtn").GetComponent<Button>();
+        _startTrainingBtn = GameObject.Find("TrainingPart").transform.Find("startTrainingBtn").GetComponent<Button>();
+        _stopRecordBtn = GameObject.Find("RecordPart").transform.Find("stopRecordBtn").GetComponent<Button>();
+        _injectMarkerBtn = GameObject.Find("RecordPart").transform.Find("injectMarkerBtn").GetComponent<Button>();
+        _exportRecordBtn = GameObject.Find("RecordPart").transform.Find("exportRecordBtn").GetComponent<Button>();
+        _queryRecordBtn = GameObject.Find("RecordPart").transform.Find("queryRecordBtn").GetComponent<Button>();
+    }
+
     private void CheckButtonsInteractable()
     {
-        Button signInBtn = GameObject.Find("AuthenPart").transform.Find("signInBtn").GetComponent<Button>();
-        Button signOutBtn = GameObject.Find("AuthenPart").transform.Find("signOutBtn").GetComponent<Button>();
         #if USE_EMBEDDED_LIB || UNITY_ANDROID || UNITY_IOS
         ConnectToCortexStates connectionState =  _eItf.GetConnectToCortexState();
-        signInBtn.interactable = (connectionState == ConnectToCortexStates.Login_notYet);
-        signOutBtn.interactable = (connectionState > ConnectToCortexStates.Login_notYet);
+        _signInBtn.interactable = (connectionState == ConnectToCortexStates.Login_notYet);
+        _signOutBtn.interactable = (connectionState > ConnectToCortexStates.Login_notYet);
         #else
-        signInBtn.interactable = false;
-        signOutBtn.interactable = false;
+        _signInBtn.interactable = false;
+        _signOutBtn.interactable = false;
         #endif
 
-        Button createSessionBtn = GameObject.Find("SessionPart").transform.Find("createSessionBtn").GetComponent<Button>();
-        // query headset button
-        Button queryHeadsetBtn = GameObject.Find("SessionPart").transform.Find("queryHeadset").GetComponent<Button>();
-        Button startRecordBtn = GameObject.Find("RecordPart").transform.Find("startRecordBtn").GetComponent<Button>();
-        Button subscribeBtn = GameObject.Find("SubscribeDataPart").transform.Find("subscribeBtn").GetComponent<Button>();
-        Button unsubscribeBtn = GameObject.Find("SubscribeDataPart").transform.Find("unsubscribeBtn").GetComponent<Button>();
-        Button loadProfileBtn = GameObject.Find("TrainingPart").transform.Find("loadProfileBtn").GetComponent<Button>();
-        Button unloadProfileBtn = GameObject.Find("TrainingPart").transform.Find("unloadProfileBtn").GetComponent<Button>();
-        Button saveProfileBtn = GameObject.Find("TrainingPart").transform.Find("saveProfileBtn").GetComponent<Button>();
-        Button rejectTrainingBtn = GameObject.Find("TrainingPart").transform.Find("rejectTrainingBtn").GetComponent<Button>();
-        Button eraseTrainingBtn = GameObject.Find("TrainingPart").transform.Find("eraseTrainingBtn").GetComponent<Button>();
-        Button acceptTrainingBtn = GameObject.Find("TrainingPart").transform.Find("acceptTrainingBtn").GetComponent<Button>();
-        Button startTrainingBtn = GameObject.Find("TrainingPart").transform.Find("startTrainingBtn").GetComponent<Button>();
-        Button stopRecordBtn = GameObject.Find("RecordPart").transform.Find("stopRecordBtn").GetComponent<Button>();
-        Button injectMarkerBtn = GameObject.Find("RecordPart").transform.Find("injectMarkerBtn").GetComponent<Button>();
-        Button exportRecordBtn = GameObject.Find("RecordPart").transform.Find("exportRecordBtn").GetComponent<Button>();
-        Button queryRecordBtn = GameObject.Find("RecordPart").transform.Find("queryRecordBtn").GetComponent<Button>();
-
-        createSessionBtn.interactable = _eItf.IsAuthorizedOK;
-        queryHeadsetBtn.interactable = _eItf.IsAuthorizedOK;
-        startRecordBtn.interactable = _eItf.IsSessionCreated;
-        stopRecordBtn.interactable = _eItf.IsRecording;
-        exportRecordBtn.interactable = _eItf.IsAuthorizedOK && !_eItf.IsRecording;
-        queryRecordBtn.interactable = _eItf.IsAuthorizedOK;
-        injectMarkerBtn.interactable = _eItf.IsRecording;
-        subscribeBtn.interactable = _eItf.IsSessionCreated;
-        unsubscribeBtn.interactable = _eItf.IsSessionCreated;
-        loadProfileBtn.interactable = _eItf.IsSessionCreated;
-        saveProfileBtn.interactable = _eItf.IsProfileLoaded;
-        startTrainingBtn.interactable = _eItf.IsProfileLoaded;
-        rejectTrainingBtn.interactable = _eItf.IsProfileLoaded;
-        eraseTrainingBtn.interactable = _eItf.IsProfileLoaded;
-        acceptTrainingBtn.interactable = _eItf.IsProfileLoaded;
-        unloadProfileBtn.interactable = _eItf.IsProfileLoaded;
+        _createSessionBtn.interactable = _eItf.IsAuthorizedOK;
+        _queryHeadsetBtn.interactable = _eItf.IsAuthorizedOK;
+        _startRecordBtn.interactable = _eItf.IsSessionCreated;
+        _stopRecordBtn.interactable = _eItf.IsRecording;
+        _exportRecordBtn.interactable = _eItf.IsAuthorizedOK && !_eItf.IsRecording;
+        _queryRecordBtn.interactable = _eItf.IsAuthorizedOK;
+        _injectMarkerBtn.interactable = _eItf.IsRecording;
+        _subscribeBtn.interactable = _eItf.IsSessionCreated;
+        _unsubscribeBtn.interactable = _eItf.IsSessionCreated;
+        _loadProfileBtn.interactable = _eItf.IsSessionCreated;
+        _saveProfileBtn.interactable = _eItf.IsProfileLoaded;
+        _startTrainingBtn.interactable = _eItf.IsProfileLoaded;
+        _rejectTrainingBtn.interactable = _eItf.IsProfileLoaded;
+        _eraseTrainingBtn.interactable = _eItf.IsProfileLoaded;
+        _acceptTrainingBtn.interactable = _eItf.IsProfileLoaded;
+        _unloadProfileBtn.interactable = _eItf.IsProfileLoaded;
     }
 
     private List<string> GetStreamsList() {
