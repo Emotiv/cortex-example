@@ -16,12 +16,13 @@ The Python proxy is a required helper utility. It is not implemented by MATLAB o
 
 ## Folder Structure
 
-- `core/`: Internal SDK classes and the Python TCP-to-WSS proxy.
-- `api/`: Simple procedural functions that hide the internal MATLAB classes.
+- `api/`: Public functions (`cortexConnect`, `cortexDisconnect`) that hide the internal MATLAB classes.
+- `internal/`: Internal SDK classes. Not a public interface; they may change.
+- `proxy/`: The Python TCP-to-WSS proxy.
+- `config/`: Local configuration. `config/config.json` holds your Cortex application credentials. This file is ignored by Git and must not be committed or shared.
 - `examples/`: Beginner-friendly scripts that show complete workflows.
-- `examples/config.json`: Local Cortex application credentials. This file is ignored by Git and must not be committed or shared.
 
-The public workflow uses `cortexConnect` and `cortexDisconnect`. The underlying `CortexManager` and `CortexAuth` classes are kept inside `core/` so future examples can extend the SDK without making the user-facing scripts more complicated.
+The public workflow uses `cortexConnect` and `cortexDisconnect`. The underlying `CortexManager` and `CortexAuth` classes are kept inside `internal/` so future examples can extend the SDK without making the user-facing scripts more complicated.
 
 ## Requirements
 
@@ -74,9 +75,9 @@ You can also follow the application-registration instructions in the repository'
 
 ## Configure Your Credentials
 
-The example reads credentials from `octave/examples/config.json`.
+The example reads credentials from `octave/config/config.json`.
 
-1. Open `octave/examples/config.json`.
+1. Open `octave/config/config.json`.
 2. Replace the placeholder values with the Client ID and Client Secret from your Cortex application:
 
 ```json
@@ -115,7 +116,7 @@ python -m pip install websocket-client
 Open a terminal and run:
 
 ```text
-cd octave/core
+cd octave/proxy
 python cortex_proxy.py
 ```
 
@@ -133,7 +134,7 @@ Open MATLAB or GNU Octave from the repository root and run:
 run('octave/examples/testAuth.m')
 ```
 
-The script adds `octave/core`, `octave/api`, and `octave/examples` to the search path automatically. It then calls this simple workflow:
+The script adds `octave/internal`, `octave/api`, and `octave/examples` to the search path automatically. It then calls this simple workflow:
 
 ```matlab
 cortex = cortexConnect(clientId, clientSecret);
@@ -163,7 +164,7 @@ The internal manager is stored in the struct only so that `cortexDisconnect(cort
 ### Could not connect to the proxy on `localhost:9999`
 
 - Confirm that the proxy terminal is still running.
-- Start it from `octave/core` with `python cortex_proxy.py`.
+- Start it from `octave/proxy` with `python cortex_proxy.py`.
 - Check that another program is not already using port `9999`.
 - Confirm that EMOTIV Launcher is running before the proxy starts.
 
@@ -196,6 +197,6 @@ The current proxy and MATLAB/Octave client use port `9999`. Stop the process usi
 
 ## Next Steps
 
-Once authentication works, new examples can reuse the same connection pattern and build additional Cortex workflows in `api/` and `examples/`. Keep transport and authentication details in `core/`, and keep researcher-facing scripts short and sequential.
+Once authentication works, new examples can reuse the same connection pattern and build additional Cortex workflows in `api/` and `examples/`. Keep transport and authentication details in `internal/`, and keep researcher-facing scripts short and sequential.
 
 For the full API reference, see the [official Emotiv Cortex API documentation](https://emotiv.gitbook.io/cortex-api).

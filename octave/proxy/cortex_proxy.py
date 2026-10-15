@@ -109,7 +109,12 @@ def main():
     try:
         while True:
             conn, _ = server.accept()
-            handle_client(conn)
+            try:
+                handle_client(conn)
+            except Exception:
+                logger.exception("Unhandled client error")
+            finally:
+                conn.close()
     except KeyboardInterrupt:
         logger.info("Shutdown requested")
         pass

@@ -17,7 +17,7 @@ try
         auth = manager.getAuth();
     catch connectFailure
         fprintf(['Could not connect to the proxy on localhost:%d. ' ...
-            'Start the proxy first (see README Quickstart, step 1).\n'], manager.port);
+            'Start the proxy first (see README Quickstart, step 3).\n'], manager.port);
         rethrow(connectFailure);
     end
 

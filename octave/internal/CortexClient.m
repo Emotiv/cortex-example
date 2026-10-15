@@ -17,10 +17,18 @@ classdef CortexClient < handle
         lastWarning = []
     end
 
+    properties
+        requestTimeout = 60
+    end
+
     methods
-        function obj = CortexClient(host, port)
+        function obj = CortexClient(host, port, requestTimeout)
             if nargin < 1, host = '127.0.0.1'; end
             if nargin < 2, port = 9999; end
+            if nargin < 3, requestTimeout = 60; end
+
+            obj.requestTimeout = requestTimeout;
+            obj.validateRequestTimeout();
 
             obj.socket = javaObject('java.net.Socket', host, int32(port));
             obj.socket.setTcpNoDelay(true);
@@ -35,6 +43,11 @@ classdef CortexClient < handle
                 greeting = obj.readSocketLine();
                 if ~isempty(greeting), break; end
             end
+            if isempty(greeting)
+                obj.close();
+                error('CortexClient:connectTimeout', ...
+                    'Timed out waiting for the Cortex proxy connection greeting.');
+            end
             msg = jsondecode(greeting);
             if ~isfield(msg, 'status') || ~strcmp(msg.status, 'connected')
                 obj.close();
@@ -45,6 +58,8 @@ classdef CortexClient < handle
         function response = sendRequest(obj, method, params)
             if nargin < 3, params = struct(); end
 
+            obj.validateRequestTimeout();
+            requestStartedAt = tic();
             id = obj.nextId;
             obj.nextId = id + 1;
             request = struct('jsonrpc', '2.0', 'id', id, 'method', method, 'params', params);
@@ -57,7 +72,9 @@ classdef CortexClient < handle
             end
 
             while true
+                obj.checkRequestDeadline(requestStartedAt, method);
                 [messageType, msg] = obj.readMessage();
+                obj.checkRequestDeadline(requestStartedAt, method);
                 if strcmp(messageType, 'timeout'), continue; end
 
                 switch messageType
@@ -177,6 +194,22 @@ classdef CortexClient < handle
     end
 
     methods (Access = private)
+        function validateRequestTimeout(obj)
+            if ~isnumeric(obj.requestTimeout) || ~isscalar(obj.requestTimeout) || ...
+                    ~isfinite(obj.requestTimeout) || obj.requestTimeout <= 0
+                error('CortexClient:requestTimeoutConfig', ...
+                    'requestTimeout must be a finite, positive numeric scalar.');
+            end
+        end
+
+        function checkRequestDeadline(obj, requestStartedAt, method)
+            if toc(requestStartedAt) >= obj.requestTimeout
+                error('CortexClient:requestTimeout', ...
+                    'Timed out waiting for a response to "%s" after %.3g seconds.', ...
+                    method, obj.requestTimeout);
+            end
+        end
+
         function [messageType, msg] = readMessage(obj)
             line = obj.readSocketLine();
             if isempty(line)

@@ -9,7 +9,7 @@ if nargin == 2
 end
 
 if isempty(storedId) || isempty(storedSecret)
-    error('cortexCredentials:notSet', 'Credentials not set. Edit octave/examples/setCredentials.m.');
+    error('cortexCredentials:notSet', 'Credentials not set. Run octave/examples/setCredentials.m or call cortexCredentials(clientId, clientSecret).');
 end
 
 clientId = storedId;
