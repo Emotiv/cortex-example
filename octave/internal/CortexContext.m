@@ -5,5 +5,12 @@ classdef CortexContext < handle
         token = ''
         userInfo = []
         licenseInfo = []
+
+        headsets = {}           % cell array of headset structs from the last queryHeadsets
+        headsetId = ''
+        sessionId = ''
+        subscribedStreams = {}
+        streamLabels = struct() % one field per stream, each a cell array of column labels
+        buffer = []             % CortexDataBuffer holding the received samples
     end
 end

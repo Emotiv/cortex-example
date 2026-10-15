@@ -6,8 +6,10 @@ function cortex = cortexConnect(clientId, clientSecret)
 %     userInfo     user details returned by Cortex ([] on failure)
 %     licenseInfo  license details returned by Cortex ([] on failure)
 %     manager      internal handle used by cortexDisconnect; do not modify
+%     isSubscribed, headsetId, sessionId, streams   filled in by cortexSubscribe
 
-cortex = struct('isConnected', false, 'token', '', 'userInfo', [], 'licenseInfo', [], 'manager', []);
+cortex = struct('isConnected', false, 'token', '', 'userInfo', [], 'licenseInfo', [], 'manager', [], ...
+    'isSubscribed', false, 'headsetId', '', 'sessionId', '', 'streams', {{}});
 manager = CortexManager(clientId, clientSecret);
 cortex.manager = manager;
 

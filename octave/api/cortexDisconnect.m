@@ -9,6 +9,10 @@ if isstruct(cortex) && isfield(cortex, 'manager') && ~isempty(cortex.manager)
 end
 
 cortex.isConnected = false;
+cortex.isSubscribed = false;
+cortex.headsetId = '';
+cortex.sessionId = '';
+cortex.streams = {};
 cortex.token = '';
 cortex.userInfo = [];
 cortex.licenseInfo = [];
