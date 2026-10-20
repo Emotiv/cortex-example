@@ -1,17 +1,13 @@
 % testAuth  Connect to Cortex, authorize this app, print the token, and disconnect.
 %   Start the proxy first: python octave/proxy/cortex_proxy.py
 
-% 1. Initialization & Configuration: make the SDK functions and classes visible.
+% 1. Initialization & Configuration: make the SDK functions visible.
 currentDir = fileparts(mfilename('fullpath'));
-addpath(fullfile(currentDir, '../internal'));
-addpath(fullfile(currentDir, '../api'));
-addpath(currentDir);
-
-% Client id/secret come from config/config.json (or an input() prompt if it is missing).
-setCredentials;
+addpath(fullfile(currentDir, '../functions'));
 
 % 2. Connection / Authentication: needs EMOTIV Launcher running with a logged-in user.
-cortex = cortexConnect(clientId, clientSecret);
+%    Credentials are loaded from config/config.json.
+cortex = cortexConnect();
 
 % 3. Action: show the result of the authentication.
 if cortex.isConnected

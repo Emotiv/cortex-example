@@ -1,0 +1,23 @@
+{
+  "mcp": {
+    "command": "c:\\Users\\tungt\\.vscode\\extensions\\tunakite03.codebase-memory-mcp-0.5.23\\bin\\win32-x64\\codebase-memory-mcp.exe",
+    "args": [],
+    "transport": "stdio"
+  },
+  "tools": [
+    "index_repository",
+    "list_projects",
+    "delete_project",
+    "index_status",
+    "search_graph",
+    "trace_call_path",
+    "detect_changes",
+    "query_graph",
+    "get_graph_schema",
+    "get_code_snippet",
+    "get_architecture",
+    "search_code",
+    "manage_adr",
+    "ingest_traces"
+  ]
+}

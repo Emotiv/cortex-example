@@ -8,13 +8,16 @@ import ssl
 import threading
 import json
 import logging
+from pathlib import Path
 
 import websocket
 
 TCP_HOST = "127.0.0.1"
 TCP_PORT = 9999
 CORTEX_URL = "wss://localhost:6868"
-SSL_OPTIONS = {"cert_reqs": ssl.CERT_NONE, "check_hostname": False}
+CERTIFICATE_PATH = Path(__file__).resolve().parents[2] / "certificates" / "rootCA.pem"
+SSL_OPTIONS = {"ca_certs": str(CERTIFICATE_PATH), "cert_reqs": ssl.CERT_REQUIRED}
+SSL_OPTIONS["check_hostname"] = True
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s [%(threadName)s] %(message)s",
@@ -72,6 +75,15 @@ def tcp_to_wss(conn, ws):
         logger.exception("TCP -> WSS forwarding failed")
 
 
+def require_certificate():
+    if not CERTIFICATE_PATH.is_file():
+        raise FileNotFoundError(
+            "Required Cortex CA certificate not found: %s. "
+            "Include the repository's certificates/rootCA.pem file when copying the Octave examples."
+            % CERTIFICATE_PATH
+        )
+
+
 def handle_client(conn):
     conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     logger.info("TCP client connected from %s", conn.getpeername())
@@ -100,6 +112,7 @@ def handle_client(conn):
 
 
 def main():
+    require_certificate()
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)

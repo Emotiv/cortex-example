@@ -1,12 +1,18 @@
-function cortex = cortexConnect(clientId, clientSecret)
+function cortex = cortexConnect()
 % cortexConnect  Connect to Cortex through the proxy and authorize this app.
-%   cortex = cortexConnect(clientId, clientSecret) returns a struct with the fields:
+%   cortex = cortexConnect() loads clientId and clientSecret from config/config.json
+%   and returns a struct with the fields:
 %     isConnected  true when the proxy link is open and the app is authorized
 %     token        cortexToken to use in later Cortex requests ('' on failure)
 %     userInfo     user details returned by Cortex ([] on failure)
 %     licenseInfo  license details returned by Cortex ([] on failure)
 %     manager      internal handle used by cortexDisconnect; do not modify
 %     isSubscribed, headsetId, sessionId, streams   filled in by cortexSubscribe
+
+functionsDir = fileparts(mfilename('fullpath'));
+addpath(fullfile(functionsDir, '..', 'internal'));
+
+[clientId, clientSecret] = cortexCredentials();
 
 cortex = struct('isConnected', false, 'token', '', 'userInfo', [], 'licenseInfo', [], 'manager', [], ...
     'isSubscribed', false, 'headsetId', '', 'sessionId', '', 'streams', {{}});

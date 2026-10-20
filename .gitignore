@@ -79,3 +79,4 @@ unity/*.unityproj
 ### Project-specific
 cortex_creds
 *build-*
+octave/config/config.json

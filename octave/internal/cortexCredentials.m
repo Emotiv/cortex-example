@@ -1,17 +1,21 @@
-function [clientId, clientSecret] = cortexCredentials(newClientId, newClientSecret)
-% cortexCredentials  Set (two arguments) or get the Cortex app credentials shared by all examples.
+function [clientId, clientSecret] = cortexCredentials()
+% cortexCredentials  Load the Cortex app clientId and clientSecret from config/config.json.
 
-persistent storedId storedSecret
-
-if nargin == 2
-    storedId = newClientId;
-    storedSecret = newClientSecret;
+configFile = fullfile(fileparts(mfilename('fullpath')), '..', 'config', 'config.json');
+if ~exist(configFile, 'file')
+    error('cortexCredentials:configNotFound', ...
+        ['Config file not found: %s. ' ...
+         'Copy octave/config/config.example.json to octave/config/config.json ' ...
+         'and set your clientId and clientSecret.'], configFile);
 end
 
-if isempty(storedId) || isempty(storedSecret)
-    error('cortexCredentials:notSet', 'Credentials not set. Run octave/examples/setCredentials.m or call cortexCredentials(clientId, clientSecret).');
+config = jsondecode(fileread(configFile));
+if ~isfield(config, 'clientId') || ~isfield(config, 'clientSecret') || ...
+        isempty(config.clientId) || isempty(config.clientSecret)
+    error('cortexCredentials:invalidConfig', ...
+        'octave/config/config.json must contain non-empty clientId and clientSecret fields.');
 end
 
-clientId = storedId;
-clientSecret = storedSecret;
+clientId = config.clientId;
+clientSecret = config.clientSecret;
 end

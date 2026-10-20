@@ -16,10 +16,10 @@ The Python proxy is a required helper utility. It is not implemented by MATLAB o
 
 ## Folder Structure
 
-- `api/`: Public functions (`cortexConnect`, `cortexSubscribe`, `cortexGetData`, `cortexDisconnect`) that hide the internal MATLAB classes.
+- `functions/`: Public functions (`cortexConnect`, `cortexSubscribe`, `cortexGetData`, `cortexDisconnect`) that hide the internal MATLAB classes.
 - `internal/`: Internal SDK classes. Not a public interface; they may change.
 - `proxy/`: The Python TCP-to-WSS proxy.
-- `config/`: Local configuration. `config/config.json` holds your Cortex application credentials. This file is ignored by Git and must not be committed or shared.
+- `config/`: Local configuration. Copy `config/config.example.json` to `config/config.json` to store your Cortex application credentials. `config/config.json` is ignored by Git and must not be committed or shared.
 - `examples/`: Beginner-friendly scripts that show complete workflows.
 
 The public workflow uses `cortexConnect` and `cortexDisconnect`. The underlying `CortexManager` and `CortexAuth` classes are kept inside `internal/` so future examples can extend the SDK without making the user-facing scripts more complicated.
@@ -39,6 +39,8 @@ Download EMOTIV Launcher from the [EMOTIV website](https://www.emotiv.com/produc
 
 - Python 3 is recommended.
 - The proxy uses the `websocket-client` package.
+- The proxy verifies Cortex TLS certificates using the repository's `certificates/rootCA.pem` CA bundle.
+- Keep the repository-level `certificates/rootCA.pem` file when copying the Octave examples; the proxy reports a clear error if it is missing.
 
 ```text
 python -m pip install websocket-client
@@ -77,8 +79,8 @@ You can also follow the application-registration instructions in the repository'
 
 The example reads credentials from `octave/config/config.json`.
 
-1. Open `octave/config/config.json`.
-2. Replace the placeholder values with the Client ID and Client Secret from your Cortex application:
+1. Copy `octave/config/config.example.json` to `octave/config/config.json`.
+2. Open `octave/config/config.json` and replace the placeholder values with the Client ID and Client Secret from your Cortex application:
 
 ```json
 {
@@ -89,9 +91,9 @@ The example reads credentials from `octave/config/config.json`.
 
 3. Save the file.
 
-The script `examples/setCredentials.m` loads this file automatically. If the file is missing, it asks for the two values interactively and explains where to obtain them.
+`cortexConnect` loads `octave/config/config.json` automatically and raises an error if the file does not exist.
 
-The repository ignores `config.json` because it contains a secret. If Git shows this file as tracked in your checkout, remove it from version control before committing changes; do not publish the secret.
+The repository ignores `octave/config/config.json` because it contains a secret. Keep your real credentials only in `octave/config/config.json` and do not commit or share it.
 
 ## Quickstart
 
@@ -134,10 +136,10 @@ Open MATLAB or GNU Octave from the repository root and run:
 run('octave/examples/testAuth.m')
 ```
 
-The script adds `octave/internal`, `octave/api`, and `octave/examples` to the search path automatically. It then calls this simple workflow:
+The script adds `octave/functions` to the search path automatically (`cortexConnect` adds `octave/internal` internally). It then calls this simple workflow:
 
 ```matlab
-cortex = cortexConnect(clientId, clientSecret);
+cortex = cortexConnect();
 % Use cortex.token, cortex.userInfo, and cortex.licenseInfo here.
 cortex = cortexDisconnect(cortex);
 ```
@@ -167,7 +169,7 @@ The internal manager is stored in the struct only so that `cortexDisconnect(cort
 2. Run `run('octave/examples/subscribeAndPlot.m')`.
 
 ```matlab
-cortex = cortexConnect(clientId, clientSecret);
+cortex = cortexConnect();
 cortex = cortexSubscribe(cortex, 'INSIGHT-A1B2C3D4', {'eeg'});
 [labels, data, time] = cortexGetData(cortex, 'eeg', 256);  % newest 256 samples
 cortex = cortexDisconnect(cortex);                         % unsubscribes and closes the socket
@@ -193,6 +195,7 @@ cortex = cortexDisconnect(cortex);                         % unsubscribes and cl
 
 - Open EMOTIV Launcher and sign in.
 - Confirm that Cortex is available in the Launcher.
+- If certificate verification fails, confirm that `certificates/rootCA.pem` is present in the repository.
 - Restart EMOTIV Launcher, then restart the proxy.
 - Check that local security software is not blocking the connection.
 
@@ -225,6 +228,6 @@ The current proxy and MATLAB/Octave client use port `9999`. Stop the process usi
 
 ## Next Steps
 
-Once authentication works, new examples can reuse the same connection pattern and build additional Cortex workflows in `api/` and `examples/`. Keep transport and authentication details in `internal/`, and keep researcher-facing scripts short and sequential.
+Once authentication works, new examples can reuse the same connection pattern and build additional Cortex workflows in `functions/` and `examples/`. Keep transport and authentication details in `internal/`, and keep researcher-facing scripts short and sequential.
 
 For the full API reference, see the [official Emotiv Cortex API documentation](https://emotiv.gitbook.io/cortex-api).

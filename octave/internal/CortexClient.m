@@ -309,9 +309,10 @@ classdef CortexClient < handle
                 end
                 rethrow(err);
             end
-            if ~ischar(line)
+            if ~(ischar(line) || isa(line, 'java.lang.String'))
                 error('CortexClient:closed', 'Connection to Cortex proxy closed.');
             end
+            line = char(line);
         end
     end
 end
