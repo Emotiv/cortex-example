@@ -15,6 +15,7 @@ import websocket
 TCP_HOST = "127.0.0.1"
 TCP_PORT = 9999
 CORTEX_URL = "wss://localhost:6868"
+CORTEX_CONNECT_TIMEOUT = 10
 CERTIFICATE_PATH = Path(__file__).resolve().parents[2] / "certificates" / "rootCA.pem"
 SSL_OPTIONS = {"ca_certs": str(CERTIFICATE_PATH), "cert_reqs": ssl.CERT_REQUIRED}
 SSL_OPTIONS["check_hostname"] = True
@@ -88,7 +89,12 @@ def handle_client(conn):
     conn.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
     logger.info("TCP client connected from %s", conn.getpeername())
     try:
-        ws = websocket.create_connection(CORTEX_URL, sslopt=SSL_OPTIONS)
+        ws = websocket.create_connection(
+            CORTEX_URL,
+            timeout=CORTEX_CONNECT_TIMEOUT,
+            sslopt=SSL_OPTIONS,
+        )
+        ws.settimeout(None)
     except Exception as exc:
         logger.exception("Cannot connect to Cortex at %s", CORTEX_URL)
         try:
