@@ -19,14 +19,14 @@ classdef CortexHeadset < handle
         context
         scanFinished = false
         lastQueryAt = []
-        sidList = {}
-        sidStreams = {}
+        parser
     end
 
     methods
         function obj = CortexHeadset(client, context)
             obj.client = client;
             obj.context = context;
+            obj.parser = CortexStreamParser();
             if isempty(context.buffer)
                 context.buffer = CortexDataBuffer(10000);
             end
@@ -165,9 +165,8 @@ classdef CortexHeadset < handle
             for index = 1:numel(successes)
                 item = successes{index};
                 name = item.streamName;
-                labels = CortexHeadset.flattenLabels(item.cols);
-                obj.sidList{end + 1} = item.sid;
-                obj.sidStreams{end + 1} = name;
+                labels = CortexStreamParser.flattenLabels(item.cols);
+                obj.parser.register(item.sid, name);
                 obj.context.streamLabels.(name) = labels;
                 obj.context.subscribedStreams{end + 1} = name;
                 obj.context.buffer.configure(name, labels);
@@ -184,8 +183,7 @@ classdef CortexHeadset < handle
             params = struct('cortexToken', obj.context.token, 'session', obj.context.sessionId, ...
                 'streams', {obj.context.subscribedStreams});
             obj.isSubscribed = false;
-            obj.sidList = {};
-            obj.sidStreams = {};
+            obj.parser.reset();
             obj.context.subscribedStreams = {};
             obj.client.sendRequest('unsubscribe', params);
         end
@@ -231,20 +229,9 @@ classdef CortexHeadset < handle
         end
 
         function storeSample(obj, msg)
-            stream = '';
-            if isfield(msg, 'sid') && ischar(msg.sid)
-                index = find(strcmp(obj.sidList, msg.sid), 1);
-                if ~isempty(index), stream = obj.sidStreams{index}; end
-            end
-            if isempty(stream) || ~isfield(msg, stream)
-                return;
-            end
-
-            time = NaN;
-            if isfield(msg, 'time') && isnumeric(msg.time) && ~isempty(msg.time)
-                time = double(msg.time);
-            end
-            obj.context.buffer.append(stream, CortexHeadset.flattenSample(msg.(stream)), time);
+            [stream, row, time] = obj.parser.parse(msg);
+            if isempty(stream), return; end
+            obj.context.buffer.append(stream, row, time);
         end
     end
 
@@ -259,42 +246,6 @@ classdef CortexHeadset < handle
                 items = num2cell(value(:))';
             else
                 items = {value};
-            end
-        end
-    end
-
-    methods (Static)
-        function labels = flattenLabels(cols)
-            % The dev stream nests the contact-quality labels in a sub-array.
-            if ischar(cols)
-                labels = {cols};
-            elseif iscell(cols)
-                labels = {};
-                for index = 1:numel(cols)
-                    labels = [labels, CortexHeadset.flattenLabels(cols{index})]; %#ok<AGROW>
-                end
-            else
-                labels = {};
-            end
-        end
-
-        function row = flattenSample(values)
-            % Empty entries (null, no markers) become NaN so every row keeps the same width.
-            % jsondecode returns numeric, logical or cell values depending on the tool and content.
-            if isnumeric(values) || islogical(values)
-                if isempty(values)
-                    row = NaN;
-                else
-                    row = double(values(:))';
-                end
-            elseif iscell(values)
-                row = [];
-                for index = 1:numel(values)
-                    row = [row, CortexHeadset.flattenSample(values{index})]; %#ok<AGROW>
-                end
-                if isempty(row), row = NaN; end
-            else
-                row = NaN;
             end
         end
     end
