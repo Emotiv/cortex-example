@@ -6,19 +6,17 @@ The examples are written for researchers and engineers who use MATLAB or GNU Oct
 
 ## What You Will Run
 
-The local connection has three parts:
+The local connection has two parts:
 
 1. **EMOTIV Launcher**: Provides the local Cortex service and the logged-in Emotiv account.
-2. **Python proxy**: Connects MATLAB/Octave to Cortex. It listens on `127.0.0.1:9999` and forwards messages to Cortex over WSS at `wss://localhost:6868`.
-3. **MATLAB or GNU Octave**: Runs the example and communicates with the proxy.
-
-The Python proxy is a required helper utility. It is not implemented by MATLAB or Octave.
+2. **MATLAB or GNU Octave**: Runs the example and connects directly to Cortex at `wss://localhost:6868` using the bundled Java WebSocket client (`lib/`). No separate process is needed.
 
 ## Folder Structure
 
 - `functions/`: Public functions (`cortexConnect`, `cortexSubscribe`, `cortexGetData`, `cortexDisconnect`) that hide the internal MATLAB classes.
 - `internal/`: Internal SDK classes. Not a public interface; they may change.
-- `proxy/`: The Python TCP-to-WSS proxy.
+- `lib/`: `nv-websocket-client-2.14.jar` and `cortex-ws-client.jar`, the Java WebSocket client used for WSS.
+- `java/`: Source of the small Java wrapper (`cortex-ws-client.jar`).
 - `config/`: Local configuration. Copy `config/config.example.json` to `config/config.json` to store your Cortex application credentials. `config/config.json` is ignored by Git and must not be committed or shared.
 - `examples/`: Beginner-friendly scripts that show complete workflows.
 
@@ -35,31 +33,18 @@ The public workflow uses `cortexConnect` and `cortexDisconnect`. The underlying 
 
 Download EMOTIV Launcher from the [EMOTIV website](https://www.emotiv.com/products/emotiv-launcher). Follow the Launcher prompts to accept the current Terms of Use, Privacy Policy, and EULA.
 
-### Python
+### Java
 
-- Python 3 is recommended.
-- The proxy uses the `websocket-client` package.
-- The proxy verifies Cortex TLS certificates using the repository's `certificates/rootCA.pem` CA bundle.
-- Keep the repository-level `certificates/rootCA.pem` file when copying the Octave examples; the proxy reports a clear error if it is missing.
-
-```text
-python -m pip install websocket-client
-```
-
-Check the installation with:
-
-```text
-python --version
-python -c "import websocket; print('websocket-client is ready')"
-```
-
+- MATLAB or GNU Octave with a working Java VM.
+- The client verifies Cortex TLS certificates using the repository's `certificates/rootCA.pem` CA bundle.
+- Keep the repository-level `certificates/rootCA.pem` file when copying the Octave examples; the client reports a clear error if it is missing.
 ### MATLAB or GNU Octave
 
 Use a recent MATLAB release or GNU Octave version with:
 
 - `jsonencode` and `jsondecode` support.
-- Java networking support, including `java.net.Socket`.
-- Permission to open a local TCP connection to `127.0.0.1:9999`.
+- Java support (the bundled jars in `lib/` are loaded automatically).
+- Permission to open a TLS connection to `localhost:6868`.
 
 The SDK does not require the MATLAB Instrument Control Toolbox, an Octave sockets package, or a separate JSON package.
 
@@ -101,39 +86,20 @@ Run these steps in order.
 
 ### 1. Start EMOTIV Launcher
 
-Open EMOTIV Launcher and sign in. Make sure Cortex is available before starting the proxy.
+Open EMOTIV Launcher and sign in. Make sure Cortex is available before running the example.
 
 If you are testing without a physical headset, create or enable a virtual headset in EMOTIV Launcher according to the [virtual brainwear guide](https://emotiv.gitbook.io/emotiv-launcher/devices-setting-up-virtual-brainwear-r/creating-a-virtual-brainwear-device).
 
-### 2. Install the Python dependency
-
-Run this command in any terminal:
-
-```text
-python -m pip install websocket-client
-```
-
-### 3. Start the Cortex proxy
-
-Open a terminal and run:
-
-```text
-cd octave/proxy
-python cortex_proxy.py
-```
-
-Leave this terminal open. A successful startup reports that the proxy is listening on `127.0.0.1:9999`.
-
-### 4. Configure `config.json`
+### 2. Configure `config.json`
 
 Complete the credential setup described above before running the example.
 
-### 5. Run the authentication example
+### 3. Run the authentication example
 
 Open MATLAB or GNU Octave from the repository root and run:
 
 ```matlab
-run('octave/examples/testAuth.m')
+run('octave/examples/authorizeAndShowAccount.m')
 ```
 
 The script adds `octave/functions` to the search path automatically (`cortexConnect` adds `octave/internal` internally). It then calls this simple workflow:
@@ -146,7 +112,7 @@ cortex = cortexDisconnect(cortex);
 
 A successful run prints an authorization message, the Cortex token length or token, the logged-in username, and the license name. The example closes the connection before it finishes.
 
-### 6. Approve application access when prompted
+### 4. Approve application access when prompted
 
 The first authorization may require approval in EMOTIV Launcher. Keep the application open and approve access when prompted. The example waits for approval for up to 180 seconds.
 
@@ -154,12 +120,12 @@ The first authorization may require approval in EMOTIV Launcher. Keep the applic
 
 `cortexConnect` returns a plain MATLAB/Octave struct:
 
-- `cortex.isConnected`: `true` after the proxy connection and authorization succeed.
+- `cortex.isConnected`: `true` after the Cortex connection and authorization succeed.
 - `cortex.token`: The Cortex token for later API requests.
 - `cortex.userInfo`: Information returned by `getUserInformation`.
 - `cortex.licenseInfo`: License information returned by `getLicenseInfo`.
 
-The internal manager is stored in the struct only so that `cortexDisconnect(cortex)` can close the Java socket. Treat that field as internal and do not edit it.
+The internal manager is stored in the struct only so that `cortexDisconnect(cortex)` can close the WebSocket. Treat that field as internal and do not edit it.
 
 ## Subscribe and Plot
 
@@ -184,24 +150,18 @@ cortex = cortexDisconnect(cortex);                         % unsubscribes and cl
 
 ## Troubleshooting
 
-### Could not connect to the proxy on `localhost:9999`
-
-- Confirm that the proxy terminal is still running.
-- Start it from `octave/proxy` with `python cortex_proxy.py`.
-- Check that another program is not already using port `9999`.
-- Confirm that EMOTIV Launcher is running before the proxy starts.
-
-### The proxy cannot connect to Cortex at `wss://localhost:6868`
+### Could not connect to Cortex at `wss://localhost:6868`
 
 - Open EMOTIV Launcher and sign in.
 - Confirm that Cortex is available in the Launcher.
 - If certificate verification fails, confirm that `certificates/rootCA.pem` is present in the repository.
-- Restart EMOTIV Launcher, then restart the proxy.
+- If a jar is reported missing, restore the `lib/` folder from the repository.
+- Restart EMOTIV Launcher and run the example again.
 - Check that local security software is not blocking the connection.
 
 ### No user is logged in
 
-Sign in to EMOTIV Launcher and run `testAuth.m` again.
+Sign in to EMOTIV Launcher and run `authorizeAndShowAccount.m` again.
 
 ### Application access is not granted
 
@@ -221,10 +181,6 @@ Use a recent MATLAB or GNU Octave release with native JSON support. The SDK does
 - Check that `headsetId` matches the id shown in EMOTIV Launcher exactly.
 - Increase `'scanTimeout'` in `cortexSubscribe` if the headset is slow to appear.
 - If you see "warning 104 was not received", the headset did not finish connecting in 5 seconds; try again.
-
-### A port conflict occurs
-
-The current proxy and MATLAB/Octave client use port `9999`. Stop the process using that port before starting the proxy again. Changing the port requires updating both the proxy and the `CortexManager` defaults.
 
 ## Next Steps
 

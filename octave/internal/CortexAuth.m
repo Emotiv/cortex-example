@@ -1,5 +1,5 @@
 classdef CortexAuth < handle
-    % CortexAuth  Opens the proxy connection, checks login/access rights and holds the cortexToken.
+    % CortexAuth  Opens the Cortex WSS connection, checks login/access rights and holds the cortexToken.
 
     properties
         license = ''
@@ -24,8 +24,8 @@ classdef CortexAuth < handle
 
     methods
         function obj = CortexAuth(clientId, clientSecret, host, port, context)
-            if nargin < 3, host = '127.0.0.1'; end
-            if nargin < 4, port = 9999; end
+            if nargin < 3, host = 'localhost'; end
+            if nargin < 4, port = 6868; end
             if nargin < 5, context = CortexContext(); end
             obj.clientId = clientId;
             obj.clientSecret = clientSecret;

@@ -18,10 +18,12 @@ classdef CortexManager < handle
     methods
         function obj = CortexManager(clientId, clientSecret, host, port)
             if nargin < 2
-                [clientId, clientSecret] = cortexCredentials();
+                [clientId, clientSecret, configPort] = cortexCredentials();
+            else
+                configPort = 6868;
             end
-            if nargin < 3, host = '127.0.0.1'; end
-            if nargin < 4, port = 9999; end
+            if nargin < 3, host = 'localhost'; end
+            if nargin < 4, port = configPort; end
             obj.clientId = clientId;
             obj.clientSecret = clientSecret;
             obj.host = host;

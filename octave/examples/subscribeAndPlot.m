@@ -1,6 +1,5 @@
 function subscribeAndPlot()
 % subscribeAndPlot  Subscribe to EEG, motion (mot), and performance metrics (met) streams and plot live.
-%   Start the proxy first: python octave/proxy/cortex_proxy.py
 
 % 1. Initialization & Configuration: make the SDK functions visible.
 currentDir = fileparts(mfilename('fullpath'));

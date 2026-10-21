@@ -1,9 +1,9 @@
 function cortex = cortexDisconnect(cortex)
-% cortexDisconnect  Close the proxy connection opened by cortexConnect.
+% cortexDisconnect  Close the Cortex connection opened by cortexConnect.
 %   cortex = cortexDisconnect(cortex) is safe to call even if cortexConnect failed.
 
 if isstruct(cortex) && isfield(cortex, 'manager') && ~isempty(cortex.manager)
-    fprintf('[cortexDisconnect] Closing proxy connection...\n');
+    fprintf('[cortexDisconnect] Closing Cortex connection...\n');
     cortex.manager.close();
     cortex.manager = [];
 end

@@ -1,11 +1,9 @@
 classdef CortexClient < handle
-    % CortexClient  JSON-RPC client for Cortex over the cortex_proxy.py TCP bridge.
-    %   Works in GNU Octave (with Java) and MATLAB via java.net.Socket.
+    % CortexClient  JSON-RPC client that connects straight to Cortex over WSS.
+    %   Works in GNU Octave (with Java) and MATLAB via lib/cortex-ws-client.jar (nv-websocket-client).
 
     properties (Access = private)
-        socket
-        writer
-        reader
+        ws
         nextId = 1
         pendingResponses = {}
         streamMessages = {}
@@ -23,36 +21,25 @@ classdef CortexClient < handle
 
     methods
         function obj = CortexClient(host, port, requestTimeout)
-            if nargin < 1, host = '127.0.0.1'; end
-            if nargin < 2, port = 9999; end
+            if nargin < 1, host = 'localhost'; end
+            if nargin < 2, port = 6868; end
             if nargin < 3, requestTimeout = 60; end
 
             obj.requestTimeout = requestTimeout;
             obj.validateRequestTimeout();
 
-            obj.socket = javaObject('java.net.Socket', host, int32(port));
-            obj.socket.setTcpNoDelay(true);
-            obj.socket.setSoTimeout(int32(1000));
-            obj.writer = javaObject('java.io.PrintWriter', obj.socket.getOutputStream(), true);
-            isr = javaObject('java.io.InputStreamReader', obj.socket.getInputStream(), 'UTF-8');
-            obj.reader = javaObject('java.io.BufferedReader', isr);
+            internalDir = fileparts(mfilename('fullpath'));
+            libDir = fullfile(internalDir, '..', 'lib');
+            CortexClient.addJars(libDir);
+            caPath = fullfile(internalDir, '..', '..', 'certificates', 'rootCA.pem');
+            if ~exist(caPath, 'file')
+                error('CortexClient:certificate', ...
+                    'Required Cortex CA certificate not found: %s', caPath);
+            end
 
-            % Greeting may need several 1 s read timeouts while the proxy opens the WSS link.
-            greeting = '';
-            for attempt = 1:10
-                greeting = obj.readSocketLine();
-                if ~isempty(greeting), break; end
-            end
-            if isempty(greeting)
-                obj.close();
-                error('CortexClient:connectTimeout', ...
-                    'Timed out waiting for the Cortex proxy connection greeting.');
-            end
-            msg = jsondecode(greeting);
-            if ~isfield(msg, 'status') || ~strcmp(msg.status, 'connected')
-                obj.close();
-                error('CortexClient:connect', 'Cortex proxy did not report "connected": %s', greeting);
-            end
+            url = sprintf('wss://%s:%d', host, port);
+            obj.ws = javaObject('cortex.CortexWsClient');
+            obj.ws.connect(url, caPath, int32(10000));
         end
 
         function response = sendRequest(obj, method, params)
@@ -63,7 +50,7 @@ classdef CortexClient < handle
             id = obj.nextId;
             obj.nextId = id + 1;
             request = struct('jsonrpc', '2.0', 'id', id, 'method', method, 'params', params);
-            obj.writer.println(jsonencode(request));
+            obj.ws.sendText(jsonencode(request));
 
             queued = obj.takeResponse(id, method);
             if ~isempty(queued)
@@ -182,14 +169,31 @@ classdef CortexClient < handle
         end
 
         function close(obj)
-            if isempty(obj.socket), return; end
+            if isempty(obj.ws), return; end
             try
-                obj.socket.close();
+                obj.ws.close();
             catch
             end
-            obj.socket = [];
-            obj.writer = [];
-            obj.reader = [];
+            obj.ws = [];
+        end
+    end
+
+    methods (Static, Access = private)
+        function addJars(libDir)
+            loaded = javaclasspath('-all');
+            [status, libInfo] = fileattrib(libDir);
+            if status
+                libDir = libInfo.Name;
+            end
+            for jarName = {'nv-websocket-client-2.14.jar', 'cortex-ws-client.jar'}
+                jarPath = fullfile(libDir, jarName{1});
+                if ~exist(jarPath, 'file')
+                    error('CortexClient:jar', 'Missing %s. Restore the lib folder from the repository.', jarPath);
+                end
+                if ~any(strcmp(loaded, jarPath))
+                    javaaddpath(jarPath);
+                end
+            end
         end
     end
 
@@ -300,19 +304,17 @@ classdef CortexClient < handle
         end
 
         function line = readSocketLine(obj)
+            % Java returns null (empty in Octave) on timeout; a closed link throws.
             try
-                line = obj.reader.readLine();
+                line = obj.ws.poll(int32(1000));
             catch err
-                if ~isempty(regexpi(err.message, 'timed? ?out', 'once'))
-                    line = '';
-                    return;
-                end
-                rethrow(err);
+                error('CortexClient:closed', 'Connection to Cortex closed: %s', err.message);
             end
-            if ~(ischar(line) || isa(line, 'java.lang.String'))
-                error('CortexClient:closed', 'Connection to Cortex proxy closed.');
+            if isempty(line)
+                line = '';
+            else
+                line = char(line);
             end
-            line = char(line);
         end
     end
 end

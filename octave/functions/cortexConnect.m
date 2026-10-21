@@ -1,8 +1,9 @@
 function cortex = cortexConnect()
-% cortexConnect  Connect to Cortex through the proxy and authorize this app.
-%   cortex = cortexConnect() loads clientId and clientSecret from config/config.json
+% cortexConnect  Connect to Cortex over WSS and authorize this app.
+%   cortex = cortexConnect() loads clientId, clientSecret and the optional port (default 6868)
+%   from config/config.json
 %   and returns a struct with the fields:
-%     isConnected  true when the proxy link is open and the app is authorized
+%     isConnected  true when the Cortex link is open and the app is authorized
 %     token        cortexToken to use in later Cortex requests ('' on failure)
 %     userInfo     user details returned by Cortex ([] on failure)
 %     licenseInfo  license details returned by Cortex ([] on failure)
@@ -12,20 +13,20 @@ function cortex = cortexConnect()
 functionsDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(functionsDir, '..', 'internal'));
 
-[clientId, clientSecret] = cortexCredentials();
+[clientId, clientSecret, port] = cortexCredentials();
 
 cortex = struct('isConnected', false, 'token', '', 'userInfo', [], 'licenseInfo', [], 'manager', [], ...
     'isSubscribed', false, 'headsetId', '', 'sessionId', '', 'streams', {{}});
-manager = CortexManager(clientId, clientSecret);
+manager = CortexManager(clientId, clientSecret, 'localhost', port);
 cortex.manager = manager;
 
 try
-    fprintf('[cortexConnect] Connecting to the proxy on %s:%d...\n', manager.host, manager.port);
+    fprintf('[cortexConnect] Connecting to Cortex at wss://%s:%d...\n', manager.host, manager.port);
     try
         auth = manager.getAuth();
     catch connectFailure
-        fprintf(['Could not connect to the proxy on localhost:%d. ' ...
-            'Start the proxy first (see README Quickstart, step 3).\n'], manager.port);
+        fprintf(['Could not connect to Cortex at wss://%s:%d. ' ...
+            'Make sure EMOTIV Launcher is running.\n'], manager.host, manager.port);
         rethrow(connectFailure);
     end
 
