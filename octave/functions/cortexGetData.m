@@ -19,5 +19,9 @@ end
 
 headset = cortex.manager.getHeadset();
 headset.update();
+if ~headset.isSubscribed
+    fprintf('[cortexGetData] No active subscription. Call cortexSubscribe first.\n');
+    return;
+end
 [labels, data, time] = cortex.manager.getContext().buffer.read(stream, lastN);
 end

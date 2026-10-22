@@ -12,7 +12,6 @@ function cortex = cortexSubscribe(cortex, headsetId, streams, varargin)
 %     'scanTimeout'   seconds to wait for the headset to appear (default 30)
 %   Read the samples with cortexGetData.
 
-cortex.isSubscribed = false;
 options = struct('autoRescan', true, 'queryInterval', 3, 'scanTimeout', 30);
 for index = 1:2:numel(varargin) - 1
     if ~isfield(options, varargin{index})
@@ -33,6 +32,7 @@ if ~iscellstr(streams) || isempty(streams) || ~all(ismember(streams, validStream
     return;
 end
 
+cortex.isSubscribed = false;
 try
     headset = cortex.manager.getHeadset();
     headset.scanHeadset(options.autoRescan, options.queryInterval);

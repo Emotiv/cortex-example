@@ -13,6 +13,7 @@ durationSeconds = 90;
 % 2. Connection / Authentication, then headset connection and subscription.
 %    Credentials are loaded from config/config.json.
 cortex = cortexConnect();
+connectionCleanup = onCleanup(@() cortexDisconnect(cortex));
 if cortex.isConnected
     cortex = cortexSubscribe(cortex, headsetId, streams);
 end
@@ -68,7 +69,7 @@ catch failure
 end
 
 % 4. Safe Teardown: unsubscribes and releases the socket, even after an error.
-cortex = cortexDisconnect(cortex);
+clear connectionCleanup;
 fprintf('[subscribeAndPlot] Done.\n');
 end
 

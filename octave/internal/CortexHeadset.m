@@ -30,6 +30,7 @@ classdef CortexHeadset < handle
             if isempty(context.buffer)
                 context.buffer = CortexDataBuffer(10000);
             end
+            obj.client.onWarning(1, @(warning) obj.onSessionClosed(warning));
             obj.client.onWarning(142, @(warning) obj.onScanFinished(warning));
         end
 
@@ -216,6 +217,22 @@ classdef CortexHeadset < handle
                 fprintf(['[CortexHeadset] Headset scan finished (warning 142). ' ...
                     'Call scanHeadset again to rescan.\n']);
             end
+        end
+
+        function onSessionClosed(obj, warning)
+            if ~isfield(warning, 'message') || ~isstruct(warning.message) || ...
+                    ~isfield(warning.message, 'sessionId') || ...
+                    ~strcmp(warning.message.sessionId, obj.context.sessionId)
+                return;
+            end
+
+            obj.isScanning = false;
+            obj.isSubscribed = false;
+            obj.context.sessionId = '';
+            obj.context.headsetId = '';
+            obj.context.subscribedStreams = {};
+            obj.parser.reset();
+            fprintf('[CortexHeadset] Session %s was closed by Cortex.\n', warning.message.sessionId);
         end
 
         function runScanTimer(obj)

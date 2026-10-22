@@ -18,6 +18,7 @@ import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketFactory;
 import com.neovisionaries.ws.client.WebSocketFrame;
+import com.neovisionaries.ws.client.WebSocketState;
 
 /** Polling WebSocket client for Octave/MATLAB, which cannot receive Java callbacks. */
 public class CortexWsClient {
@@ -29,6 +30,7 @@ public class CortexWsClient {
     public void connect(String url, String caPath, int timeoutMs) throws Exception {
         WebSocketFactory factory = new WebSocketFactory();
         factory.setConnectionTimeout(timeoutMs);
+        factory.setSocketTimeout(timeoutMs);
         factory.setVerifyHostname(true);
         if (caPath != null && !caPath.isEmpty()) {
             factory.setSSLContext(sslContextFor(caPath));
@@ -39,6 +41,14 @@ public class CortexWsClient {
             @Override
             public void onTextMessage(WebSocket ws, String text) {
                 messages.add(text);
+            }
+
+            @Override
+            public void onStateChanged(WebSocket ws, WebSocketState newState) throws Exception {
+                // Runs before the reader thread starts, so idle reads must block again.
+                if (newState == WebSocketState.OPEN) {
+                    ws.getSocket().setSoTimeout(0);
+                }
             }
 
             @Override
