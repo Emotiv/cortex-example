@@ -10,12 +10,13 @@ headsetId = '<YOUR_HEADSET_ID>';
 streams = {'eeg'};
 durationSeconds = 90;
 
-% 2. Connection / Authentication, then headset connection and subscription.
+% 2. Connection / Authentication, then create a headset session and subscribe to streams.
 %    Credentials are loaded from config/config.json.
 cortex = cortexConnect();
 connectionCleanup = onCleanup(@() cortexDisconnect(cortex));
 if cortex.isConnected
-    cortex = cortexSubscribe(cortex, headsetId, streams);
+    cortex = cortexSession(cortex, headsetId);
+    cortex = cortexSubscribe(cortex, streams);
 end
 
 % 3. Acquisition Loop: each cortexGetData call collects new samples into the buffer.

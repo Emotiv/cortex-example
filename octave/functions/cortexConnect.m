@@ -8,7 +8,8 @@ function cortex = cortexConnect()
 %     userInfo     user details returned by Cortex ([] on failure)
 %     licenseInfo  license details returned by Cortex ([] on failure)
 %     manager      internal handle used by cortexDisconnect; do not modify
-%     isSubscribed, headsetId, sessionId, streams   filled in by cortexSubscribe
+%     isSubscribed, headsetId, sessionId, streams   filled in by headset connection/subscription
+%     isRecording, recordId   filled in by cortexRecord
 
 functionsDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(functionsDir, '..', 'internal'));
@@ -16,7 +17,8 @@ addpath(fullfile(functionsDir, '..', 'internal'));
 [clientId, clientSecret, port] = cortexCredentials();
 
 cortex = struct('isConnected', false, 'token', '', 'userInfo', [], 'licenseInfo', [], 'manager', [], ...
-    'isSubscribed', false, 'headsetId', '', 'sessionId', '', 'streams', {{}});
+    'isSubscribed', false, 'isRecording', false, 'recordId', '', ...
+    'headsetId', '', 'sessionId', '', 'streams', {{}});
 manager = CortexManager(clientId, clientSecret, 'localhost', port);
 cortex.manager = manager;
 
