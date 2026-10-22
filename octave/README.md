@@ -13,14 +13,14 @@ The local connection has two parts:
 
 ## Folder Structure
 
-- `functions/`: Public functions (`cortexConnect`, `cortexSubscribe`, `cortexGetData`, `cortexDisconnect`) that hide the internal MATLAB classes.
+- `functions/`: Public functions (`cortexConnect`, `cortexSession`, `cortexSubscribe`, `cortexGetData`, `cortexRecord`, `cortexMarker`, `cortexDisconnect`) that hide the internal MATLAB classes.
 - `internal/`: Internal SDK classes. Not a public interface; they may change.
 - `lib/`: `nv-websocket-client-2.14.jar` and `cortex-ws-client.jar`, the Java WebSocket client used for WSS.
 - `java/`: Source of the small Java wrapper (`cortex-ws-client.jar`).
 - `config/`: Local configuration. Copy `config/config.example.json` to `config/config.json` to store your Cortex application credentials. `config/config.json` is ignored by Git and must not be committed or shared.
 - `examples/`: Beginner-friendly scripts that show complete workflows.
 
-The public workflow uses `cortexConnect` and `cortexDisconnect`. The underlying `CortexManager` and `CortexAuth` classes are kept inside `internal/` so future examples can extend the SDK without making the user-facing scripts more complicated.
+The public workflow uses procedural functions such as `cortexConnect`, `cortexSession`, `cortexSubscribe`, `cortexRecord`, `cortexMarker`, and `cortexDisconnect`. The underlying Cortex classes are kept inside `internal/` so examples can extend the SDK without making researchers manage the WebSocket or internal class instances.
 
 ## Requirements
 
@@ -136,7 +136,8 @@ The internal manager is stored in the struct only so that `cortexDisconnect(cort
 
 ```matlab
 cortex = cortexConnect();
-cortex = cortexSubscribe(cortex, 'INSIGHT-A1B2C3D4', {'eeg'});
+cortex = cortexSession(cortex, 'INSIGHT-A1B2C3D4');
+cortex = cortexSubscribe(cortex, {'eeg'});
 [labels, data, time] = cortexGetData(cortex, 'eeg', 256);  % newest 256 samples
 cortex = cortexDisconnect(cortex);                         % unsubscribes and closes the socket
 ```
@@ -144,9 +145,43 @@ cortex = cortexDisconnect(cortex);                         % unsubscribes and cl
 - To subscribe to other supported streams, pass their names instead, for example `{'mot','dev','eq','pow','met'}`. Call `cortexGetData(cortex, streamName)` for each stream you want to consume.
 - `labels{j}` names column `j` of `data`; each row is a sample. Use the returned labels to select columns rather than hard-coding positions. For console output, loop over `labels` and print each `data(end,j)`; for plots, plot the desired numeric columns against `time`.
 - `met` columns named `<metric>.isActive` are 1 when that metric is running. When it is 0 the metric value is `NaN` (Cortex sends `null`). Without a PRO license `met` arrives about every 10 seconds; with a PRO license about 2 samples per second. `pow` does not need a PRO license.
-- `cortexSubscribe` scans for the headset, connects it if needed (waiting up to 5 seconds for Cortex warning 104), creates an active session and subscribes. Optional name/value pairs: `'autoRescan'` (default `true`), `'queryInterval'` (default `3` seconds), `'scanTimeout'` (default `15` seconds).
+- `cortexSession` scans for the headset, connects it if needed (waiting up to 5 seconds for Cortex warning 104), and creates one active session for that headset. Calling it again for the same active headset reuses that session; a different headset requires disconnecting first.
+- `cortexSubscribe(cortex, streams)` subscribes the requested streams on the active session created by `cortexSession`.
 - `cortexGetData` collects the samples that have arrived and returns them from a buffer that keeps the latest 10000 samples per stream. `data` has one row per sample and one column per entry in `labels`; empty values are `NaN`.
 - Call `cortexGetData` regularly. Samples are only read from the connection when it runs, and it can take up to about 1 second when no data is arriving.
+
+## Record and Markers
+
+`examples/recordAndMarker.m` demonstrates creating and stopping a record without subscribing to any data stream, and adding keyboard-controlled markers.
+
+1. Set `headsetId` and `titlePrefix` near the top of `examples/recordAndMarker.m`. Add the examples folder to the MATLAB or Octave path and run the function without arguments:
+
+```matlab
+addpath('octave/examples');
+recordAndMarker();
+```
+
+2. Focus the opened figure. Press `S` to start a record titled `<prefix>_<epoch-seconds>`. The example adds a description and the tags `octave` and `record-marker-demo`.
+3. Press any other letter to inject an instance marker; the pressed letter is used as both its label and string value. Press that letter again to update the marker with the current epoch time in milliseconds, turning it into an interval marker. The next press injects a new instance marker.
+4. Press `Esc` or close the figure to stop the active record and disconnect.
+
+The headset-only connection and record/marker APIs are also available directly:
+
+```matlab
+cortex = cortexConnect();
+cortex = cortexSession(cortex, 'INSIGHT-A1B2C3D4');
+[cortex, started] = cortexRecord(cortex, 'start', 'my-study_1792692000', ...
+  'Example record description', {'octave', 'demo'});
+[cortex, injected] = cortexMarker(cortex, 'inject', 'A', 'A');
+[cortex, updated] = cortexMarker(cortex, 'update', injected.marker.uuid, ...
+  1792692000123);
+[cortex, stopped] = cortexRecord(cortex, 'stop');
+cortex = cortexDisconnect(cortex);
+```
+
+`cortexSession(cortex, headsetId)` connects the headset and creates or reuses its active session without subscribing to streams. From that session, call either `cortexSubscribe(cortex, streams)` or start a record. `cortexRecord(cortex, 'start', title, description, tags)` returns the Cortex result fields `record` and `sessionId`; `cortexRecord(cortex, 'stop')` returns the stopped `record` and its `sessionId`. `cortex.isRecording` and `cortex.recordId` reflect the active record.
+
+`cortexMarker(cortex, 'inject', label, value, ...)` returns `recordId`, `sessionId`, and `marker`. Optional name/value pairs are `time` (epoch milliseconds; defaults to the current time), `port` (defaults to `Software`), and `extras` (a scalar struct). `cortexMarker(cortex, 'update', markerId, endTime, ...)` returns the same result fields and accepts optional `extras`. `endTime` is required and is measured in milliseconds since 1970-01-01 UTC. Both marker actions require an active record.
 
 ## Troubleshooting
 
@@ -179,7 +214,7 @@ Use a recent MATLAB or GNU Octave release with native JSON support. The SDK does
 
 - Switch the headset on and make sure it is in range, or enable a virtual headset in EMOTIV Launcher.
 - Check that `headsetId` matches the id shown in EMOTIV Launcher exactly.
-- Increase `'scanTimeout'` in `cortexSubscribe` if the headset is slow to appear.
+- Increase `'scanTimeout'` in `cortexSession` if the headset is slow to appear.
 - If you see "warning 104 was not received", the headset did not finish connecting in 5 seconds; try again.
 
 ## Next Steps

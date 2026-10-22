@@ -13,6 +13,8 @@ classdef CortexManager < handle
     properties (Access = private)
         auth = []
         headset = []
+        record = []
+        marker = []
     end
 
     methods
@@ -53,7 +55,19 @@ classdef CortexManager < handle
             headset = obj.headset;
         end
 
-        % Future getRecord/getBCI follow the getAuth pattern: create lazily with getClient() and getAuth().
+        function record = getRecord(obj)
+            if isempty(obj.record)
+                obj.record = CortexRecord(obj.getClient(), obj.context);
+            end
+            record = obj.record;
+        end
+
+        function marker = getMarker(obj)
+            if isempty(obj.marker)
+                obj.marker = CortexMarker(obj.getClient(), obj.context);
+            end
+            marker = obj.marker;
+        end
 
         function close(obj)
             % Only closes what was actually created.
@@ -67,6 +81,8 @@ classdef CortexManager < handle
             if ~isempty(obj.auth)
                 obj.auth.close();
             end
+            obj.record = [];
+            obj.marker = [];
         end
     end
 end

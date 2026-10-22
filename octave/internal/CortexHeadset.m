@@ -1,5 +1,5 @@
 classdef CortexHeadset < handle
-    % CortexHeadset  Scans for headsets, connects one, opens a session and subscribes to data streams.
+    % CortexHeadset  Scans for headsets, connects one and opens a session, optionally subscribing to streams.
     %   The client is single-threaded, so the scan "timer" runs inside update(), which also reads
     %   the incoming data samples into the context buffer.
 
@@ -99,7 +99,7 @@ classdef CortexHeadset < handle
         end
 
         function [ok, message] = connectToHeadset(obj, headsetId, streams)
-            % Connects the headset if needed, creates an active session, then subscribes to streams.
+            % Connects the headset if needed, creates an active session, and subscribes when streams are provided.
             if nargin < 3, streams = {}; end
             ok = false;
             message = '';
@@ -231,6 +231,8 @@ classdef CortexHeadset < handle
             obj.context.sessionId = '';
             obj.context.headsetId = '';
             obj.context.subscribedStreams = {};
+            obj.context.isRecording = false;
+            obj.context.recordId = '';
             obj.parser.reset();
             fprintf('[CortexHeadset] Session %s was closed by Cortex.\n', warning.message.sessionId);
         end
