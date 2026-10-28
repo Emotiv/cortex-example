@@ -233,6 +233,8 @@ classdef CortexHeadset < handle
             obj.context.subscribedStreams = {};
             obj.context.isRecording = false;
             obj.context.recordId = '';
+            obj.context.profileName = '';
+            obj.context.isProfileLoaded = false;
             obj.parser.reset();
             fprintf('[CortexHeadset] Session %s was closed by Cortex.\n', warning.message.sessionId);
         end
@@ -248,9 +250,21 @@ classdef CortexHeadset < handle
         end
 
         function storeSample(obj, msg)
-            [stream, row, time] = obj.parser.parse(msg);
+            [stream, row, time, mcAction] = obj.parser.parse(msg);
             if isempty(stream), return; end
-            obj.context.buffer.append(stream, row, time);
+            if strcmp(stream, 'sys')
+                obj.storeSystemEvent(msg.sys, time);
+                return;
+            end
+            obj.context.buffer.append(stream, row, time, mcAction);
+        end
+
+        function storeSystemEvent(obj, values, time)
+            % A sys sample is {detection, event}, for example {'mentalCommand', 'MC_Started'}.
+            names = CortexStreamParser.stringsOf(values);
+            if numel(names) < 2, return; end
+            obj.context.trainingEvents{end + 1} = ...
+                struct('detection', names{1}, 'event', names{2}, 'time', time);
         end
     end
 
