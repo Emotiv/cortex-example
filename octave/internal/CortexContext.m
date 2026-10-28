@@ -12,6 +12,9 @@ classdef CortexContext < handle
         subscribedStreams = {}
         isRecording = false
         recordId = ''
+        profileName = ''
+        isProfileLoaded = false
+        trainingEvents = {}     % structs with detection, event and time from the sys stream
         streamLabels = struct() % one field per stream, each a cell array of column labels
         buffer = []             % CortexDataBuffer holding the received samples
     end
