@@ -49,6 +49,10 @@ try
         fprintf('[mentalCommandTraining] Loaded existing profile %s.\n', profileName);
     end
 
+    mentalCommandInfo = cortexMentalCommandInfo(cortex, 'get');
+    fprintf('[mentalCommandTraining] Mental command info:\n%s\n', ...
+        jsonencode(mentalCommandInfo, 'PrettyPrint', true));
+
     % The sys stream reports the training events (started, succeeded, completed).
     cortex = cortexSubscribe(cortex, {'sys'});
     if ~cortex.isSubscribed
@@ -59,6 +63,7 @@ try
     fprintf('  N / P / L / D: start training neutral / push / left / drop.\n');
     fprintf('  A / R: accept / reject the training result.\n');
     fprintf('  S: show live mental commands (act and pow).\n');
+    fprintf('  C: set sensitivity push 7, left 8, drop 2.\n');
     fprintf('  U or Esc: unload the profile and exit.\n');
 
     fig = figure('Name', 'Cortex Mental Command Training', 'NumberTitle', 'off', ...
@@ -71,16 +76,17 @@ try
         'A: accept the training result (saves the profile)', ...
         'R: reject the training result', ...
         'S: show live mental commands (act = action, pow = power 0-1)', ...
+        'C: set sensitivity (push 7, left 8, drop 2)', ...
         'U or Esc: unload the profile and exit'};
     uicontrol(fig, 'Style', 'text', 'Units', 'normalized', ...
-        'Position', [0.08 0.52 0.84 0.40], 'String', helpLines, ...
-        'HorizontalAlignment', 'left', 'FontSize', 12, ...
+        'Position', [0.08 0.44 0.84 0.52], 'String', helpLines, ...
+        'HorizontalAlignment', 'left', 'FontSize', 11, ...
         'BackgroundColor', get(fig, 'Color'), 'Enable', 'on', 'KeyPressFcn', @onKeyPress);
     commandText = uicontrol(fig, 'Style', 'text', 'Units', 'normalized', ...
-        'Position', [0.08 0.36 0.40 0.12], 'String', '', ...
+        'Position', [0.08 0.28 0.40 0.12], 'String', '', ...
         'HorizontalAlignment', 'left', 'FontSize', 20, ...
         'BackgroundColor', get(fig, 'Color'), 'Enable', 'on', 'KeyPressFcn', @onKeyPress);
-    powerAxes = axes('Parent', fig, 'Units', 'normalized', 'Position', [0.52 0.37 0.40 0.08], ...
+    powerAxes = axes('Parent', fig, 'Units', 'normalized', 'Position', [0.52 0.29 0.40 0.08], ...
         'XLim', [0 1], 'YLim', [0 1], 'XTick', [], 'YTick', [], 'Box', 'on', 'Visible', 'off');
     powerBar = patch('Parent', powerAxes, 'Faces', [1 2 3 4], ...
         'Vertices', [0 0; 0 0; 0 1; 0 1], 'FaceColor', [0.8 0.2 0.1], 'EdgeColor', 'none', ...
@@ -143,10 +149,12 @@ fprintf('[mentalCommandTraining] Finished.\n');
                 finishTraining('reject');
             case 's'
                 startCommandStream();
+            case 'c'
+                configureSensitivity();
             case 'u'
                 unloadAndExit();
             otherwise
-                showStatus(sprintf('Ignored key: %s. Use N, P, L, D, A, R, S, U or Esc.', keyName));
+                showStatus(sprintf('Ignored key: %s. Use N, P, L, D, A, R, S, C, U or Esc.', keyName));
         end
     end
 
@@ -198,6 +206,24 @@ fprintf('[mentalCommandTraining] Finished.\n');
         catch finishFailure
             fprintf('[mentalCommandTraining] ERROR %s: %s\n', finishFailure.identifier, finishFailure.message);
             showStatus(['Could not ' status ' the training: ' finishFailure.message]);
+        end
+        isBusy = false;
+    end
+
+    function configureSensitivity()
+        isBusy = true;
+        try
+            showStatus('Configuring sensitivity...');
+            % Sensitivities follow the order of the active actions, so activate them in this order.
+            settings = struct('activeActions', {{'neutral', 'push', 'left', 'drop'}}, ...
+                'actionSensitivities', [7 8 2]);
+            configured = cortexMentalCommandInfo(cortex, 'configure', settings);
+            fprintf('[mentalCommandTraining] Mental command info:\n%s\n', ...
+                jsonencode(configured, 'PrettyPrint', true));
+            showStatus('Sensitivity set: push 7, left 8, drop 2. Profile saved.');
+        catch configureFailure
+            fprintf('[mentalCommandTraining] ERROR %s: %s\n', configureFailure.identifier, configureFailure.message);
+            showStatus(['Could not configure sensitivity: ' configureFailure.message]);
         end
         isBusy = false;
     end
@@ -256,13 +282,16 @@ fprintf('[mentalCommandTraining] Finished.\n');
 
     function unloadAndExit()
         isBusy = true;
+        showStatus('Unloading the profile, please wait...');
         try
-            [cortex, ~] = cortexProfile(cortex, 'unload');
-            fprintf('[mentalCommandTraining] Profile unloaded.\n');
+            [cortex, unloadResult] = cortexProfile(cortex, 'unload');
+            fprintf('[mentalCommandTraining] Profile %s unloaded.\n', unloadResult.name);
+            isExitRequested = true;
         catch unloadFailure
             fprintf('[mentalCommandTraining] ERROR %s: %s\n', unloadFailure.identifier, unloadFailure.message);
+            showStatus(['Could not unload the profile: ' unloadFailure.message ' Press U to try again.']);
+            isBusy = false;
         end
-        isExitRequested = true;
     end
 
     function showStatus(message)

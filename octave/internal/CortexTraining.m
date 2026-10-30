@@ -7,7 +7,6 @@ classdef CortexTraining < handle
         context
         headset
         profile
-        infoCache = struct()
     end
 
     methods
@@ -16,22 +15,6 @@ classdef CortexTraining < handle
             obj.context = context;
             obj.headset = headset;
             obj.profile = profile;
-        end
-
-        function info = getDetectionInfo(obj, detection)
-            % info has the cell arrays actions, controls and events supported by the detection.
-            detection = CortexTraining.normalizeDetection(detection);
-            if isfield(obj.infoCache, detection)
-                info = obj.infoCache.(detection);
-                return;
-            end
-
-            response = obj.client.sendRequest('getDetectionInfo', struct('detection', detection));
-            result = response.result;
-            info = struct('actions', {CortexTraining.toStrings(result, 'actions')}, ...
-                'controls', {CortexTraining.toStrings(result, 'controls')}, ...
-                'events', {CortexTraining.toStrings(result, 'events')});
-            obj.infoCache.(detection) = info;
         end
 
         function result = train(obj, detection, action, status, waitSeconds)
@@ -47,7 +30,7 @@ classdef CortexTraining < handle
                 error('CortexTraining:wait', 'wait must be a non-negative number of seconds.');
             end
 
-            info = obj.getDetectionInfo(detection);
+            info = obj.context.detectionInfo.(detection);
             action = CortexTraining.canonical(info.actions, action, 'action', detection);
             status = CortexTraining.canonical(info.controls, status, 'status', detection);
 
@@ -133,17 +116,6 @@ classdef CortexTraining < handle
                     kind, value, detection, strjoin(allowed, ', '));
             end
             value = allowed{index};
-        end
-
-        function items = toStrings(result, fieldName)
-            items = {};
-            if ~isstruct(result) || ~isfield(result, fieldName), return; end
-            value = result.(fieldName);
-            if ischar(value)
-                items = {value};
-            elseif iscell(value)
-                items = value(:)';
-            end
         end
     end
 end

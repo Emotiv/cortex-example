@@ -17,6 +17,7 @@ classdef CortexManager < handle
         marker = []
         profile = []
         training = []
+        mentalCommand = []
     end
 
     methods
@@ -85,6 +86,13 @@ classdef CortexManager < handle
             training = obj.training;
         end
 
+        function mentalCommand = getMentalCommandConfiguration(obj)
+            if isempty(obj.mentalCommand)
+                obj.mentalCommand = CortexMentalCommandConfiguration(obj.getClient(), obj.context);
+            end
+            mentalCommand = obj.mentalCommand;
+        end
+
         function close(obj)
             % Only closes what was actually created.
             if ~isempty(obj.headset)
@@ -101,6 +109,7 @@ classdef CortexManager < handle
             obj.marker = [];
             obj.profile = [];
             obj.training = [];
+            obj.mentalCommand = [];
         end
     end
 end
