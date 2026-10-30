@@ -61,6 +61,7 @@ classdef CortexProfile < handle
 
             obj.context.profileName = profileName;
             obj.context.isProfileLoaded = true;
+            obj.loadDetectionInfo();
             result = CortexProfile.makeResult(profileName, uuid, ~created, created, true);
         end
 
@@ -78,12 +79,24 @@ classdef CortexProfile < handle
             setupResult = obj.setup(name, 'unload');
             obj.context.profileName = '';
             obj.context.isProfileLoaded = false;
+            obj.context.detectionInfo = struct();
             result = CortexProfile.makeResult(name, CortexProfile.textField(setupResult, 'uuid'), ...
                 true, false, false);
         end
     end
 
     methods (Access = private)
+        function loadDetectionInfo(obj)
+            for detection = {'mentalCommand', 'facialExpression'}
+                response = obj.client.sendRequest('getDetectionInfo', struct('detection', detection{1}));
+                result = response.result;
+                obj.context.detectionInfo.(detection{1}) = struct( ...
+                    'actions', {CortexProfile.toStrings(result, 'actions')}, ...
+                    'controls', {CortexProfile.toStrings(result, 'controls')}, ...
+                    'events', {CortexProfile.toStrings(result, 'events')});
+            end
+        end
+
         function result = setup(obj, profileName, status)
             params = struct('cortexToken', obj.context.token, 'headset', obj.context.headsetId, ...
                 'profile', profileName, 'status', status);
@@ -120,6 +133,17 @@ classdef CortexProfile < handle
             text = '';
             if isstruct(item) && isfield(item, fieldName) && ischar(item.(fieldName))
                 text = item.(fieldName);
+            end
+        end
+
+        function items = toStrings(result, fieldName)
+            items = {};
+            if ~isstruct(result) || ~isfield(result, fieldName), return; end
+            value = result.(fieldName);
+            if ischar(value)
+                items = {value};
+            elseif iscell(value)
+                items = value(:)';
             end
         end
 
