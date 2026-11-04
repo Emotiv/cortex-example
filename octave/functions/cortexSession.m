@@ -38,12 +38,12 @@ if ~isempty(context.sessionId)
     return;
 end
 
+headset = [];
 try
     headset = manager.getHeadset();
     headset.scanHeadset(options.autoRescan, options.queryInterval);
 
     if ~headset.waitForHeadset(headsetId, options.scanTimeout)
-        headset.stopScan();
         error('CortexHeadset:notFound', 'Headset %s was not found within %g seconds.', ...
             headsetId, options.scanTimeout);
     end
@@ -55,12 +55,12 @@ try
 
     cortex = syncSessionState(cortex, manager.getContext());
 catch failure
-    try
-        manager.close();
-    catch
+    if ~isempty(headset)
+        try
+            headset.stopScan();
+        catch
+        end
     end
-    cortex.manager = [];
-    cortex.isConnected = false;
     error('cortex:sessionFailed', 'Could not create a headset session: %s', failure.message);
 end
 end

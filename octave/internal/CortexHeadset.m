@@ -4,7 +4,7 @@ classdef CortexHeadset < handle
     %   the incoming data samples into the context buffer.
 
     properties
-        connectTimeout = 5      % seconds to wait for warning 104 (headset connected)
+        connectTimeout = 10      % seconds to wait for warning 104 (headset connected)
     end
 
     properties (SetAccess = private)
