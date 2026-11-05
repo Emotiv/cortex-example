@@ -18,13 +18,13 @@ classdef CortexStreamParser < handle
             obj.streams = {};
         end
 
-        function [stream, row, time, mcAction] = parse(obj, msg)
+        function [stream, row, time, bciAction] = parse(obj, msg)
             % stream is '' when the message does not belong to a registered stream.
-            % mcAction is the mental command action of a com sample ('' for other streams).
+            % bciAction is the action of a com sample, or {eyeAct, uAct, lAct} for fac ('' for other streams).
             stream = '';
             row = [];
             time = NaN;
-            mcAction = '';
+            bciAction = '';
             if isfield(msg, 'sid') && ischar(msg.sid)
                 % Streams of one session can share the same sid, so match the stream by its field name too.
                 candidates = find(strcmp(obj.sids, msg.sid));
@@ -45,7 +45,12 @@ classdef CortexStreamParser < handle
             end
             row = CortexStreamParser.flattenSample(msg.(stream));
             names = CortexStreamParser.stringsOf(msg.(stream));
-            if ~isempty(names), mcAction = names{1}; end
+            if strcmp(stream, 'fac')
+                % fac carries three actions per sample: {eyeAct, uAct, lAct}.
+                bciAction = names;
+            elseif ~isempty(names)
+                bciAction = names{1};
+            end
         end
     end
 
