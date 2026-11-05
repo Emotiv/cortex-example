@@ -173,8 +173,8 @@ cortex = cortexSession(cortex, 'INSIGHT-A1B2C3D4');
 [cortex, started] = cortexRecord(cortex, 'start', 'my-study_1792692000', ...
   'Example record description', {'octave', 'demo'});
 [cortex, injected] = cortexMarker(cortex, 'inject', 'A', 'A');
-[cortex, updated] = cortexMarker(cortex, 'update', injected.marker.uuid, ...
-  1792692000123);
+endTime = double(javaMethod('currentTimeMillis', 'java.lang.System'));
+[cortex, updated] = cortexMarker(cortex, 'update', injected.marker.uuid, endTime);
 [cortex, stopped] = cortexRecord(cortex, 'stop');
 cortex = cortexDisconnect(cortex);
 ```
