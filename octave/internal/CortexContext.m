@@ -10,6 +10,8 @@ classdef CortexContext < handle
         headsetId = ''
         sessionId = ''
         subscribedStreams = {}
+        isRecording = false
+        recordId = ''
         streamLabels = struct() % one field per stream, each a cell array of column labels
         buffer = []             % CortexDataBuffer holding the received samples
     end
