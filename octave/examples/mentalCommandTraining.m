@@ -196,7 +196,11 @@ fprintf('[mentalCommandTraining] Finished.\n');
                     'wait', trainAcceptTimeout);
                 fprintf('[mentalCommandTraining] Training %s completed (%s); profile saved: %d.\n', ...
                     pendingAction, accepted.event, accepted.profileSaved);
-                showStatus(sprintf('Training %s accepted and profile saved.', pendingAction));
+                if accepted.profileSaved
+                    showStatus(sprintf('Training %s accepted and profile saved.', pendingAction));
+                else
+                    showStatus(sprintf('Training %s accepted, but saving the profile failed (see console).', pendingAction));
+                end
             else
                 cortexTraining(cortex, 'mentalCommand', pendingAction, 'reject');
                 fprintf('[mentalCommandTraining] Training %s rejected.\n', pendingAction);

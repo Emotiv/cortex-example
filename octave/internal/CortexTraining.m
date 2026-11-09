@@ -64,8 +64,12 @@ classdef CortexTraining < handle
             result.isSucceeded = ~isempty(regexp(event, '_(Succeeded|Completed)$', 'once'));
 
             if strcmp(status, 'accept') && result.isSucceeded
-                obj.profile.save();
-                result.profileSaved = true;
+                try
+                    obj.profile.save();
+                    result.profileSaved = true;
+                catch err
+                    fprintf('[CortexTraining] Training completed but saving the profile failed: %s\n', err.message);
+                end
             end
         end
     end

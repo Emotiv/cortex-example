@@ -36,6 +36,10 @@ classdef CortexProfile < handle
 
             if obj.context.isProfileLoaded
                 if strcmp(obj.context.profileName, profileName)
+                    info = obj.context.detectionInfo;
+                    if ~isstruct(info) || ~isfield(info, 'mentalCommand') || ~isfield(info, 'facialExpression')
+                        obj.loadDetectionInfo();
+                    end
                     result = CortexProfile.makeResult(profileName, '', true, false, true);
                     return;
                 end
@@ -87,8 +91,18 @@ classdef CortexProfile < handle
 
     methods (Access = private)
         function loadDetectionInfo(obj)
+            maxAttempts = 3;
             for detection = {'mentalCommand', 'facialExpression'}
-                response = obj.client.sendRequest('getDetectionInfo', struct('detection', detection{1}));
+                for attempt = 1:maxAttempts
+                    try
+                        response = obj.client.sendRequest('getDetectionInfo', struct('detection', detection{1}));
+                        break;
+                    catch err
+                        if attempt == maxAttempts
+                            rethrow(err);
+                        end
+                    end
+                end
                 result = response.result;
                 obj.context.detectionInfo.(detection{1}) = struct( ...
                     'actions', {CortexProfile.toStrings(result, 'actions')}, ...
