@@ -15,6 +15,9 @@ classdef CortexManager < handle
         headset = []
         record = []
         marker = []
+        profile = []
+        training = []
+        mentalCommand = []
     end
 
     methods
@@ -69,6 +72,27 @@ classdef CortexManager < handle
             marker = obj.marker;
         end
 
+        function profile = getProfile(obj)
+            if isempty(obj.profile)
+                obj.profile = CortexProfile(obj.getClient(), obj.context);
+            end
+            profile = obj.profile;
+        end
+
+        function training = getTraining(obj)
+            if isempty(obj.training)
+                obj.training = CortexTraining(obj.getClient(), obj.context, obj.getHeadset(), obj.getProfile());
+            end
+            training = obj.training;
+        end
+
+        function mentalCommand = getMentalCommandConfiguration(obj)
+            if isempty(obj.mentalCommand)
+                obj.mentalCommand = CortexMentalCommandConfiguration(obj.getClient(), obj.context);
+            end
+            mentalCommand = obj.mentalCommand;
+        end
+
         function close(obj)
             % Only closes what was actually created.
             if ~isempty(obj.headset)
@@ -83,6 +107,9 @@ classdef CortexManager < handle
             end
             obj.record = [];
             obj.marker = [];
+            obj.profile = [];
+            obj.training = [];
+            obj.mentalCommand = [];
         end
     end
 end

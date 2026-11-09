@@ -11,6 +11,7 @@ classdef CortexDataBuffer < handle
         labels = {}
         samples = {}
         times = {}
+        mcActions = {}
         nextRow = []
         count = []
     end
@@ -30,16 +31,20 @@ classdef CortexDataBuffer < handle
             obj.labels{idx} = labels;
             obj.samples{idx} = [];
             obj.times{idx} = [];
+            obj.mcActions{idx} = {};
             obj.nextRow(idx) = 1;
             obj.count(idx) = 0;
         end
 
-        function append(obj, stream, row, time)
+        function append(obj, stream, row, time, mcAction)
+            % mcAction is optional: the mental command action of a com sample.
+            if nargin < 5, mcAction = ''; end
             idx = obj.indexOf(stream);
             width = numel(row);
             if isempty(obj.samples{idx})
                 obj.samples{idx} = NaN(obj.capacity, width);
                 obj.times{idx} = NaN(obj.capacity, 1);
+                obj.mcActions{idx} = cell(obj.capacity, 1);
             end
 
             columns = size(obj.samples{idx}, 2);
@@ -52,15 +57,17 @@ classdef CortexDataBuffer < handle
             r = obj.nextRow(idx);
             obj.samples{idx}(r, :) = row;
             obj.times{idx}(r) = time;
+            obj.mcActions{idx}{r} = mcAction;
             obj.nextRow(idx) = mod(r, obj.capacity) + 1;
             obj.count(idx) = min(obj.count(idx) + 1, obj.capacity);
         end
 
-        function [labels, data, time] = read(obj, stream, lastN)
+        function [labels, data, time, mcActions] = read(obj, stream, lastN)
             % Returns the newest lastN samples (all buffered samples when lastN is omitted).
             labels = {};
             data = [];
             time = [];
+            mcActions = {};
             idx = find(strcmp(obj.names, stream), 1);
             if isempty(idx), return; end
 
@@ -75,6 +82,7 @@ classdef CortexDataBuffer < handle
             rows = mod((newest - n + 1:newest) - 1, obj.capacity) + 1;
             data = obj.samples{idx}(rows, :);
             time = obj.times{idx}(rows);
+            mcActions = obj.mcActions{idx}(rows);
         end
 
         function n = numSamples(obj, stream)
@@ -96,6 +104,7 @@ classdef CortexDataBuffer < handle
                 obj.labels{idx} = {};
                 obj.samples{idx} = [];
                 obj.times{idx} = [];
+                obj.mcActions{idx} = {};
                 obj.nextRow(idx) = 1;
                 obj.count(idx) = 0;
             end

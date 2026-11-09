@@ -18,14 +18,22 @@ classdef CortexStreamParser < handle
             obj.streams = {};
         end
 
-        function [stream, row, time] = parse(obj, msg)
+        function [stream, row, time, mcAction] = parse(obj, msg)
             % stream is '' when the message does not belong to a registered stream.
+            % mcAction is the mental command action of a com sample ('' for other streams).
             stream = '';
             row = [];
             time = NaN;
+            mcAction = '';
             if isfield(msg, 'sid') && ischar(msg.sid)
-                index = find(strcmp(obj.sids, msg.sid), 1);
-                if ~isempty(index), stream = obj.streams{index}; end
+                % Streams of one session can share the same sid, so match the stream by its field name too.
+                candidates = find(strcmp(obj.sids, msg.sid));
+                for index = candidates
+                    if isfield(msg, obj.streams{index})
+                        stream = obj.streams{index};
+                        break;
+                    end
+                end
             end
             if isempty(stream) || ~isfield(msg, stream)
                 stream = '';
@@ -36,10 +44,23 @@ classdef CortexStreamParser < handle
                 time = double(msg.time);
             end
             row = CortexStreamParser.flattenSample(msg.(stream));
+            names = CortexStreamParser.stringsOf(msg.(stream));
+            if ~isempty(names), mcAction = names{1}; end
         end
     end
 
     methods (Static)
+        function names = stringsOf(values)
+            if ischar(values)
+                names = {values};
+            elseif iscell(values)
+                names = values(cellfun(@ischar, values));
+                names = names(:)';
+            else
+                names = {};
+            end
+        end
+
         function labels = flattenLabels(cols)
             % The dev stream nests the contact-quality labels in a sub-array.
             if ischar(cols)
