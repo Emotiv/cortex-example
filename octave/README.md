@@ -13,7 +13,7 @@ The local connection has two parts:
 
 ## Folder Structure
 
-- `functions/`: Public functions (`cortexConnect`, `cortexSession`, `cortexSubscribe`, `cortexGetData`, `cortexRecord`, `cortexMarker`, `cortexDisconnect`) that hide the internal MATLAB classes.
+- `functions/`: Public functions (`cortexConnect`, `cortexSession`, `cortexSubscribe`, `cortexGetData`, `cortexRecord`, `cortexMarker`, `cortexProfile`, `cortexTraining`, `cortexDisconnect`) that hide the internal MATLAB classes.
 - `internal/`: Internal SDK classes. Not a public interface; they may change.
 - `lib/`: `nv-websocket-client-2.14.jar` and `cortex-ws-client.jar`, the Java WebSocket client used for WSS.
 - `java/`: Source of the small Java wrapper (`cortex-ws-client.jar`).
@@ -182,6 +182,39 @@ cortex = cortexDisconnect(cortex);
 `cortexSession(cortex, headsetId)` connects the headset and creates or reuses its active session without subscribing to streams. From that session, call either `cortexSubscribe(cortex, streams)` or start a record. `cortexRecord(cortex, 'start', title, description, tags)` returns the Cortex result fields `record` and `sessionId`; `cortexRecord(cortex, 'stop')` returns the stopped `record` and its `sessionId`. `cortex.isRecording` and `cortex.recordId` reflect the active record.
 
 `cortexMarker(cortex, 'inject', label, value, ...)` returns `recordId`, `sessionId`, and `marker`. Optional name/value pairs are `time` (epoch milliseconds; defaults to the current time), `port` (defaults to `Software`), and `extras` (a scalar struct). `cortexMarker(cortex, 'update', markerId, endTime, ...)` returns the same result fields and accepts optional `extras`. `endTime` is required and is measured in milliseconds since 1970-01-01 UTC. Both marker actions require an active record.
+
+## Mental Command Training
+
+`examples/mentalCommandTraining.m` loads (or creates) a profile, trains mental command actions from the keyboard, and shows live commands.
+
+1. Set `headsetId` and `profileName` near the top of the file, then run:
+
+```matlab
+addpath('octave/examples');
+mentalCommandTraining();
+```
+
+2. Focus the figure. `N`, `P`, `L`, `D` start training neutral, push, left and drop (train neutral first). When a training succeeds, press `A` to accept it (this saves the profile) or `R` to reject it. `S` subscribes to `com` and shows the live action and power as text. `U` or `Esc` unloads the profile and exits.
+
+The same flow with the public functions:
+
+```matlab
+cortex = cortexConnect();
+cortex = cortexSession(cortex, 'INSIGHT-A1B2C3D4');
+[cortex, profile] = cortexProfile(cortex, 'load', 'my-profile');   % creates it when missing
+cortex = cortexSubscribe(cortex, {'sys', 'com'});
+started = cortexTraining(cortex, 'mentalCommand', 'push', 'start', 'wait', 30);
+if started.isSucceeded
+  accepted = cortexTraining(cortex, 'mentalCommand', 'push', 'accept', 'wait', 15);  % also saves the profile
+end
+[labels, data, time, mcActions] = cortexGetData(cortex, 'com', 1);     % mcActions{end} = action, data(end, 2) = power
+[cortex, ~] = cortexProfile(cortex, 'unload');
+cortex = cortexDisconnect(cortex);
+```
+
+- `[cortex, result] = cortexProfile(cortex, action, profileName)`: `action` is `'load'` (creates the profile if missing), `'save'` or `'unload'` (`profileName` is only needed for `'load'`). `result` has `name`, `uuid`, `existed`, `created` and `isLoaded`. It updates `cortex.isProfileLoaded` and `cortex.profileName`. Errors use `cortex:profileFailed`.
+- `result = cortexTraining(cortex, detection, action, status, 'wait', seconds)`: `detection` is `'mentalCommand'` (`'facialExpression'` uses the same call), `action` is any action Cortex lists for the detection (for example `neutral`, `push`, `pull`, `left`, `right`), and `status` is `start`, `accept`, `reject`, `reset` or `erase`. With `'wait'` (requires the `sys` stream), `start` waits for `MC_Succeeded` or `MC_Failed` and `accept` waits for `MC_Completed`, then saves the profile. `result` has `detection`, `action`, `status`, `event`, `isSucceeded` and `profileSaved`. Errors use `cortex:trainingFailed`.
+- `cortexGetData(cortex, 'com')` returns labels `{'act','pow'}`. The `act` column of `data` is `NaN`; the mental command actions are in the fourth output `mcActions` (one string per row) and `pow` (0 to 1) is in `data`.
 
 ## Troubleshooting
 

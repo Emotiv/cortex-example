@@ -10,6 +10,7 @@ function cortex = cortexConnect()
 %     manager      internal handle used by cortexDisconnect; do not modify
 %     isSubscribed, headsetId, sessionId, streams   filled in by headset connection/subscription
 %     isRecording, recordId   filled in by cortexRecord
+%     isProfileLoaded, profileName   filled in by cortexProfile
 
 functionsDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(functionsDir, '..', 'internal'));
@@ -18,6 +19,7 @@ addpath(fullfile(functionsDir, '..', 'internal'));
 
 cortex = struct('isConnected', false, 'token', '', 'userInfo', [], 'licenseInfo', [], 'manager', [], ...
     'isSubscribed', false, 'isRecording', false, 'recordId', '', ...
+    'isProfileLoaded', false, 'profileName', '', ...
     'headsetId', '', 'sessionId', '', 'streams', {{}});
 manager = CortexManager(clientId, clientSecret, 'localhost', port);
 cortex.manager = manager;
