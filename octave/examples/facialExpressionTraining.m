@@ -27,10 +27,10 @@ addpath(fullfile(currentDir, '../functions'));
 cortex = cortexConnect();
 fig = [];
 statusText = [];
-liveText = [];
-powerAxes = [];
-powerBars = [];
-powerLabels = [];
+    liveText = {};
+    powerAxes = {};
+    powerBars = {};
+    powerLabels = {};
 isBusy = false;
 isExitRequested = false;
 isLiveStreaming = false;
@@ -70,6 +70,9 @@ try
         'KeyPressFcn', @onKeyPress);
     figurePosition = get(fig, 'Position');
     figurePosition(3) = 2 * figurePosition(3);
+    heightIncrease = 0.15 * figurePosition(4);
+    figurePosition(4) = figurePosition(4) + heightIncrease;
+    figurePosition(2) = figurePosition(2) - heightIncrease / 2;
     set(fig, 'Position', figurePosition);
     helpLines = {'Keyboard controls', '', ...
         'N: train neutral (do this first)', ...
@@ -85,29 +88,29 @@ try
         'Position', [0.08 0.48 0.84 0.48], 'String', helpLines, ...
         'HorizontalAlignment', 'left', 'FontSize', 11, ...
         'BackgroundColor', get(fig, 'Color'), 'Enable', 'on', 'KeyPressFcn', @onKeyPress);
-    separatorAxes = axes('Parent', fig, 'Units', 'normalized', 'Position', [0.08 0.465 0.84 0.005], ...
+    separatorAxes = axes('Parent', fig, 'Units', 'normalized', 'Position', [0.08 0.445 0.84 0.005], ...
         'XLim', [0 1], 'YLim', [0 1], 'Visible', 'off');
     line('Parent', separatorAxes, 'XData', [0 1], 'YData', [0.5 0.5], 'Color', [0.5 0.5 0.5], 'LineWidth', 1);
     % One row per action; the upper and lower rows share their vertical center with their power bar.
-    rowBottoms = [0.40 0.33 0.26];
-    liveText = zeros(1, 3);
+    rowBottoms = [0.38 0.31 0.24];
+    liveText = cell(1, 3);
+    powerAxes = cell(1, 2);
+    powerBars = cell(1, 2);
+    powerLabels = cell(1, 2);
     for row = 1:3
-        liveText(row) = uicontrol(fig, 'Style', 'text', 'Units', 'normalized', ...
+        liveText{row} = uicontrol(fig, 'Style', 'text', 'Units', 'normalized', ...
             'Position', [0.08 rowBottoms(row) 0.40 0.06], 'String', '', ...
             'HorizontalAlignment', 'left', 'FontSize', 14, ...
             'BackgroundColor', get(fig, 'Color'), 'Enable', 'on', 'KeyPressFcn', @onKeyPress);
     end
-    powerAxes = zeros(1, 2);
-    powerBars = zeros(1, 2);
-    powerLabels = zeros(1, 2);
     for row = 1:2
-        powerAxes(row) = axes('Parent', fig, 'Units', 'normalized', ...
+        powerAxes{row} = axes('Parent', fig, 'Units', 'normalized', ...
             'Position', [0.52 rowBottoms(row + 1) + 0.01 0.40 0.04], ...
             'XLim', [0 1], 'YLim', [0 1], 'XTick', [], 'YTick', [], 'Box', 'on', 'Visible', 'off');
-        powerBars(row) = patch('Parent', powerAxes(row), 'Faces', [1 2 3 4], ...
+        powerBars{row} = patch('Parent', powerAxes{row}, 'Faces', [1 2 3 4], ...
             'Vertices', [0 0; 0 0; 0 1; 0 1], 'FaceColor', [0.8 0.2 0.1], ...
             'EdgeColor', 'none', 'Visible', 'off');
-        powerLabels(row) = text('Parent', powerAxes(row), 'Position', [0.5 0.5], 'String', '', ...
+        powerLabels{row} = text('Parent', powerAxes{row}, 'Position', [0.5 0.5], 'String', '', ...
             'HorizontalAlignment', 'center', 'Visible', 'off');
     end
     statusText = uicontrol(fig, 'Style', 'text', 'Units', 'normalized', ...
@@ -217,7 +220,11 @@ fprintf('[facialExpressionTraining] Finished.\n');
                     'wait', trainAcceptEventWaitLimit);
                 fprintf('[facialExpressionTraining] Training %s completed (%s); profile saved: %d.\n', ...
                     pendingAction, accepted.event, accepted.profileSaved);
-                showStatus(sprintf('Training %s accepted and profile saved.', pendingAction));
+                if accepted.profileSaved
+                    showStatus(sprintf('Training %s accepted and profile saved.', pendingAction));
+                else
+                    showStatus(sprintf('Training %s accepted, but saving the profile failed (see console).', pendingAction));
+                end
             else
                 cortexTraining(cortex, 'facialExpression', pendingAction, 'reject');
                 fprintf('[facialExpressionTraining] Training %s rejected.\n', pendingAction);
@@ -243,7 +250,11 @@ fprintf('[facialExpressionTraining] Finished.\n');
                 error('facialExpressionTraining:subscribe', 'Could not subscribe to the fac stream.');
             end
             isLiveStreaming = true;
-            set([powerAxes powerBars powerLabels], 'Visible', 'on');
+            for row = 1:2
+                set(powerAxes{row}, 'Visible', 'on');
+                set(powerBars{row}, 'Visible', 'on');
+                set(powerLabels{row}, 'Visible', 'on');
+            end
             showStatus('Showing live facial expressions. Train more actions with N, S, F, M or C.');
         catch subscribeFailure
             fprintf('[facialExpressionTraining] ERROR %s: %s\n', subscribeFailure.identifier, subscribeFailure.message);
@@ -269,20 +280,20 @@ fprintf('[facialExpressionTraining] Finished.\n');
 
         powers(isnan(powers)) = 0;
         levels = max(0, min(1, powers));
-        if all(ishandle(liveText))
-            set(liveText(1), 'String', ['Eye: ' names{1}]);
-            set(liveText(2), 'String', ['Upper: ' names{2}]);
-            set(liveText(3), 'String', ['Lower: ' names{3}]);
+        if all(cellfun(@ishandle, liveText))
+            set(liveText{1}, 'String', ['Eye: ' names{1}]);
+            set(liveText{2}, 'String', ['Upper: ' names{2}]);
+            set(liveText{3}, 'String', ['Lower: ' names{3}]);
         end
         for row = 1:2
             % Red (weak) through yellow to green (strong).
             barColor = [min(1, 2 * (1 - levels(row))), min(1, 2 * levels(row)), 0.1];
-            if ishandle(powerBars(row))
-                set(powerBars(row), 'Vertices', [0 0; levels(row) 0; levels(row) 1; 0 1], ...
+            if ishandle(powerBars{row})
+                set(powerBars{row}, 'Vertices', [0 0; levels(row) 0; levels(row) 1; 0 1], ...
                     'FaceColor', barColor);
             end
-            if ishandle(powerLabels(row))
-                set(powerLabels(row), 'String', sprintf('%.2f', powers(row)));
+            if ishandle(powerLabels{row})
+                set(powerLabels{row}, 'String', sprintf('%.2f', powers(row)));
             end
         end
     end

@@ -57,7 +57,7 @@ classdef CortexFacialExpressionConfiguration < handle
             if iscell(value)
                 items = value(:)';
             elseif isstruct(value)
-                items = num2cell(value(:)');
+                items = num2cell(value(:))';
             elseif ischar(value)
                 items = {value};
             else
