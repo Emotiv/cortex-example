@@ -18,6 +18,7 @@ classdef CortexManager < handle
         profile = []
         training = []
         mentalCommand = []
+        facialExpression = []
     end
 
     methods
@@ -93,6 +94,13 @@ classdef CortexManager < handle
             mentalCommand = obj.mentalCommand;
         end
 
+        function facialExpression = getFacialExpressionConfiguration(obj)
+            if isempty(obj.facialExpression)
+                obj.facialExpression = CortexFacialExpressionConfiguration(obj.getClient(), obj.context);
+            end
+            facialExpression = obj.facialExpression;
+        end
+
         function close(obj)
             % Only closes what was actually created.
             if ~isempty(obj.headset)
@@ -110,6 +118,7 @@ classdef CortexManager < handle
             obj.profile = [];
             obj.training = [];
             obj.mentalCommand = [];
+            obj.facialExpression = [];
         end
     end
 end
