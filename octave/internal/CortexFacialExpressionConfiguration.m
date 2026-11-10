@@ -37,8 +37,9 @@ classdef CortexFacialExpressionConfiguration < handle
                 % Neutral has no threshold.
                 value = [];
                 if ~strcmp(name, 'neutral')
-                    value = obj.client.sendRequest('facialExpressionThreshold', struct( ...
+                    thresholdResult = obj.client.sendRequest('facialExpressionThreshold', struct( ...
                         'cortexToken', token, 'session', session, 'action', name, 'status', 'get')).result;
+                    value = CortexFacialExpressionConfiguration.field(thresholdResult, 'value', thresholdResult);
                     if ~isnumeric(value) || isempty(value), value = []; end
                 end
                 trainedActions{index} = struct('action', name, 'threshold', value, ...
