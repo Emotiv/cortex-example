@@ -1,7 +1,7 @@
 function cortex = cortexSubscribe(cortex, streams)
 % cortexSubscribe  Subscribe to streams on an active headset session.
-%   cortex = cortexSubscribe(cortex, {'eeg','mot','dev','eq','pow','met','com','sys'})
-%   com (mental command) needs a loaded profile; sys carries training events.
+%   cortex = cortexSubscribe(cortex, {'eeg','mot','dev','eq','pow','met','com','fac','sys'})
+%   com (mental command) and fac (facial expression) need a loaded profile; sys carries training events.
 %   Update the fields:
 %     isSubscribed  true when the streams are being received
 %     streams       the subscribed stream names
@@ -14,7 +14,7 @@ if ~isstruct(cortex) || ~isfield(cortex, 'isConnected') || ~cortex.isConnected |
 end
 
 if ischar(streams), streams = {streams}; end
-validStreams = {'eeg', 'mot', 'dev', 'eq', 'pow', 'met', 'com', 'sys'};
+validStreams = {'eeg', 'mot', 'dev', 'eq', 'pow', 'met', 'com', 'fac', 'sys'};
 if ~iscellstr(streams) || isempty(streams) || ~all(ismember(streams, validStreams))
     fprintf('[cortexSubscribe] ERROR streams must be a non-empty list of: %s.\n', strjoin(validStreams, ', '));
     return;

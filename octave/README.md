@@ -13,7 +13,7 @@ The local connection has two parts:
 
 ## Folder Structure
 
-- `functions/`: Public functions (`cortexConnect`, `cortexSession`, `cortexSubscribe`, `cortexGetData`, `cortexRecord`, `cortexMarker`, `cortexProfile`, `cortexTraining`, `cortexDisconnect`) that hide the internal MATLAB classes.
+- `functions/`: Public functions (`cortexConnect`, `cortexSession`, `cortexSubscribe`, `cortexGetData`, `cortexRecord`, `cortexMarker`, `cortexProfile`, `cortexTraining`, `cortexMentalCommandInfo`, `cortexFacialExpressionInfo`, `cortexDisconnect`) that hide the internal MATLAB classes.
 - `internal/`: Internal SDK classes. Not a public interface; they may change.
 - `lib/`: `nv-websocket-client-2.14.jar` and `cortex-ws-client.jar`, the Java WebSocket client used for WSS.
 - `java/`: Source of the small Java wrapper (`cortex-ws-client.jar`).
@@ -207,14 +207,30 @@ started = cortexTraining(cortex, 'mentalCommand', 'push', 'start', 'wait', 30);
 if started.isSucceeded
   accepted = cortexTraining(cortex, 'mentalCommand', 'push', 'accept', 'wait', 15);  % also saves the profile
 end
-[labels, data, time, mcActions] = cortexGetData(cortex, 'com', 1);     % mcActions{end} = action, data(end, 2) = power
+[labels, data, time, bciActions] = cortexGetData(cortex, 'com', 1);    % bciActions{end} = action, data(end, 2) = power
 [cortex, ~] = cortexProfile(cortex, 'unload');
 cortex = cortexDisconnect(cortex);
 ```
 
 - `[cortex, result] = cortexProfile(cortex, action, profileName)`: `action` is `'load'` (creates the profile if missing), `'save'` or `'unload'` (`profileName` is only needed for `'load'`). `result` has `name`, `uuid`, `existed`, `created` and `isLoaded`. It updates `cortex.isProfileLoaded` and `cortex.profileName`. Errors use `cortex:profileFailed`.
-- `result = cortexTraining(cortex, detection, action, status, 'wait', seconds)`: `detection` is `'mentalCommand'` (`'facialExpression'` uses the same call), `action` is any action Cortex lists for the detection (for example `neutral`, `push`, `pull`, `left`, `right`), and `status` is `start`, `accept`, `reject`, `reset` or `erase`. With `'wait'` (requires the `sys` stream), `start` waits for `MC_Succeeded` or `MC_Failed` and `accept` waits for `MC_Completed`, then saves the profile. `result` has `detection`, `action`, `status`, `event`, `isSucceeded` and `profileSaved`. Errors use `cortex:trainingFailed`.
-- `cortexGetData(cortex, 'com')` returns labels `{'act','pow'}`. The `act` column of `data` is `NaN`; the mental command actions are in the fourth output `mcActions` (one string per row) and `pow` (0 to 1) is in `data`.
+- `result = cortexTraining(cortex, detection, action, status, 'wait', seconds)`: `detection` is `'mentalCommand'` (`'facialExpression'` uses the same call), `action` is any action Cortex lists for the detection (for example `neutral`, `push`, `pull`, `left`, `right`; for `facialExpression` only `neutral`, `surprise`, `frown`, `smile` and `clench` can be trained), and `status` is `start`, `accept`, `reject`, `reset` or `erase`. With `'wait'` (requires the `sys` stream), `start` waits for `MC_Succeeded` or `MC_Failed` and `accept` waits for `MC_Completed`, then saves the profile. `result` has `detection`, `action`, `status`, `event`, `isSucceeded` and `profileSaved`. Errors use `cortex:trainingFailed`.
+- `cortexGetData(cortex, 'com')` returns labels `{'act','pow'}`. The `act` column of `data` is `NaN`; the mental command actions are in the fourth output `bciActions` (one string per row) and `pow` (0 to 1) is in `data`.
+
+## Facial Expression Training
+
+`examples/facialExpressionTraining.m` works like the mental command example, for facial expressions.
+
+1. Set `headsetId` and `profileName` near the top of the file, then run:
+
+```matlab
+addpath('octave/examples');
+facialExpressionTraining();
+```
+
+2. Focus the figure. `N`, `S`, `F`, `M`, `C` start training neutral, surprise, frown, smile and clench (train neutral first). Press `A` to accept a successful training (this saves the profile) or `R` to reject it. `L` subscribes to `fac` and shows the live eye, upper face and lower face actions with their powers. `U` or `Esc` unloads the profile and exits.
+
+- `info = cortexFacialExpressionInfo(cortex)` returns `possibleActions`, `trainedActions` (structs with `action`, `threshold` from 0 to 1000 (`[]` for neutral) and `trainingCount`) and `trainingDuration` in seconds. It requires a loaded profile. Errors use `cortex:facialExpressionFailed`.
+- `cortexGetData(cortex, 'fac')` returns labels `{'eyeAct','uAct','uPow','lAct','lPow'}`. The action columns of `data` are `NaN`; each element of the fourth output is `{eyeAct, uAct, lAct}`, and `uPow` and `lPow` (0 to 1) are in `data`.
 
 ## Troubleshooting
 

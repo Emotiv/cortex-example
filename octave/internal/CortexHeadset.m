@@ -250,13 +250,13 @@ classdef CortexHeadset < handle
         end
 
         function storeSample(obj, msg)
-            [stream, row, time, mcAction] = obj.parser.parse(msg);
+            [stream, row, time, bciAction] = obj.parser.parse(msg);
             if isempty(stream), return; end
             if strcmp(stream, 'sys')
                 obj.storeSystemEvent(msg.sys, time);
                 return;
             end
-            obj.context.buffer.append(stream, row, time, mcAction);
+            obj.context.buffer.append(stream, row, time, bciAction);
         end
 
         function storeSystemEvent(obj, values, time)
