@@ -1110,7 +1110,7 @@ class Cortex(Dispatcher):
             "params": {
                 "headset": headset_id,
                 "systemTime": time.time(),
-                "monotonicTime": time.monotonic()
+                "monotonicTime": time.perf_counter()
             }
         }
 
