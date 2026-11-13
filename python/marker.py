@@ -75,7 +75,7 @@ class Marker():
     def add_markers(self):
         print('add_markers: ' + str(self.number_markers) + ' markers will be injected each second automatically.')
         for m in range(self.number_markers):
-            marker_time = (time.monotonic() + self.headset_clock_adjustment) * 1000
+            marker_time = (time.perf_counter() + self.headset_clock_adjustment) * 1000
             print('add marker at : ', marker_time)
             
             # marker_value = "test marker value"
