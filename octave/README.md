@@ -1,8 +1,8 @@
 # Emotiv Cortex Octave/MATLAB Examples
 
-This folder contains a small MATLAB/GNU Octave client for the Emotiv Cortex API. The first example checks the connection, verifies that an Emotiv user is logged in, requests application access when needed, authorizes the application, and prints basic account and license information.
+This folder contains a MATLAB/GNU Octave client for the Emotiv Cortex API, with reusable functions and example scripts that demonstrate the Cortex API and its major Cortex workflows.
 
-The examples are written for researchers and engineers who use MATLAB or GNU Octave for analysis. You do not need to understand the internal classes to run the example.
+The examples demonstrate the main Cortex API workflows: authorization, connecting to a headset, subscribing to data, creating a record and injecting markers, and BCI training.
 
 ## What You Will Run
 
@@ -20,7 +20,7 @@ The local connection has two parts:
 - `config/`: Local configuration. Copy `config/config.example.json` to `config/config.json` to store your Cortex application credentials. `config/config.json` is ignored by Git and must not be committed or shared.
 - `examples/`: Beginner-friendly scripts that show complete workflows.
 
-The public workflow uses procedural functions such as `cortexConnect`, `cortexSession`, `cortexSubscribe`, `cortexRecord`, `cortexMarker`, and `cortexDisconnect`. The underlying Cortex classes are kept inside `internal/` so examples can extend the SDK without making researchers manage the WebSocket or internal class instances.
+The `functions/` folder provides a task-oriented, procedural interface to the Cortex API. Its helpers group related API calls where useful—for example, `cortexConnect` connects and authorizes the app, while `cortexSession` scans for and connects a headset, then creates or reuses its session. Use these functions with the shared `cortex` state to build clear, sequential workflows without instantiating or coordinating Cortex classes directly. The underlying classes and WebSocket handling are kept in `internal/`.
 
 ## Requirements
 
@@ -149,6 +149,8 @@ cortex = cortexDisconnect(cortex);                         % unsubscribes and cl
 - `cortexSubscribe(cortex, streams)` subscribes the requested streams on the active session created by `cortexSession`.
 - `cortexGetData` collects the samples that have arrived and returns them from a buffer that keeps the latest 10000 samples per stream. `data` has one row per sample and one column per entry in `labels`; empty values are `NaN`.
 - Call `cortexGetData` regularly. Samples are only read from the connection when it runs, and it can take up to about 1 second when no data is arriving.
+
+**Known limitations:** EPOC Flex headsets are not currently supported by the Octave examples, including configurations that use channel mappings. The examples also do not automatically recover if a headset disconnects; reconnect the headset and run the example again. These limitations may be addressed in a future update.
 
 ## Record and Markers
 
