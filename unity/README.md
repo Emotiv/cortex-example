@@ -100,6 +100,26 @@ In **AppConfig.cs**, set your `clientId` and `clientSecret` from your Emotiv Cor
 >   - **iOS:** Add Bluetooth permissions to `Info.plist` and ensure `.xcframework` is present in Xcode.
 >   - **Desktop:** No special permissions, but EMOTIV Launcher must be running.
 
+## Query and Export Records
+
+- **Query Record** calls Cortex `queryRecords` with a start-time range and shows each result's ID, title, start/end time, and sync status in the message log.
+- **Export Record** takes a record ID entered in the UI and calls Cortex `exportRecord` for EEG and MOTION streams in CSV V2 format. The result log reports successful and failed record IDs.
+- Export is enabled after authorization and while not recording. Query is enabled after authorization.
+
+### Manual Test
+
+1. Set valid Cortex app credentials in `AppConfig.cs`. For desktop, start EMOTIV Launcher. Run the scene and authorize the app.
+2. Click **Query Record**. The message log should show the number of records found and the record ID, title, start/end time, and sync status for each result. A successful query with no matching records should report zero records.
+3. Copy a returned record ID into the **Record ID** field and click **Export Record** while not recording. The message log should report success or a per-record failure. Check for the exported CSV files in the Desktop folder on desktop, `Application.persistentDataPath` on Android, or the app's Documents folder on iOS.
+4. Check the empty-ID path by clearing **Record ID** and clicking **Export Record**. No export request should be sent; Unity should log that the record ID must not be empty.
+5. To test the full record lifecycle, connect a headset, create a session, start and stop a recording, wait for Cortex post-processing to finish, then query and export that record if it matches the query filter.
+
+### Test Notes
+
+- The query uses a rolling range from the current UTC time back three months. To change the range, edit `queryStart` in `onQueryRecordBtnClick()` in `Assets/SimpleExample.cs` (for example, change the `AddMonths(-3)` value).
+- The export request currently includes only EEG and MOTION and uses CSV V2; these options are not configurable from the UI.
+- Query and export require authorization. Exporting a record also requires a valid record ID and an available export destination.
+
 ## Change Log
 
 **[15 March 2024]**

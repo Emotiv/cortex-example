@@ -4,6 +4,7 @@ using UnityEngine;
 using EmotivUnityPlugin;
 using UnityEngine.UI;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 
@@ -331,6 +332,16 @@ public class SimpleExample : MonoBehaviour
 
         try
         {
+            string exportFolderPath = string.IsNullOrEmpty(folderPath) ? Application.persistentDataPath : folderPath;
+            Directory.CreateDirectory(exportFolderPath);
+
+            Dictionary<string, Tuple<long, DateTime>> filesBeforeExport = new Dictionary<string, Tuple<long, DateTime>>();
+            foreach (string filePath in Directory.GetFiles(exportFolderPath))
+            {
+                FileInfo fileInfo = new FileInfo(filePath);
+                filesBeforeExport[filePath] = Tuple.Create(fileInfo.Length, fileInfo.LastWriteTimeUtc);
+            }
+
             ExportRecordResult result = await _eItf.ExportRecordAsync(recordsToExport, folderPath, streamTypes, format, version);
 
             string msgLog = "Export records - success: " + result.SuccessRecordIds.Count + ", failed: " + result.FailedRecords.Count + "\n";
@@ -342,6 +353,29 @@ public class SimpleExample : MonoBehaviour
             {
                 msgLog += "Failed: " + failure.RecordId + " (code " + failure.Code + "): " + failure.Message + "\n";
             }
+
+            if (result.SuccessRecordIds.Count > 0)
+            {
+                int exportedFileCount = 0;
+                foreach (string filePath in Directory.GetFiles(exportFolderPath))
+                {
+                    FileInfo fileInfo = new FileInfo(filePath);
+                    Tuple<long, DateTime> previousFileState;
+                    if (!filesBeforeExport.TryGetValue(filePath, out previousFileState) ||
+                        fileInfo.Length != previousFileState.Item1 ||
+                        fileInfo.LastWriteTimeUtc != previousFileState.Item2)
+                    {
+                        msgLog += "Exported file: " + filePath + "\n";
+                        exportedFileCount++;
+                    }
+                }
+
+                if (exportedFileCount == 0)
+                {
+                    msgLog += "Export destination: " + exportFolderPath + "\n";
+                }
+            }
+
             MessageLog.text = msgLog;
         }
         catch (Exception ex)
@@ -356,10 +390,12 @@ public class SimpleExample : MonoBehaviour
     {
         Debug.Log("onQueryRecordBtnClick");
         // demo to query with startDatetime range, the from and to are in ISO 8601 format
+        DateTimeOffset queryEnd = DateTimeOffset.UtcNow;
+        DateTimeOffset queryStart = queryEnd.AddMonths(-3);
         JObject query = new JObject(
             new JProperty("startDatetime", new JObject(
-                new JProperty("from", "2026-01-06T16:32:50.572490+07:00"),
-                new JProperty("to", "2026-08-06T16:32:50.572490+07:00")
+                new JProperty("from", queryStart.ToString("o")),
+                new JProperty("to", queryEnd.ToString("o"))
             ))
         );
 
