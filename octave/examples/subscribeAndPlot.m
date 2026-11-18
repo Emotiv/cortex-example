@@ -5,10 +5,14 @@ function subscribeAndPlot()
 currentDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(currentDir, '../functions'));
 
-% Set the EPOC Flex headset id and electrode map.
+% Set your headset ID.
 headsetId = '<YOUR_HEADSET_ID>';
-mappings = struct('CMS', 'TP8', 'DRL', 'P6', ...
-    'RM', 'TP10', 'RN', 'P4', 'RO', 'P8');
+% For EPOC Flex, also set the electrode map.
+mappings = struct('CMS', 'TP9', 'DRL', 'TP10', ...
+    'LA', 'FC5', 'LB', 'O1', 'LC', 'P7', 'LD', 'T7', ...
+    'LE', 'F3', 'LF', 'F7', 'LG', 'AF3', ...
+    'RA', 'FC6', 'RB', 'O2', 'RC', 'P8', 'RD', 'T8', ...
+    'RE', 'F4', 'RF', 'F8', 'RG', 'AF4');
 streams = {'eeg'};
 durationSeconds = 90;
 
