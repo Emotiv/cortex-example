@@ -19,6 +19,8 @@ try
         error('recordAndMarker:connect', 'Cortex connection or authorization failed.');
     end
     cortex = cortexSession(cortex, headsetId);
+    activeSessionId = cortex.manager.getContext().sessionId;
+    exitRequested = false;
     fprintf('[recordAndMarker] Connected to %s. Key help:\n', headsetId);
     fprintf('  S: start a record.\n');
     fprintf('  A-Z except S: inject an instance marker; press that key again to end its interval.\n');
@@ -47,8 +49,19 @@ try
         'BackgroundColor', get(fig, 'Color'), 'Enable', 'on', ...
         'KeyPressFcn', @onKeyPress, 'Interruptible', 'off', 'BusyAction', 'queue');
 
-    % Acquire: wait for keyboard events while Cortex keeps the active session open.
-    uiwait(fig);
+    % Poll periodically while waiting so session-close warnings are handled even when idle.
+    while ishandle(fig) && ~exitRequested
+        uiwait(fig, 1);
+        if ishandle(fig)
+            try
+                headset = cortex.manager.getHeadset();
+                headset.update();
+                syncSessionState();
+            catch pollFailure
+                fprintf('[recordAndMarker] Cortex poll failed: %s\n', pollFailure.message);
+            end
+        end
+    end
 catch failure
     fprintf('[recordAndMarker] ERROR %s: %s\n', failure.identifier, failure.message);
 end
@@ -71,6 +84,7 @@ fprintf('[recordAndMarker] Finished.\n');
                     showStatus(['Could not stop record: ' stopFailure.message]);
                 end
             end
+            exitRequested = true;
             if ishandle(fig), uiresume(fig); end
             return;
         end
@@ -147,8 +161,27 @@ fprintf('[recordAndMarker] Finished.\n');
         end
     end
 
+    function syncSessionState()
+        context = cortex.manager.getContext();
+        if strcmp(context.sessionId, activeSessionId), return; end
+
+        cortex.isRecording = false;
+        cortex.recordId = '';
+        markerIds = struct();
+        activeSessionId = context.sessionId;
+        if isempty(activeSessionId)
+            set(fig, 'Visible', 'off');
+            showStatus('Session closed. Scanning for headset...');
+        else
+            set(fig, 'Visible', 'on');
+            figure(fig);
+            showStatus('Session restored. Ready to start a new record.');
+        end
+    end
+
     function cleanupConnection()
-        if cortex.isRecording
+        context = cortex.manager.getContext();
+        if cortex.isRecording && context.isRecording
             try
                 [cortex, ~] = cortexRecord(cortex, 'stop');
             catch stopFailure

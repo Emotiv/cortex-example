@@ -20,6 +20,12 @@ classdef CortexHeadset < handle
         scanFinished = false
         lastQueryAt = []
         parser
+        reconnectHeadsetId = ''
+        reconnectStreams = {}
+        reconnectProfileName = ''
+        reconnectProfileWasLoaded = false
+        reconnectPending = false
+        reconnectSessionReady = false
     end
 
     methods
@@ -30,6 +36,7 @@ classdef CortexHeadset < handle
             if isempty(context.buffer)
                 context.buffer = CortexDataBuffer(10000);
             end
+            obj.client.onWarning(0, @(warning) obj.onSessionClosed(warning));
             obj.client.onWarning(1, @(warning) obj.onSessionClosed(warning));
             obj.client.onWarning(142, @(warning) obj.onScanFinished(warning));
         end
@@ -114,8 +121,12 @@ classdef CortexHeadset < handle
                 if ~strcmp(headset.status, 'connected')
                     if ~strcmp(headset.status, 'connecting')
                         fprintf('[CortexHeadset] Connecting to %s...\n', headsetId);
-                        obj.client.sendRequest('controlDevice', ...
-                            struct('command', 'connect', 'headset', headsetId));
+                        params = struct('command', 'connect', 'headset', headsetId);
+                        if ~isempty(strfind(upper(headsetId), 'FLEX'))
+                            params.mappings = struct('CMS', 'TP8', 'DRL', 'P6', ...
+                                'RM', 'TP10', 'RN', 'P4', 'RO', 'P8');
+                        end
+                        obj.client.sendRequest('controlDevice', params);
                     end
                     if isempty(obj.client.waitForWarning(104, obj.connectTimeout))
                         message = sprintf(['Connection to %s was not successful: warning 104 ' ...
@@ -143,6 +154,7 @@ classdef CortexHeadset < handle
             sessionId = response.result.id;
             obj.context.sessionId = sessionId;
             obj.context.headsetId = headsetId;
+            obj.reconnectHeadsetId = headsetId;
         end
 
         function subscribe(obj, streams)
@@ -177,6 +189,7 @@ classdef CortexHeadset < handle
             if ~obj.isSubscribed
                 error('CortexHeadset:subscribe', 'Cortex did not accept any data stream.');
             end
+            obj.reconnectStreams = obj.context.subscribedStreams;
         end
 
         function unsubscribe(obj)
@@ -226,17 +239,32 @@ classdef CortexHeadset < handle
                 return;
             end
 
-            obj.isScanning = false;
+            obj.reconnectHeadsetId = obj.context.headsetId;
+            obj.reconnectStreams = obj.context.subscribedStreams;
+            obj.reconnectProfileName = obj.context.profileName;
+            obj.reconnectProfileWasLoaded = obj.context.isProfileLoaded;
+            obj.reconnectPending = ~isempty(obj.reconnectHeadsetId);
+            obj.reconnectSessionReady = false;
+            obj.isScanning = obj.reconnectPending;
+            obj.autoRescan = true;
+            obj.scanFinished = obj.reconnectPending;
+            obj.lastQueryAt = [];
             obj.isSubscribed = false;
             obj.context.sessionId = '';
             obj.context.headsetId = '';
             obj.context.subscribedStreams = {};
+            obj.context.streamLabels = struct();
             obj.context.isRecording = false;
             obj.context.recordId = '';
             obj.context.profileName = '';
             obj.context.isProfileLoaded = false;
+            obj.context.detectionInfo = struct();
+            obj.context.trainingEvents = {};
             obj.parser.reset();
             fprintf('[CortexHeadset] Session %s was closed by Cortex.\n', warning.message.sessionId);
+            if obj.reconnectPending
+                fprintf('[CortexHeadset] Scanning to reconnect %s...\n', obj.reconnectHeadsetId);
+            end
         end
 
         function runScanTimer(obj)
@@ -246,6 +274,43 @@ classdef CortexHeadset < handle
             end
             if isempty(obj.lastQueryAt) || toc(obj.lastQueryAt) >= obj.queryInterval
                 obj.queryHeadsets();
+                if obj.reconnectPending
+                    obj.reconnectIfAvailable();
+                end
+            end
+        end
+
+        function reconnectIfAvailable(obj)
+            headset = obj.findHeadset(obj.reconnectHeadsetId);
+            if isempty(headset), return; end
+
+            if ~obj.reconnectSessionReady
+                [ok, message] = obj.connectToHeadset(obj.reconnectHeadsetId, {});
+                if ~ok
+                    fprintf('[CortexHeadset] Reconnect attempt failed: %s\n', message);
+                    obj.isScanning = true;
+                    obj.lastQueryAt = tic();
+                    return;
+                end
+                obj.reconnectSessionReady = true;
+            end
+
+            try
+                if obj.reconnectProfileWasLoaded
+                    profile = CortexProfile(obj.client, obj.context);
+                    profile.loadOrCreate(obj.reconnectProfileName);
+                end
+                if ~isempty(obj.reconnectStreams)
+                    obj.subscribe(obj.reconnectStreams);
+                end
+                obj.reconnectPending = false;
+                obj.reconnectSessionReady = false;
+                obj.isScanning = false;
+                fprintf('[CortexHeadset] Reconnected to %s.\n', obj.reconnectHeadsetId);
+            catch failure
+                fprintf('[CortexHeadset] Could not restore the session: %s\n', failure.message);
+                obj.isScanning = true;
+                obj.lastQueryAt = tic();
             end
         end
 
