@@ -27,6 +27,7 @@ classdef CortexHeadset < handle
         parser
         reconnectHeadsetId = ''
         reconnectStreams = {}
+        reconnectMappings = []
         reconnectProfileName = ''
         reconnectProfileWasLoaded = false
         reconnectPending = false
@@ -110,9 +111,10 @@ classdef CortexHeadset < handle
             end
         end
 
-        function [ok, message] = connectToHeadset(obj, headsetId, streams)
+        function [ok, message] = connectToHeadset(obj, headsetId, streams, mappings)
             % Connects the headset if needed, creates an active session, and subscribes when streams are provided.
             if nargin < 3, streams = {}; end
+            if nargin < 4, mappings = []; end
             ok = false;
             message = '';
 
@@ -123,12 +125,20 @@ classdef CortexHeadset < handle
                     return;
                 end
 
+                isFlex = ~isempty(strfind(upper(headsetId), 'FLEX'));
+                if isFlex && isempty(mappings)
+                    mappings = CortexHeadset.flexMapping;
+                elseif ~isFlex && ~isempty(mappings)
+                    error('CortexHeadset:mappings', 'mappings can only be supplied for an EPOC Flex headset.');
+                end
+                obj.reconnectMappings = mappings;
+
                 if ~strcmp(headset.status, 'connected')
                     if ~strcmp(headset.status, 'connecting')
                         fprintf('[CortexHeadset] Connecting to %s...\n', headsetId);
                         params = struct('command', 'connect', 'headset', headsetId);
-                        if ~isempty(strfind(upper(headsetId), 'FLEX'))
-                            params.mappings = CortexHeadset.flexMapping;
+                        if isFlex
+                            params.mappings = mappings;
                         end
                         obj.client.sendRequest('controlDevice', params);
                     end
@@ -289,7 +299,8 @@ classdef CortexHeadset < handle
             if isempty(headset), return; end
 
             if ~obj.reconnectSessionReady
-                [ok, message] = obj.connectToHeadset(obj.reconnectHeadsetId, {});
+                [ok, message] = obj.connectToHeadset( ...
+                    obj.reconnectHeadsetId, {}, obj.reconnectMappings);
                 if ~ok
                     fprintf('[CortexHeadset] Reconnect attempt failed: %s\n', message);
                     obj.isScanning = true;
