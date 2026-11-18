@@ -1,5 +1,5 @@
 function subscribeAndPlot()
-% subscribeAndPlot  Subscribe to the EEG stream and plot it live.
+% subscribeAndPlot  Subscribe to EEG, motion (mot), and performance metrics (met) streams and plot live.
 
 % 1. Initialization & Configuration: make the SDK functions visible.
 currentDir = fileparts(mfilename('fullpath'));
@@ -9,7 +9,7 @@ addpath(fullfile(currentDir, '../functions'));
 headsetId = '<YOUR_HEADSET_ID>';
 mappings = struct('CMS', 'TP8', 'DRL', 'P6', ...
     'RM', 'TP10', 'RN', 'P4', 'RO', 'P8');
-streams = {'eeg'};
+streams = {'eeg', 'mot'};
 durationSeconds = 90;
 
 % 2. Connection / Authentication, then create a headset session and subscribe to streams.
@@ -28,6 +28,9 @@ try
         if ismember('eeg', cortex.streams)
             figs.eeg = figure('Name', 'Live EEG', 'NumberTitle', 'off');
         end
+        if ismember('mot', cortex.streams)
+            figs.mot = figure('Name', 'Live Motion (IMU)', 'NumberTitle', 'off');
+        end
         if ismember('met', cortex.streams)
             figs.met = figure('Name', 'Live Performance Metrics', 'NumberTitle', 'off');
         end
@@ -38,6 +41,13 @@ try
                 [labels, data, time] = cortexGetData(cortex, 'eeg', 256);
                 if ~isempty(data)
                     plotEeg(figs.eeg, labels, data, time);
+                end
+            end
+
+            if isfield(figs, 'mot') && ishandle(figs.mot)
+                [labels, data, time] = cortexGetData(cortex, 'mot', 160);
+                if ~isempty(data)
+                    plotMotion(figs.mot, labels, data, time);
                 end
             end
 
@@ -100,6 +110,54 @@ set(gca, 'YTick', fliplr(offsets), 'YTickLabel', fliplr(labels(channels)));
 title('EEG (+/-100 uV per trace, 200 uV spacing)');
 xlabel('Seconds');
 ylabel('Channel');
+end
+
+function plotMotion(fig, labels, data, time)
+% plotMotion  Plot 9-axis IMU motion stream:
+%   - Quaternions (Q0..Q3): [-1, 1] (or Gyroscope GYROX..GYROZ: [-100, 100] dps)
+%   - Accelerometer (ACCX..ACCZ): [-4, 4] g
+%   - Magnetometer (MAGX..MAGZ): [-4900, 4900] uT
+figure(fig);
+t = time - time(end);
+
+quatCols = find(ismember(labels, {'Q0', 'Q1', 'Q2', 'Q3'}));
+gyroCols = find(ismember(labels, {'GYROX', 'GYROY', 'GYROZ'}));
+accCols = find(ismember(labels, {'ACCX', 'ACCY', 'ACCZ'}));
+magCols = find(ismember(labels, {'MAGX', 'MAGY', 'MAGZ'}));
+
+subplot(3, 1, 1);
+if ~isempty(quatCols)
+    plot(t, data(:, quatCols));
+    ylim([-1, 1]);
+    legend(labels(quatCols), 'Location', 'eastoutside');
+    title('Quaternions ([-1, 1])');
+    ylabel('Quaternion');
+elseif ~isempty(gyroCols)
+    plot(t, data(:, gyroCols));
+    ylim([-100, 100]);
+    legend(labels(gyroCols), 'Location', 'eastoutside');
+    title('Gyroscope ([-100, 100] dps)');
+    ylabel('dps');
+end
+
+subplot(3, 1, 2);
+if ~isempty(accCols)
+    plot(t, data(:, accCols));
+    ylim([-4, 4]);
+    legend(labels(accCols), 'Location', 'eastoutside');
+    title('Accelerometer ([-4, 4] g)');
+    ylabel('g');
+end
+
+subplot(3, 1, 3);
+if ~isempty(magCols)
+    plot(t, data(:, magCols));
+    ylim([-4900, 4900]);
+    legend(labels(magCols), 'Location', 'eastoutside');
+    title('Magnetometer ([-4900, 4900] uT)');
+    ylabel('uT');
+    xlabel('Seconds');
+end
 end
 
 function plotPm(fig, labels, data, time)
