@@ -4,9 +4,9 @@ function cortex = cortexSession(cortex, headsetId, varargin)
 %   Calling it again for the same active headset reuses that session; another headset
 %   cannot be connected until the current Cortex connection is closed.
 %   Optional name/value pairs: autoRescan (true), queryInterval (3 seconds),
-%   and scanTimeout (30 seconds).
+%   scanTimeout (30 seconds), and mappings (a scalar struct for EPOC Flex).
 
-options = struct('autoRescan', true, 'queryInterval', 3, 'scanTimeout', 30);
+options = struct('autoRescan', true, 'queryInterval', 3, 'scanTimeout', 30, 'mappings', []);
 if mod(numel(varargin), 2) ~= 0
     error('cortex:sessionFailed', 'Options must be supplied as name/value pairs.');
 end
@@ -24,6 +24,14 @@ if ~isstruct(cortex) || ~isfield(cortex, 'isConnected') || ~cortex.isConnected |
 end
 if ~ischar(headsetId) || isempty(headsetId)
     error('cortex:sessionFailed', 'headsetId must be a non-empty character vector.');
+end
+if ~isempty(options.mappings)
+    if ~isstruct(options.mappings) || ~isscalar(options.mappings) || isempty(fieldnames(options.mappings))
+        error('cortex:sessionFailed', 'mappings must be a non-empty scalar struct.');
+    end
+    if isempty(strfind(upper(headsetId), 'FLEX'))
+        error('cortex:sessionFailed', 'mappings can only be supplied for an EPOC Flex headset.');
+    end
 end
 
 manager = cortex.manager;
@@ -48,7 +56,7 @@ try
             headsetId, options.scanTimeout);
     end
 
-    [ok, message] = headset.connectToHeadset(headsetId, {});
+    [ok, message] = headset.connectToHeadset(headsetId, {}, options.mappings);
     if ~ok
         error('CortexHeadset:connect', '%s', message);
     end

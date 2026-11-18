@@ -14,12 +14,27 @@ classdef CortexHeadset < handle
         queryInterval = 3
     end
 
+    properties (Constant, Access = private)
+        flexMapping = struct('CMS', 'TP9', 'DRL', 'TP10', ...
+            'LA', 'FC5', 'LB', 'O1', 'LC', 'P7', 'LD', 'T7', ...
+            'LE', 'F3', 'LF', 'F7', 'LG', 'AF3', ...
+            'RA', 'FC6', 'RB', 'O2', 'RC', 'P8', 'RD', 'T8', ...
+            'RE', 'F4', 'RF', 'F8', 'RG', 'AF4')
+    end
+
     properties (Access = private)
         client
         context
         scanFinished = false
         lastQueryAt = []
         parser
+        reconnectHeadsetId = ''
+        reconnectStreams = {}
+        reconnectMappings = []
+        reconnectProfileName = ''
+        reconnectProfileWasLoaded = false
+        reconnectPending = false
+        reconnectSessionReady = false
     end
 
     methods
@@ -30,6 +45,7 @@ classdef CortexHeadset < handle
             if isempty(context.buffer)
                 context.buffer = CortexDataBuffer(10000);
             end
+            obj.client.onWarning(0, @(warning) obj.onSessionClosed(warning));
             obj.client.onWarning(1, @(warning) obj.onSessionClosed(warning));
             obj.client.onWarning(142, @(warning) obj.onScanFinished(warning));
         end
@@ -98,9 +114,11 @@ classdef CortexHeadset < handle
             end
         end
 
-        function [ok, message] = connectToHeadset(obj, headsetId, streams)
+        function [ok, message] = connectToHeadset(obj, headsetId, streams, mappings, isRecovery)
             % Connects the headset if needed, creates an active session, and subscribes when streams are provided.
             if nargin < 3, streams = {}; end
+            if nargin < 4, mappings = []; end
+            if nargin < 5, isRecovery = false; end
             ok = false;
             message = '';
 
@@ -111,11 +129,22 @@ classdef CortexHeadset < handle
                     return;
                 end
 
+                isFlex = ~isempty(strfind(upper(headsetId), 'FLEX'));
+                if isFlex && isempty(mappings)
+                    mappings = CortexHeadset.flexMapping;
+                elseif ~isFlex && ~isempty(mappings)
+                    error('CortexHeadset:mappings', 'mappings can only be supplied for an EPOC Flex headset.');
+                end
+                obj.reconnectMappings = mappings;
+
                 if ~strcmp(headset.status, 'connected')
                     if ~strcmp(headset.status, 'connecting')
                         fprintf('[CortexHeadset] Connecting to %s...\n', headsetId);
-                        obj.client.sendRequest('controlDevice', ...
-                            struct('command', 'connect', 'headset', headsetId));
+                        params = struct('command', 'connect', 'headset', headsetId);
+                        if isFlex
+                            params.mappings = mappings;
+                        end
+                        obj.client.sendRequest('controlDevice', params);
                     end
                     if isempty(obj.client.waitForWarning(104, obj.connectTimeout))
                         message = sprintf(['Connection to %s was not successful: warning 104 ' ...
@@ -127,6 +156,9 @@ classdef CortexHeadset < handle
 
                 obj.isScanning = false;
                 obj.createSession(headsetId);
+                if ~isRecovery
+                    obj.clearRecoveryState();
+                end
                 if ~isempty(streams)
                     obj.subscribe(streams);
                 end
@@ -143,11 +175,21 @@ classdef CortexHeadset < handle
             sessionId = response.result.id;
             obj.context.sessionId = sessionId;
             obj.context.headsetId = headsetId;
+            obj.reconnectHeadsetId = headsetId;
         end
 
-        function subscribe(obj, streams)
+        function subscribe(obj, streams, preserveTarget)
+            if nargin < 3, preserveTarget = false; end
             if isempty(obj.context.sessionId)
                 error('CortexHeadset:noSession', 'Create a session before subscribing.');
+            end
+
+            if ~preserveTarget
+                for index = 1:numel(streams)
+                    if ~any(strcmp(obj.reconnectStreams, streams{index}))
+                        obj.reconnectStreams{end + 1} = streams{index};
+                    end
+                end
             end
 
             params = struct('cortexToken', obj.context.token, 'session', obj.context.sessionId, ...
@@ -173,7 +215,7 @@ classdef CortexHeadset < handle
                 obj.context.buffer.configure(name, labels);
                 fprintf('[CortexHeadset] Subscribed to %s (%d columns).\n', name, numel(labels));
             end
-            obj.isSubscribed = ~isempty(successes);
+            obj.isSubscribed = ~isempty(obj.context.subscribedStreams);
             if ~obj.isSubscribed
                 error('CortexHeadset:subscribe', 'Cortex did not accept any data stream.');
             end
@@ -186,6 +228,7 @@ classdef CortexHeadset < handle
             obj.isSubscribed = false;
             obj.parser.reset();
             obj.context.subscribedStreams = {};
+            obj.reconnectStreams = {};
             obj.client.sendRequest('unsubscribe', params);
         end
 
@@ -226,17 +269,34 @@ classdef CortexHeadset < handle
                 return;
             end
 
-            obj.isScanning = false;
+            if ~obj.reconnectPending
+                obj.reconnectHeadsetId = obj.context.headsetId;
+                obj.reconnectStreams = obj.context.subscribedStreams;
+                obj.reconnectProfileName = obj.context.profileName;
+                obj.reconnectProfileWasLoaded = obj.context.isProfileLoaded;
+            end
+            obj.reconnectPending = ~isempty(obj.reconnectHeadsetId);
+            obj.reconnectSessionReady = false;
+            obj.isScanning = obj.reconnectPending;
+            obj.autoRescan = true;
+            obj.scanFinished = obj.reconnectPending;
+            obj.lastQueryAt = [];
             obj.isSubscribed = false;
             obj.context.sessionId = '';
             obj.context.headsetId = '';
             obj.context.subscribedStreams = {};
+            obj.context.streamLabels = struct();
             obj.context.isRecording = false;
             obj.context.recordId = '';
             obj.context.profileName = '';
             obj.context.isProfileLoaded = false;
+            obj.context.detectionInfo = struct();
+            obj.context.trainingEvents = {};
             obj.parser.reset();
             fprintf('[CortexHeadset] Session %s was closed by Cortex.\n', warning.message.sessionId);
+            if obj.reconnectPending
+                fprintf('[CortexHeadset] Scanning to reconnect %s...\n', obj.reconnectHeadsetId);
+            end
         end
 
         function runScanTimer(obj)
@@ -246,6 +306,57 @@ classdef CortexHeadset < handle
             end
             if isempty(obj.lastQueryAt) || toc(obj.lastQueryAt) >= obj.queryInterval
                 obj.queryHeadsets();
+                if obj.reconnectPending
+                    obj.reconnectIfAvailable();
+                end
+            end
+        end
+
+        function reconnectIfAvailable(obj)
+            headset = obj.findHeadset(obj.reconnectHeadsetId);
+            if isempty(headset), return; end
+
+            if ~obj.reconnectSessionReady
+                [ok, message] = obj.connectToHeadset( ...
+                    obj.reconnectHeadsetId, {}, obj.reconnectMappings, true);
+                if ~ok
+                    fprintf('[CortexHeadset] Reconnect attempt failed: %s\n', message);
+                    obj.isScanning = true;
+                    obj.lastQueryAt = tic();
+                    return;
+                end
+                obj.reconnectSessionReady = true;
+            end
+
+            try
+                if obj.reconnectProfileWasLoaded
+                    profile = CortexProfile(obj.client, obj.context);
+                    profile.loadOrCreate(obj.reconnectProfileName);
+                end
+                targetStreams = obj.reconnectStreams;
+                missingStreams = targetStreams(~ismember(targetStreams, obj.context.subscribedStreams));
+                if ~isempty(missingStreams)
+                    obj.subscribe(missingStreams, true);
+                    missingStreams = targetStreams(~ismember(targetStreams, obj.context.subscribedStreams));
+                    obj.reconnectStreams = targetStreams;
+                end
+                obj.isSubscribed = ~isempty(obj.context.subscribedStreams);
+                if ~isempty(missingStreams)
+                    obj.reconnectStreams = targetStreams;
+                    fprintf('[CortexHeadset] Waiting to restore streams: %s.\n', ...
+                        strjoin(missingStreams, ', '));
+                    obj.isScanning = true;
+                    obj.lastQueryAt = tic();
+                    return;
+                end
+                obj.reconnectPending = false;
+                obj.reconnectSessionReady = false;
+                obj.isScanning = false;
+                fprintf('[CortexHeadset] Reconnected to %s.\n', obj.reconnectHeadsetId);
+            catch failure
+                fprintf('[CortexHeadset] Could not restore the session: %s\n', failure.message);
+                obj.isScanning = true;
+                obj.lastQueryAt = tic();
             end
         end
 
@@ -257,6 +368,16 @@ classdef CortexHeadset < handle
                 return;
             end
             obj.context.buffer.append(stream, row, time, bciAction);
+        end
+
+        function clearRecoveryState(obj)
+            obj.reconnectStreams = {};
+            obj.reconnectProfileName = '';
+            obj.reconnectProfileWasLoaded = false;
+            obj.reconnectPending = false;
+            obj.reconnectSessionReady = false;
+            obj.scanFinished = false;
+            obj.lastQueryAt = [];
         end
 
         function storeSystemEvent(obj, values, time)

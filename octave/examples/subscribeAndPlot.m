@@ -5,8 +5,14 @@ function subscribeAndPlot()
 currentDir = fileparts(mfilename('fullpath'));
 addpath(fullfile(currentDir, '../functions'));
 
-% Set your headset id (shown in EMOTIV Launcher, for example 'INSIGHT-A1B2C3D4').
+% Set your headset ID.
 headsetId = '<YOUR_HEADSET_ID>';
+% For EPOC Flex, also set the electrode map.
+mappings = struct('CMS', 'TP9', 'DRL', 'TP10', ...
+    'LA', 'FC5', 'LB', 'O1', 'LC', 'P7', 'LD', 'T7', ...
+    'LE', 'F3', 'LF', 'F7', 'LG', 'AF3', ...
+    'RA', 'FC6', 'RB', 'O2', 'RC', 'P8', 'RD', 'T8', ...
+    'RE', 'F4', 'RF', 'F8', 'RG', 'AF4');
 streams = {'eeg'};
 durationSeconds = 90;
 
@@ -15,7 +21,11 @@ durationSeconds = 90;
 cortex = cortexConnect();
 connectionCleanup = onCleanup(@() cortexDisconnect(cortex));
 if cortex.isConnected
-    cortex = cortexSession(cortex, headsetId);
+    if isempty(strfind(upper(headsetId), 'FLEX'))
+        cortex = cortexSession(cortex, headsetId);
+    else
+        cortex = cortexSession(cortex, headsetId, 'mappings', mappings);
+    end
     cortex = cortexSubscribe(cortex, streams);
 end
 
@@ -89,6 +99,9 @@ function plotEeg(fig, labels, data, time)
 % plotEeg  Plot multi-channel EEG with +/-100 uV per trace and 200 uV channel spacing.
 figure(fig);
 channels = find(strcmp(labels, 'INTERPOLATED')) + 1:find(strcmp(labels, 'RAW_CQ')) - 1;
+if isempty(channels)
+    channels = find(~ismember(labels, {'COUNTER', 'INTERPOLATED', 'RAW_CQ', 'MARKER', 'TIMESTAMP'}));
+end
 if isempty(channels), return; end
 
 eeg = data(:, channels);
