@@ -317,8 +317,21 @@ classdef CortexHeadset < handle
                     profile = CortexProfile(obj.client, obj.context);
                     profile.loadOrCreate(obj.reconnectProfileName);
                 end
-                if ~isempty(obj.reconnectStreams)
-                    obj.subscribe(obj.reconnectStreams);
+                targetStreams = obj.reconnectStreams;
+                missingStreams = targetStreams(~ismember(targetStreams, obj.context.subscribedStreams));
+                if ~isempty(missingStreams)
+                    try
+                        obj.subscribe(missingStreams);
+                    catch subscribeFailure
+                        obj.reconnectStreams = targetStreams;
+                        obj.isSubscribed = ~isempty(obj.context.subscribedStreams);
+                        rethrow(subscribeFailure);
+                    end
+                    obj.reconnectStreams = targetStreams;
+                end
+                obj.isSubscribed = ~isempty(obj.context.subscribedStreams);
+                if ~all(ismember(targetStreams, obj.context.subscribedStreams))
+                    error('CortexHeadset:subscribe', 'Not all data streams have been restored.');
                 end
                 obj.reconnectPending = false;
                 obj.reconnectSessionReady = false;
