@@ -111,10 +111,11 @@ classdef CortexHeadset < handle
             end
         end
 
-        function [ok, message] = connectToHeadset(obj, headsetId, streams, mappings)
+        function [ok, message] = connectToHeadset(obj, headsetId, streams, mappings, isRecovery)
             % Connects the headset if needed, creates an active session, and subscribes when streams are provided.
             if nargin < 3, streams = {}; end
             if nargin < 4, mappings = []; end
+            if nargin < 5, isRecovery = false; end
             ok = false;
             message = '';
 
@@ -152,6 +153,9 @@ classdef CortexHeadset < handle
 
                 obj.isScanning = false;
                 obj.createSession(headsetId);
+                if ~isRecovery
+                    obj.clearRecoveryState();
+                end
                 if ~isempty(streams)
                     obj.subscribe(streams);
                 end
@@ -171,9 +175,18 @@ classdef CortexHeadset < handle
             obj.reconnectHeadsetId = headsetId;
         end
 
-        function subscribe(obj, streams)
+        function subscribe(obj, streams, preserveTarget)
+            if nargin < 3, preserveTarget = false; end
             if isempty(obj.context.sessionId)
                 error('CortexHeadset:noSession', 'Create a session before subscribing.');
+            end
+
+            if ~preserveTarget
+                for index = 1:numel(streams)
+                    if ~any(strcmp(obj.reconnectStreams, streams{index}))
+                        obj.reconnectStreams{end + 1} = streams{index};
+                    end
+                end
             end
 
             params = struct('cortexToken', obj.context.token, 'session', obj.context.sessionId, ...
@@ -199,11 +212,10 @@ classdef CortexHeadset < handle
                 obj.context.buffer.configure(name, labels);
                 fprintf('[CortexHeadset] Subscribed to %s (%d columns).\n', name, numel(labels));
             end
-            obj.isSubscribed = ~isempty(successes);
+            obj.isSubscribed = ~isempty(obj.context.subscribedStreams);
             if ~obj.isSubscribed
                 error('CortexHeadset:subscribe', 'Cortex did not accept any data stream.');
             end
-            obj.reconnectStreams = obj.context.subscribedStreams;
         end
 
         function unsubscribe(obj)
@@ -213,6 +225,7 @@ classdef CortexHeadset < handle
             obj.isSubscribed = false;
             obj.parser.reset();
             obj.context.subscribedStreams = {};
+            obj.reconnectStreams = {};
             obj.client.sendRequest('unsubscribe', params);
         end
 
@@ -302,7 +315,7 @@ classdef CortexHeadset < handle
 
             if ~obj.reconnectSessionReady
                 [ok, message] = obj.connectToHeadset( ...
-                    obj.reconnectHeadsetId, {}, obj.reconnectMappings);
+                    obj.reconnectHeadsetId, {}, obj.reconnectMappings, true);
                 if ~ok
                     fprintf('[CortexHeadset] Reconnect attempt failed: %s\n', message);
                     obj.isScanning = true;
@@ -320,18 +333,18 @@ classdef CortexHeadset < handle
                 targetStreams = obj.reconnectStreams;
                 missingStreams = targetStreams(~ismember(targetStreams, obj.context.subscribedStreams));
                 if ~isempty(missingStreams)
-                    try
-                        obj.subscribe(missingStreams);
-                    catch subscribeFailure
-                        obj.reconnectStreams = targetStreams;
-                        obj.isSubscribed = ~isempty(obj.context.subscribedStreams);
-                        rethrow(subscribeFailure);
-                    end
+                    obj.subscribe(missingStreams, true);
+                    missingStreams = targetStreams(~ismember(targetStreams, obj.context.subscribedStreams));
                     obj.reconnectStreams = targetStreams;
                 end
                 obj.isSubscribed = ~isempty(obj.context.subscribedStreams);
-                if ~all(ismember(targetStreams, obj.context.subscribedStreams))
-                    error('CortexHeadset:subscribe', 'Not all data streams have been restored.');
+                if ~isempty(missingStreams)
+                    obj.reconnectStreams = targetStreams;
+                    fprintf('[CortexHeadset] Waiting to restore streams: %s.\n', ...
+                        strjoin(missingStreams, ', '));
+                    obj.isScanning = true;
+                    obj.lastQueryAt = tic();
+                    return;
                 end
                 obj.reconnectPending = false;
                 obj.reconnectSessionReady = false;
@@ -352,6 +365,16 @@ classdef CortexHeadset < handle
                 return;
             end
             obj.context.buffer.append(stream, row, time, bciAction);
+        end
+
+        function clearRecoveryState(obj)
+            obj.reconnectStreams = {};
+            obj.reconnectProfileName = '';
+            obj.reconnectProfileWasLoaded = false;
+            obj.reconnectPending = false;
+            obj.reconnectSessionReady = false;
+            obj.scanFinished = false;
+            obj.lastQueryAt = [];
         end
 
         function storeSystemEvent(obj, values, time)
