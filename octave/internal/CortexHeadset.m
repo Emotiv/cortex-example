@@ -253,10 +253,12 @@ classdef CortexHeadset < handle
                 return;
             end
 
-            obj.reconnectHeadsetId = obj.context.headsetId;
-            obj.reconnectStreams = obj.context.subscribedStreams;
-            obj.reconnectProfileName = obj.context.profileName;
-            obj.reconnectProfileWasLoaded = obj.context.isProfileLoaded;
+            if ~obj.reconnectPending
+                obj.reconnectHeadsetId = obj.context.headsetId;
+                obj.reconnectStreams = obj.context.subscribedStreams;
+                obj.reconnectProfileName = obj.context.profileName;
+                obj.reconnectProfileWasLoaded = obj.context.isProfileLoaded;
+            end
             obj.reconnectPending = ~isempty(obj.reconnectHeadsetId);
             obj.reconnectSessionReady = false;
             obj.isScanning = obj.reconnectPending;
