@@ -17,7 +17,11 @@ durationSeconds = 90;
 cortex = cortexConnect();
 connectionCleanup = onCleanup(@() cortexDisconnect(cortex));
 if cortex.isConnected
-    cortex = cortexSession(cortex, headsetId, 'mappings', mappings);
+    if isempty(strfind(upper(headsetId), 'FLEX'))
+        cortex = cortexSession(cortex, headsetId);
+    else
+        cortex = cortexSession(cortex, headsetId, 'mappings', mappings);
+    end
     cortex = cortexSubscribe(cortex, streams);
 end
 
