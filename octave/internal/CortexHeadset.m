@@ -14,6 +14,11 @@ classdef CortexHeadset < handle
         queryInterval = 3
     end
 
+    properties (Constant, Access = private)
+        flexMapping = struct('CMS', 'TP8', 'DRL', 'P6', ...
+            'RM', 'TP10', 'RN', 'P4', 'RO', 'P8')
+    end
+
     properties (Access = private)
         client
         context
@@ -123,8 +128,7 @@ classdef CortexHeadset < handle
                         fprintf('[CortexHeadset] Connecting to %s...\n', headsetId);
                         params = struct('command', 'connect', 'headset', headsetId);
                         if ~isempty(strfind(upper(headsetId), 'FLEX'))
-                            params.mappings = struct('CMS', 'TP8', 'DRL', 'P6', ...
-                                'RM', 'TP10', 'RN', 'P4', 'RO', 'P8');
+                            params.mappings = CortexHeadset.flexMapping;
                         end
                         obj.client.sendRequest('controlDevice', params);
                     end
