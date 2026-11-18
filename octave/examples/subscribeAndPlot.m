@@ -9,7 +9,7 @@ addpath(fullfile(currentDir, '../functions'));
 headsetId = '<YOUR_HEADSET_ID>';
 mappings = struct('CMS', 'TP8', 'DRL', 'P6', ...
     'RM', 'TP10', 'RN', 'P4', 'RO', 'P8');
-streams = {'eeg', 'mot'};
+streams = {'eeg'};
 durationSeconds = 90;
 
 % 2. Connection / Authentication, then create a headset session and subscribe to streams.
